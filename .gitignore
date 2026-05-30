@@ -1,0 +1,13 @@
+node_modules/
+dist/
+user-data/
+errors/*
+!errors/.gitkeep
+output/*
+!output/.gitkeep
+.env
+playwright-report/
+test-results/
+*.log
+attendance_curl_request_response
+wa2.js
