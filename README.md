@@ -1,6 +1,6 @@
 # School Management Portal Automation Suite
 
-A reliable, local browser automation tool powered by Playwright and TypeScript, designed to extract attendance tracking and outstanding financial account receivables from Laravel/Vue.js school management portals.
+A simple, reliable, local browser automation tool powered by Playwright and TypeScript, designed to extract attendance tracking and outstanding financial account receivables from Laravel/Vue.js school management portals.
 
 ## Features
 
