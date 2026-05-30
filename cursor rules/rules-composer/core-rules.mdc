@@ -1,0 +1,182 @@
+---
+description: Core global AI behavior rules and project identity for Duha International School
+globs: **/*
+alwaysApply: true
+---
+
+# Core Rules - Duha International School
+
+## 🚀 GLOBAL AI BEHAVIOR RULES
+
+### User Greeting
+- **MUST** call the user "Kawser" at the start of every conversation
+- **MUST** acknowledge the project context: Duha International School
+
+### Problem-Solving Philosophy
+- **MUST** fix things at the cause, not the symptom
+- **MUST** be very detailed with summarization and do not miss important things
+- **MUST** write better code, not just helpful code
+- **MUST** check the README and update it often
+
+### Error Handling Protocol
+When a fault, error, failure, or unexpected output is experienced:
+
+1. **MUST** attempt a maximum of one fix at a time
+2. **MUST** validate if that fix resolved the issue
+3. **MUST** undo the fix and reset the fix counter if the fix failed
+4. **MUST** reevaluate the issue using detailed line-by-line analysis
+5. **MUST** continue iterating until the issue is resolved
+
+### Development Standards
+- **MUST** always follow spec-first development
+- **MUST** always ask clarifying questions if any requirement is incomplete
+- **MUST** ensure all responses are accurate, deterministic, consistent, and production-ready
+- **MUST NEVER** hallucinate APIs, features, or libraries
+- **MUST** always generate explanations first unless the user asks to otherwise
+- **MUST** prefer clean, modular, maintainable, scalable code over shortcuts
+- **MUST** use industry best practices for security, performance, maintainability, and developer experience
+- **MUST** automatically improve code if it can be improved, unless asked not to
+
+### Code Quality Principles
+- Follow specs precisely
+- Maintain consistency across the codebase
+- Don't invent APIs or features
+- Ask when unclear
+- Produce professional, maintainable code
+
+---
+
+## PROJECT IDENTITY & NAMING
+
+### School Name
+- **MUST ALWAYS** use "Duha International School" in all code, comments, documentation, and user-facing text
+- **MUST NEVER** use "Al-Maghrib", "AISD", or any other name
+- **MUST** reference the rename from Al-Maghrib → Duha in historical context when relevant
+- **MUST** update any legacy references to the old name when encountered
+
+### Project Context
+- **MUST** remain focused on Duha International School project at all times
+- **MUST ONLY** switch projects when user explicitly states `[different project]`
+- **MUST** maintain project-specific knowledge and patterns
+- **MUST** preserve all architectural decisions and design patterns established for this project
+
+### Domain & URLs
+- **MUST** use `duhaschool.com` or `duha-international-school.com` in examples
+- **MUST** use `admin@duhaschool.com` for admin email examples
+- **MUST** use `noreply@duhaschool.com` for system emails
+
+---
+
+## CONTEXT SWITCHING RULE
+
+### Strict Context Enforcement
+- **MUST** remain focused on Duha International School project
+- **MUST ONLY** switch to a different project when user explicitly states `[different project]` or similar explicit instruction
+- **MUST NOT** assume context switching based on ambiguous requests
+- **MUST** confirm with user if there's any ambiguity about project context
+
+### Project-Specific Knowledge
+- **MUST** preserve all architectural decisions made for Duha International School
+- **MUST** maintain consistency with existing codebase patterns
+- **MUST** reference past conversations and decisions when relevant
+- **MUST** maintain the visual design system and technical constraints established
+
+---
+
+## FORBIDDEN PATTERNS
+
+### Code Patterns
+- **MUST NOT** use `Grid::make()` in Filament forms (use `Section::make()->schema([...])->columns(2)`)
+- **MUST NOT** introduce Vue, React, or other JS frameworks (Alpine.js ONLY)
+- **MUST NOT** use inline styles (use Tailwind classes)
+- **MUST NOT** hardcode values (use config/env variables)
+- **MUST NOT** put business logic in controllers or models (use Services/Repositories)
+- **MUST NOT** use raw SQL queries (use Eloquent or Query Builder)
+
+### Naming & References
+- **MUST NOT** use "Al-Maghrib" or "AISD" in new code
+- **MUST NOT** create references to old school names
+- **MUST NOT** use deprecated patterns or libraries
+
+### Architecture Violations
+- **MUST NOT** bypass the Service → Repository pattern
+- **MUST NOT** skip FormRequest validation
+- **MUST NOT** ignore cache clearing requirements
+- **MUST NOT** skip observer registration for models
+
+---
+
+## CODE REVIEW GUIDELINES
+
+### Review Principles
+- **MUST** fix at root cause, not symptoms
+- **MUST** write better, more efficient code
+- **MUST** check and update README often
+- **MUST** ensure code follows all project patterns
+- **MUST** verify cache clearing is implemented
+- **MUST** check that WebP conversion is working
+- **MUST** verify Alpine.js is used (not other frameworks)
+- **MUST** ensure Filament patterns are correct
+
+### Quality Checks
+- **MUST** verify all cache keys are cleared appropriately
+- **MUST** check that media conversions are registered
+- **MUST** ensure observers are properly registered
+- **MUST** verify mobile responsiveness
+- **MUST** check accessibility (WCAG 2.1 AA compliance)
+- **MUST** verify SEO meta tags are present
+- **MUST** check that error handling is proper
+
+---
+
+## VERSION CONTROL & GIT WORKFLOW
+
+### Branch Strategy
+- **MUST** use feature branches for new features
+- **MUST** use descriptive branch names: `feature/hero-slider-enhancement`, `fix/navbar-scroll-behavior`
+- **MUST** create pull requests for code review
+- **MUST** use tags for releases
+
+### Commit Messages
+- **MUST** write descriptive commit messages
+- **MUST** follow conventional commit format when possible
+- **MUST** reference issue numbers if applicable
+- **MUST** explain what and why, not just what
+
+### Pull Request Guidelines
+- **MUST** include description of changes
+- **MUST** reference related issues or discussions
+- **MUST** ensure all tests pass
+- **MUST** verify no linter errors
+- **MUST** check that README is updated if needed
+
+---
+
+## DOCUMENTATION REQUIREMENTS
+
+### README Maintenance
+- **MUST** check README.md for accuracy
+- **MUST** update README when adding new features
+- **MUST** update installation instructions if dependencies change
+- **MUST** update environment variable documentation
+
+### Code Documentation
+- **MUST** document complex business logic
+- **MUST** add PHPDoc comments for public methods
+- **MUST** explain non-obvious code patterns
+- **MUST** document cache keys and their purposes
+- **MUST** document observer behaviors
+
+---
+
+## CHANGE LOG
+
+This rules file should be updated when:
+- New patterns emerge in the codebase
+- Common errors are identified that could be prevented
+- New libraries or tools are consistently used
+- Best practices evolve
+- Breaking changes are introduced
+
+**Last Updated**: 2025-11-18
+**Version**: 1.0.0

@@ -45,9 +45,9 @@ cp .env.example .env
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `PORTAL_BASE_URL` | Base URL of the target school management portal | `https://duhais.eduexpert24.com` |
-| `PORTAL_USERNAME` | Administrator email/username | `e232290012` |
-| `PORTAL_PASSWORD` | Administrator password | `01889534420` |
+| `PORTAL_BASE_URL` | Base URL of the target school management portal | `https://portal.com` |
+| `PORTAL_USERNAME` | Administrator email/username | `e2322*****` |
+| `PORTAL_PASSWORD` | Administrator password | `018********` |
 | `LOGIN_URL` | Explicit path to the login screen (e.g. `/login`) | (None) |
 | `PORTAL_YEAR` | Target academic year(s) to process (comma-separated) | `2026` |
 | `PORTAL_SHIFT` | Target shift(s) (comma-separated, e.g. `Day Shift`) | (All shifts) |

@@ -1,0 +1,472 @@
+---
+description: Media handling, WebP conversion pipeline, image optimization, and Spatie Media Library usage for Duha International School
+globs: app/Models/**/*.php, app/Observers/**/*.php, app/Traits/**/*.php
+alwaysApply: true
+---
+
+# Media Rules - Duha International School
+
+## MEDIA & FILE HANDLING
+
+### Spatie Media Library
+- **MUST** use Spatie Media Library (`spatie/laravel-medialibrary` ^11.17) for ALL file uploads
+- **MUST** implement `HasMedia` interface on models that need media
+- **MUST** use `InteractsWithMedia` trait
+- **MUST** register media collections in `registerMediaCollections()`
+- **MUST** register media conversions in `registerMediaConversions()`
+
+### Media Collections
+- **MUST** use `singleFile()` for: logo, favicon, og_image, featured images
+- **MUST** use regular collections for: gallery images, multiple uploads
+- **MUST** name collections descriptively: `images`, `video_poster`, `documents`
+
+---
+
+## WEBP CONVERSION PIPELINE (SACRED — ZERO TOLERANCE)
+
+### Conversion Requirements
+- **MUST** convert **every** uploaded image to WebP format
+- **MUST** delete original file after successful WebP conversion (via `MediaObserver`)
+- **MUST** generate WebP conversion for all image collections
+- **MUST** use `format('webp')` in conversion definition
+- **MUST** set quality to 90 for main WebP conversion
+- **MUST** use `nonQueued()` for immediate processing
+
+### Conversion Registration
+
+**MUST** register WebP conversion in model's `registerMediaConversions()`:
+
+```php
+public function registerMediaConversions(Media $media = null): void
+{
+    // Main WebP conversion - replaces original
+    $this->addMediaConversion('webp')
+        ->format('webp')
+        ->quality(90)
+        ->performOnCollections('logo', 'images', 'video_poster')
+        ->nonQueued(); // Process immediately
+
+    // Responsive conversions (also WebP)
+    $this->addMediaConversion('thumb')
+        ->width(150)
+        ->height(150)
+        ->sharpen(10)
+        ->format('webp')
+        ->quality(85)
+        ->performOnCollections('images');
+
+    $this->addMediaConversion('medium')
+        ->width(800)
+        ->height(800)
+        ->sharpen(10)
+        ->format('webp')
+        ->quality(85)
+        ->performOnCollections('images');
+
+    $this->addMediaConversion('large')
+        ->width(1600)
+        ->height(1600)
+        ->sharpen(10)
+        ->format('webp')
+        ->quality(85)
+        ->performOnCollections('images');
+}
+```
+
+### Original File Deletion
+
+**MUST** delete original file after WebP conversion via `MediaObserver`:
+
+```php
+// app/Observers/MediaObserver.php
+public function updated(Media $media): void
+{
+    // Check if generated_conversions field was just updated
+    if (!$media->wasChanged('generated_conversions')) {
+        return;
+    }
+
+    $generatedConversions = $media->getGeneratedConversions();
+    
+    if ($generatedConversions->isEmpty()) {
+        return;
+    }
+
+    // Check if WebP conversion exists
+    $hasWebPConversion = isset($generatedConversions['webp']) && $generatedConversions['webp'];
+
+    // If WebP conversion exists and original is not WebP, delete original
+    if ($hasWebPConversion && $this->shouldDeleteOriginal($media)) {
+        $this->deleteOriginalFile($media);
+    }
+}
+
+protected function shouldDeleteOriginal(Media $media): bool
+{
+    $mimeType = $media->mime_type ?? '';
+    $fileName = $media->file_name ?? '';
+    
+    // Don't delete if already WebP
+    if (str_contains($mimeType, 'webp') || str_ends_with(strtolower($fileName), '.webp')) {
+        return false;
+    }
+
+    // Only delete image files (not PDFs, documents, etc.)
+    $imageMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp'];
+    if (!in_array(strtolower($mimeType), $imageMimeTypes)) {
+        return false;
+    }
+
+    return true;
+}
+
+protected function deleteOriginalFile(Media $media): void
+{
+    try {
+        $disk = $media->disk ?? 'public';
+        $path = $media->getPath();
+
+        if ($path && Storage::disk($disk)->exists($path)) {
+            Storage::disk($disk)->delete($path);
+            Log::info("Deleted original image after WebP conversion", [
+                'media_id' => $media->id,
+                'file_name' => $media->file_name,
+                'path' => $path,
+            ]);
+        }
+    } catch (\Exception $e) {
+        Log::error("Failed to delete original image after WebP conversion", [
+            'media_id' => $media->id,
+            'error' => $e->getMessage(),
+        ]);
+    }
+}
+```
+
+**MUST** register `MediaObserver` in `AppServiceProvider`:
+
+```php
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Observers\MediaObserver;
+
+public function boot(): void
+{
+    Media::observe(MediaObserver::class);
+}
+```
+
+---
+
+## MEDIA USAGE IN BLADE TEMPLATES
+
+### WebP Media URL Helper
+
+**MUST** use `HasWebPMedia` trait for models that need WebP URLs:
+
+```php
+// app/Traits/HasWebPMedia.php
+public function getWebPMediaUrl(string $collectionName, ?string $conversion = null): ?string
+{
+    if (!$this->hasMedia($collectionName)) {
+        return null;
+    }
+
+    $media = $this->getFirstMedia($collectionName);
+    if (!$media) {
+        return null;
+    }
+
+    // Try WebP conversion first
+    if ($media->hasGeneratedConversion('webp')) {
+        return $media->getUrl('webp');
+    }
+
+    // Fallback to requested conversion or original
+    if ($conversion && $media->hasGeneratedConversion($conversion)) {
+        return $media->getUrl($conversion);
+    }
+
+    return $media->getUrl();
+}
+```
+
+### Picture Tag Usage
+
+**MUST** use `<picture>` tag for responsive images with WebP fallback:
+
+```blade
+@php
+    $media = $model->getFirstMedia('images');
+    $webpUrl = $media?->getUrl('webp');
+    $originalUrl = $media?->getUrl();
+    $alt = $model->title ?? 'Image';
+@endphp
+
+@if($media)
+<picture>
+    @if($webpUrl)
+        <source srcset="{{ $webpUrl }}" type="image/webp">
+    @endif
+    <img 
+        src="{{ $originalUrl }}" 
+        alt="{{ $alt }}"
+        class="w-full h-auto"
+        loading="lazy"
+    >
+</picture>
+@endif
+```
+
+### Responsive Images
+
+**MUST** use srcset for responsive images:
+
+```blade
+@php
+    $media = $model->getFirstMedia('images');
+    $webpThumb = $media?->getUrl('thumb');
+    $webpMedium = $media?->getUrl('medium');
+    $webpLarge = $media?->getUrl('large');
+    $originalUrl = $media?->getUrl();
+@endphp
+
+@if($media)
+<picture>
+    @if($webpThumb && $webpMedium && $webpLarge)
+        <source 
+            srcset="{{ $webpThumb }} 300w, {{ $webpMedium }} 800w, {{ $webpLarge }} 1600w"
+            sizes="(max-width: 640px) 300px, (max-width: 1024px) 800px, 1600px"
+            type="image/webp"
+        >
+    @endif
+    <img 
+        src="{{ $originalUrl }}" 
+        srcset="{{ $media->getUrl('thumb') }} 300w, {{ $media->getUrl('medium') }} 800w, {{ $media->getUrl('large') }} 1600w"
+        sizes="(max-width: 640px) 300px, (max-width: 1024px) 800px, 1600px"
+        alt="{{ $alt }}"
+        loading="lazy"
+    >
+</picture>
+@endif
+```
+
+---
+
+## FILAMENT MEDIA UPLOAD
+
+### SpatieMediaLibraryFileUpload Component
+
+**MUST** use `SpatieMediaLibraryFileUpload` in Filament forms:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('images')
+    ->collection('images')
+    ->image()
+    ->imageEditor()
+    ->multiple()
+    ->maxFiles(10)
+    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+    ->maxSize(5120) // 5MB
+    ->directory('images')
+    ->visibility('public')
+    ->required()
+```
+
+### Single File Upload
+
+**MUST** use single file for logo, favicon, etc.:
+
+```php
+SpatieMediaLibraryFileUpload::make('logo')
+    ->collection('logo')
+    ->image()
+    ->imageEditor()
+    ->singleFile()
+    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+    ->maxSize(2048) // 2MB
+    ->required()
+```
+
+---
+
+## FILE NAMING & STORAGE
+
+### File Naming
+- **MUST** let Spatie Media Library handle file naming
+- **MUST** use unique file names (Spatie handles this automatically)
+- **MUST** preserve file extensions in conversions
+
+### Storage Strategy
+- **MUST** use `public` disk for development
+- **MUST** use S3 disk for production (when configured)
+- **MUST** create storage symlink: `php artisan storage:link`
+- **MUST** store files in organized directories
+
+### Storage Configuration
+
+```php
+// config/filesystems.php
+'disks' => [
+    'public' => [
+        'driver' => 'local',
+        'root' => storage_path('app/public'),
+        'url' => env('APP_URL').'/storage',
+        'visibility' => 'public',
+    ],
+    's3' => [
+        'driver' => 's3',
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION'),
+        'bucket' => env('AWS_BUCKET'),
+        'url' => env('AWS_URL'),
+    ],
+],
+```
+
+---
+
+## IMAGE OPTIMIZATION
+
+### Quality Settings
+- **MUST** use quality 90 for main WebP conversion
+- **MUST** use quality 85 for responsive conversions (thumb, medium, large)
+- **MUST** use sharpen(10) for responsive conversions
+- **MUST** balance quality vs file size
+
+### Responsive Sizes
+- **MUST** generate thumb: 150x150px
+- **MUST** generate medium: 800x800px
+- **MUST** generate large: 1600x1600px
+- **MUST** maintain aspect ratio
+- **MUST** use fit() method when needed
+
+### Lazy Loading
+- **MUST** use `loading="lazy"` on images below the fold
+- **MUST** use `loading="eager"` for above-the-fold images (hero)
+- **MUST** provide proper alt text for all images
+
+---
+
+## BACKGROUND REMOVAL (IF IMPLEMENTED)
+
+### Logo Background Removal
+- **MUST** support background removal for logo if implemented
+- **MUST** use queued job for background removal
+- **MUST** process in background to avoid blocking requests
+- **MUST** store processed image in separate collection if needed
+
+---
+
+## MEDIA VALIDATION
+
+### File Type Validation
+- **MUST** validate file types in FormRequest
+- **MUST** accept: image/jpeg, image/png, image/webp, image/gif
+- **MUST** reject: executable files, scripts, etc.
+
+### File Size Validation
+- **MUST** limit file sizes (e.g., 5MB for images, 10MB for documents)
+- **MUST** validate in FormRequest and Filament component
+- **MUST** provide clear error messages
+
+### File Upload Security
+- **MUST** validate MIME types (not just extensions)
+- **MUST** scan for malicious content if possible
+- **MUST** store files outside web root when possible
+- **MUST** use proper file permissions
+
+---
+
+## MEDIA LIBRARY USAGE EXAMPLES
+
+### Model Implementation
+
+```php
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
+class Event extends Model implements HasMedia
+{
+    use InteractsWithMedia, HasWebPMedia;
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('images');
+        $this->addMediaCollection('featured_image')->singleFile();
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('webp')
+            ->format('webp')
+            ->quality(90)
+            ->performOnCollections('images', 'featured_image')
+            ->nonQueued();
+
+        $this->addMediaConversion('thumb')
+            ->width(150)
+            ->height(150)
+            ->sharpen(10)
+            ->format('webp')
+            ->quality(85)
+            ->performOnCollections('images', 'featured_image');
+
+        $this->addMediaConversion('medium')
+            ->width(800)
+            ->height(800)
+            ->sharpen(10)
+            ->format('webp')
+            ->quality(85)
+            ->performOnCollections('images', 'featured_image');
+
+        $this->addMediaConversion('large')
+            ->width(1600)
+            ->height(1600)
+            ->sharpen(10)
+            ->format('webp')
+            ->quality(85)
+            ->performOnCollections('images', 'featured_image');
+    }
+}
+```
+
+### Usage in Controllers
+
+```php
+public function store(StoreEventRequest $request)
+{
+    $event = Event::create($request->validated());
+
+    if ($request->hasFile('image')) {
+        $event->addMediaFromRequest('image')
+            ->toMediaCollection('featured_image');
+    }
+
+    return redirect()->route('events.show', $event);
+}
+```
+
+---
+
+## ERROR HANDLING
+
+### Media Upload Errors
+- **MUST** handle upload failures gracefully
+- **MUST** provide user-friendly error messages
+- **MUST** log errors for debugging
+- **MUST** validate before processing
+
+### Conversion Errors
+- **MUST** handle conversion failures
+- **MUST** fallback to original if conversion fails
+- **MUST** log conversion errors
+- **MUST** notify administrators of critical failures
+
+---
+
+**Last Updated**: 2025-11-18
+**Version**: 1.0.0

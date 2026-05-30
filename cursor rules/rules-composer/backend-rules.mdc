@@ -1,0 +1,630 @@
+---
+description: Backend architecture, database design, models, controllers, services, repositories, and backend patterns for Duha International School
+globs: app/**/*.php, database/**/*.php
+alwaysApply: true
+---
+
+# Backend Rules - Duha International School
+
+## DATABASE DESIGN
+
+### Database System
+- **MUST** use MySQL 8.0+ or MariaDB 10.6+ as primary database
+- **MUST** support PostgreSQL as optional alternative
+- **MUST** use UTF8MB4 character set
+- **MUST** use InnoDB storage engine
+
+### Naming Conventions
+- **MUST** use snake_case for table names (plural): `home_page_sections`, `admission_applications`
+- **MUST** use snake_case for column names: `is_active`, `sort_order`, `created_at`
+- **MUST** use singular PascalCase for model names: `HomePageSection`, `AdmissionApplication`
+- **MUST** use `id` as primary key (auto-increment)
+- **MUST** use `created_at` and `updated_at` timestamps
+- **MUST** use `deleted_at` for soft deletes
+
+### Key Tables
+
+| Table | Purpose | Key Fields |
+|-------|---------|------------|
+| `events` | School events | title, slug, description, start_date, end_date, is_featured |
+| `notices` | School notices | title, content, category, published_at, is_featured |
+| `pages` | Dynamic pages | title, slug, content, page_type, is_published |
+| `staff` | Staff directory | name, position, bio, email, phone |
+| `home_page_sections` | Homepage sections | section_key, section_type, title, data (JSON), is_active, sort_order |
+| `home_page_contents` | Homepage content blocks | content_key, title, content, is_active |
+| `site_settings` | Global settings | key, value (JSON) |
+| `admission_applications` | Admission forms | name, email, phone, grade, status |
+| `career_applications` | Job applications | name, email, phone, position, resume_path |
+| `announcements` | Top announcement bar | message, link, link_text, is_active, expires_at |
+
+### Relationships
+
+```
+Events
+  - hasMany Media (images)
+  - belongsToMany Categories (if implemented)
+
+Notices
+  - hasMany Media (images)
+  - belongsTo Category
+
+Pages
+  - hasMany Media (featured_image)
+
+Staff
+  - hasMany Media (photo)
+
+HomePageSection
+  - hasMany Media (images, video_poster)
+  - belongsTo HomePageContent (optional)
+
+SiteSettings
+  - hasOne Media (logo)
+  - hasOne Media (favicon)
+  - hasMany Media (advisors)
+```
+
+### Indexes
+
+**MUST** create indexes for:
+- Foreign keys
+- Frequently queried columns (`is_active`, `is_featured`, `published_at`)
+- Search columns (`title`, `slug`)
+- Sort columns (`sort_order`, `created_at`)
+
+```php
+$table->index('is_active');
+$table->index('is_featured');
+$table->index('published_at');
+$table->index(['is_active', 'sort_order']);
+```
+
+---
+
+## DATA MODEL (Eloquent Models & Key Fields)
+
+### HomePageSection Model
+
+```php
+class HomePageSection extends Model
+{
+    use HasFactory, InteractsWithMedia, HasWebPMedia, SoftDeletes;
+
+    protected $fillable = [
+        'section_key',
+        'section_type',
+        'title',
+        'subtitle',
+        'description',
+        'button_text',
+        'button_link',
+        'data',  // JSON field
+        'is_active',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'data' => 'array',
+        'is_active' => 'boolean',
+        'sort_order' => 'integer',
+    ];
+
+    // Relationships
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'model');
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort_order');
+    }
+}
+```
+
+### Event Model
+
+```php
+class Event extends Model implements HasMedia
+{
+    use HasFactory, Searchable, InteractsWithMedia, HasWebPMedia, SoftDeletes;
+
+    protected $fillable = [
+        'title',
+        'slug',
+        'description',
+        'start_date',
+        'end_date',
+        'location',
+        'category',
+        'is_featured',
+        'is_published',
+        'published_at',
+    ];
+
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'published_at' => 'datetime',
+        'is_featured' => 'boolean',
+        'is_published' => 'boolean',
+    ];
+
+    // Auto-generate slug
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($event) {
+            if (empty($event->slug)) {
+                $event->slug = Str::slug($event->title);
+            }
+        });
+    }
+}
+```
+
+### Notice Model
+
+```php
+class Notice extends Model implements HasMedia
+{
+    use HasFactory, Searchable, InteractsWithMedia, HasWebPMedia, SoftDeletes;
+
+    protected $fillable = [
+        'title',
+        'content',
+        'category',
+        'is_featured',
+        'is_published',
+        'published_at',
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime',
+        'is_featured' => 'boolean',
+        'is_published' => 'boolean',
+    ];
+}
+```
+
+### SiteSettings Model
+
+```php
+class SiteSettings extends Model implements HasMedia
+{
+    use HasFactory, InteractsWithMedia;
+
+    protected $fillable = [
+        'key',
+        'value',  // JSON
+    ];
+
+    protected $casts = [
+        'value' => 'array',
+    ];
+
+    // Singleton pattern for settings
+    public static function getSettings(): self
+    {
+        return static::firstOrCreate(['key' => 'main'], [
+            'value' => [],
+        ]);
+    }
+}
+```
+
+---
+
+## MIGRATIONS
+
+### Migration Structure
+
+**MUST** follow Laravel migration conventions:
+
+```php
+Schema::create('home_page_sections', function (Blueprint $table) {
+    $table->id();
+    $table->string('section_key')->unique();
+    $table->string('section_type')->default('content');
+    $table->string('title')->nullable();
+    $table->string('subtitle')->nullable();
+    $table->text('description')->nullable();
+    $table->string('button_text')->nullable();
+    $table->string('button_link')->nullable();
+    $table->json('data')->nullable();
+    $table->boolean('is_active')->default(true);
+    $table->integer('sort_order')->default(0);
+    $table->timestamps();
+    $table->softDeletes();
+    
+    // Indexes
+    $table->index('is_active');
+    $table->index('sort_order');
+    $table->index(['is_active', 'sort_order']);
+});
+```
+
+### Foreign Keys
+
+**MUST** add foreign keys when relationships exist:
+
+```php
+$table->foreignId('user_id')
+    ->constrained()
+    ->onDelete('cascade');
+```
+
+### Soft Deletes
+
+**MUST** use soft deletes for content models:
+- Events
+- Notices
+- Pages
+- Staff
+- HomePageSection
+- HomePageContent
+
+---
+
+## ROUTES
+
+### Web Routes Structure
+
+**MUST** organize routes in `routes/web.php`:
+
+```php
+// Public Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Events
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
+
+// Notices
+Route::get('/notices', [NoticeController::class, 'index'])->name('notices.index');
+Route::get('/notices/{notice}', [NoticeController::class, 'show'])->name('notices.show');
+
+// Admission
+Route::get('/admission', [AdmissionController::class, 'index'])->name('admission.index');
+Route::post('/admission', [AdmissionController::class, 'store'])->name('admission.store')
+    ->middleware('throttle:5,1');
+
+// Contact
+Route::get('/contact-us', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact-us', [ContactController::class, 'send'])->name('contact.send')
+    ->middleware('throttle:10,1');
+```
+
+### Route Naming
+
+**MUST** use consistent route naming:
+- `{resource}.index` for listing
+- `{resource}.show` for single item
+- `{resource}.store` for POST
+- `{resource}.update` for PUT/PATCH
+
+---
+
+## CONTROLLERS — RESPONSIBILITIES
+
+### Controller Pattern
+
+**MUST** keep controllers thin - delegate to services:
+
+```php
+class EventController extends Controller
+{
+    protected EventService $eventService;
+
+    public function __construct(EventService $eventService)
+    {
+        $this->eventService = $eventService;
+    }
+
+    public function index(Request $request)
+    {
+        $events = $this->eventService->getFilteredEvents($request->all());
+        return view('pages.events.index', compact('events'));
+    }
+
+    public function show(Event $event)
+    {
+        return view('pages.events.show', compact('event'));
+    }
+}
+```
+
+### Controller Responsibilities
+
+**MUST** only handle:
+- HTTP request/response
+- Route parameters
+- View rendering
+- Redirects
+
+**MUST NOT** contain:
+- Business logic (use Services)
+- Database queries (use Repositories)
+- Complex calculations
+
+---
+
+## SERVICES
+
+### Service Pattern
+
+**MUST** put business logic in services:
+
+```php
+class EventService
+{
+    protected EventRepository $eventRepository;
+
+    public function __construct(EventRepository $eventRepository)
+    {
+        $this->eventRepository = $eventRepository;
+    }
+
+    public function getFeaturedEvents(): Collection
+    {
+        $cacheKey = 'events_featured';
+        $cacheTime = 3600;
+        
+        return Cache::remember($cacheKey, $cacheTime, function () {
+            return $this->eventRepository->getFeatured();
+        });
+    }
+
+    public function getFilteredEvents(array $filters): Collection
+    {
+        return $this->eventRepository->getFiltered($filters);
+    }
+}
+```
+
+### Service Responsibilities
+
+**MUST** handle:
+- Business logic
+- Data transformation
+- Caching
+- Orchestration between repositories
+
+---
+
+## REPOSITORIES
+
+### Repository Pattern
+
+**MUST** use repositories for data access:
+
+```php
+class EventRepository
+{
+    protected Event $model;
+
+    public function __construct(Event $model)
+    {
+        $this->model = $model;
+    }
+
+    public function getFeatured(): Collection
+    {
+        return $this->model
+            ->where('is_featured', true)
+            ->where('is_published', true)
+            ->where('start_date', '>=', now())
+            ->orderBy('start_date')
+            ->with('media')
+            ->get();
+    }
+
+    public function getFiltered(array $filters): Collection
+    {
+        $query = $this->model->newQuery();
+        
+        if (isset($filters['category'])) {
+            $query->where('category', $filters['category']);
+        }
+        
+        if (isset($filters['upcoming'])) {
+            $query->where('start_date', '>=', now());
+        }
+        
+        return $query->with('media')->get();
+    }
+}
+```
+
+### Repository Responsibilities
+
+**MUST** handle:
+- Database queries
+- Query building
+- Eager loading
+- Scopes
+
+---
+
+## FORM REQUEST VALIDATION
+
+### FormRequest Pattern
+
+**MUST** use FormRequest for validation:
+
+```php
+class StoreEventRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'unique:events,slug'],
+            'description' => ['required', 'string'],
+            'start_date' => ['required', 'date', 'after:today'],
+            'end_date' => ['nullable', 'date', 'after:start_date'],
+            'location' => ['nullable', 'string', 'max:255'],
+            'category' => ['nullable', 'string', 'max:255'],
+            'is_featured' => ['boolean'],
+            'is_published' => ['boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'The event title is required.',
+            'start_date.after' => 'The start date must be in the future.',
+        ];
+    }
+}
+```
+
+---
+
+## OBSERVERS
+
+### Observer Registration
+
+**MUST** register observers in `AppServiceProvider`:
+
+```php
+use App\Models\Event;
+use App\Models\HomePageSection;
+use App\Observers\EventObserver;
+use App\Observers\HomePageSectionObserver;
+
+public function boot(): void
+{
+    Event::observe(EventObserver::class);
+    HomePageSection::observe(HomePageSectionObserver::class);
+    Media::observe(MediaObserver::class);
+}
+```
+
+### Observer Responsibilities
+
+**MUST** handle:
+- Cache clearing
+- Side effects
+- Logging
+- Notifications
+
+**MUST NOT** handle:
+- Business logic (use Services)
+- Complex operations (use Jobs)
+
+---
+
+## QUEUES & JOBS
+
+### Job Pattern
+
+**MUST** use jobs for heavy operations:
+
+```php
+class ProcessImageConversion implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function __construct(
+        public Media $media
+    ) {}
+
+    public function handle(): void
+    {
+        // Heavy image processing
+    }
+}
+```
+
+### Queue Configuration
+
+**MUST** use Redis for queues in production:
+```env
+QUEUE_CONNECTION=redis
+```
+
+**MUST** use database for queues in development:
+```env
+QUEUE_CONNECTION=database
+```
+
+---
+
+## POLICIES & PERMISSIONS
+
+### Spatie Permission
+
+**MUST** use Spatie Permission for authorization:
+
+```php
+// Roles
+$user->assignRole('admin');
+$user->assignRole('editor');
+
+// Permissions
+$user->givePermissionTo('manage_events');
+$user->can('manage_events');
+```
+
+### Policy Pattern
+
+**MUST** use policies for resource authorization:
+
+```php
+class EventPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return $user->can('manage_events');
+    }
+
+    public function create(User $user): bool
+    {
+        return $user->can('manage_events');
+    }
+}
+```
+
+---
+
+## ERROR HANDLING
+
+### Exception Handling
+
+**MUST** handle exceptions gracefully:
+
+```php
+try {
+    $event = $this->eventService->create($data);
+} catch (ValidationException $e) {
+    return back()->withErrors($e->errors());
+} catch (\Exception $e) {
+    Log::error('Event creation failed', [
+        'error' => $e->getMessage(),
+        'data' => $data,
+    ]);
+    
+    return back()->with('error', 'Failed to create event.');
+}
+```
+
+### Logging
+
+**MUST** log important events:
+- Errors
+- Cache operations
+- Media conversions
+- User actions
+
+---
+
+**Last Updated**: 2025-11-18
+**Version**: 1.0.0

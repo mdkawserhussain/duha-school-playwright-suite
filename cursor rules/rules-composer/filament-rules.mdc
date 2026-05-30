@@ -1,0 +1,590 @@
+---
+description: Filament admin panel patterns, form structure, resources, and Filament-specific rules for Duha International School
+globs: app/Filament/**/*.php
+alwaysApply: true
+---
+
+# Filament Rules - Duha International School
+
+## FILAMENT ADMIN PATTERNS (STRICT ENFORCEMENT)
+
+### Form Structure (CRITICAL - NEVER USE Grid::make())
+
+**MUST** use `Section::make()->schema([...])->columns(2)` pattern:
+
+```php
+use Filament\Forms\Components as FormComponents;
+use Filament\Schemas\Components;
+
+Components\Section::make('Section Title')
+    ->schema([
+        FormComponents\TextInput::make('title')
+            ->label('Title')
+            ->required()
+            ->maxLength(255)
+            ->columnSpanFull(),
+
+        FormComponents\TextInput::make('first_name')
+            ->label('First Name')
+            ->required()
+            ->columnSpan(1),
+
+        FormComponents\TextInput::make('last_name')
+            ->label('Last Name')
+            ->required()
+            ->columnSpan(1),
+    ])
+    ->columns(2)  // MUST use columns() method
+```
+
+**MUST NOT** use `Grid::make()`:
+```php
+// ❌ FORBIDDEN
+Grid::make(2)
+    ->schema([
+        // ...
+    ]);
+
+// ✅ CORRECT
+Components\Section::make('Title')
+    ->schema([...])
+    ->columns(2);
+```
+
+### Section Columns
+
+**MUST** use `->columns(1)`, `->columns(2)`, or `->columns(3)` on Section:
+- **MUST** use `columnSpanFull()` for full-width fields
+- **MUST** use `columnSpan(1)` or `columnSpan(2)` for column spans
+- **MUST** ensure proper responsive behavior
+
+---
+
+## MEDIA UPLOAD IN FILAMENT
+
+### SpatieMediaLibraryFileUpload Component
+
+**MUST** use `SpatieMediaLibraryFileUpload` for all media uploads:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('images')
+    ->collection('images')
+    ->image()
+    ->imageEditor()
+    ->multiple()
+    ->maxFiles(10)
+    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+    ->maxSize(5120) // 5MB in KB
+    ->directory('images')
+    ->visibility('public')
+    ->required()
+    ->columnSpanFull()
+```
+
+### Single File Collections
+
+**MUST** use `singleFile()` for logo, favicon, featured images:
+
+```php
+SpatieMediaLibraryFileUpload::make('logo')
+    ->collection('logo')
+    ->image()
+    ->imageEditor()
+    ->singleFile()  // MUST use for single file collections
+    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+    ->maxSize(2048)
+    ->required()
+```
+
+---
+
+## CACHE CLEARING IN FILAMENT
+
+### Resource Lifecycle Hooks
+
+**MUST** clear cache in `afterSave()` and `afterDelete()` hooks:
+
+```php
+// app/Filament/Resources/HomePageSections/Pages/EditHomePageSection.php
+use Illuminate\Support\Facades\Cache;
+
+protected function afterSave(): void
+{
+    Cache::forget('homepage_v2_data');
+    
+    Notification::make()
+        ->title('Home page section updated successfully')
+        ->success()
+        ->send();
+}
+
+protected function getHeaderActions(): array
+{
+    return [
+        DeleteAction::make()
+            ->after(function () {
+                Cache::forget('homepage_v2_data');
+            }),
+    ];
+}
+```
+
+**MUST** clear cache for all resources that affect homepage:
+- HomePageSection
+- HomePageContent
+- Event (if featured)
+- Notice (if featured)
+- SiteSettings
+
+---
+
+## HERO SLIDER MANAGER
+
+### HeroSliderManager Page
+
+**MUST** use `HeroSliderManager` Filament page for hero slides:
+
+```php
+// app/Filament/Pages/HeroSliderManager.php
+class HeroSliderManager extends Page
+{
+    protected static string $navigationLabel = 'Hero Slider';
+    protected static string|UnitEnum|null $navigationGroup = 'Homepage Settings';
+    protected static ?int $navigationSort = 1;
+    
+    // MUST clear cache on save
+    public function saveSlide(): void
+    {
+        // Save logic
+        Cache::forget('homepage_v2_data');
+    }
+}
+```
+
+**MUST** manage hero slides exclusively through this page
+**MUST** clear `homepage_v2_data` cache on any change
+**MUST** support drag-and-drop reordering
+**MUST** support preview functionality
+
+---
+
+## FILAMENT RESOURCE STRUCTURE
+
+### Resource Organization
+
+**MUST** organize Filament resources in proper structure:
+
+```
+app/Filament/Resources/
+├── EventResource/
+│   ├── EventResource.php
+│   └── Pages/
+│       ├── CreateEvent.php
+│       ├── EditEvent.php
+│       ├── ListEvents.php
+│       └── ViewEvent.php
+├── HomePageSections/
+│   ├── HomePageSectionResource.php
+│   ├── Pages/
+│   ├── Schemas/
+│   │   └── HomePageSectionForm.php
+│   └── Tables/
+│       └── HomePageSectionsTable.php
+```
+
+### Resource Registration
+
+**MUST** register resources in Filament panel:
+
+```php
+// app/Providers/Filament/AdminPanelProvider.php
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        ->resources([
+            EventResource::class,
+            NoticeResource::class,
+            HomePageSectionResource::class,
+            // ...
+        ])
+        ->pages([
+            HeroSliderManager::class,
+            VisionMissionSection::class,
+            // ...
+        ]);
+}
+```
+
+---
+
+## FORM COMPONENTS
+
+### Text Inputs
+
+**MUST** use proper validation and configuration:
+
+```php
+FormComponents\TextInput::make('title')
+    ->label('Title')
+    ->required()
+    ->maxLength(255)
+    ->placeholder('Enter title')
+    ->helperText('This will be displayed on the homepage')
+    ->columnSpanFull()
+```
+
+### Textareas
+
+**MUST** configure textareas properly:
+
+```php
+FormComponents\Textarea::make('description')
+    ->label('Description')
+    ->required()
+    ->maxLength(500)
+    ->rows(3)
+    ->placeholder('Enter description')
+    ->columnSpanFull()
+```
+
+### Select Fields
+
+**MUST** use Select for dropdowns:
+
+```php
+FormComponents\Select::make('section_key')
+    ->label('Section Key')
+    ->required()
+    ->unique(ignoreRecord: true)
+    ->options([
+        'hero' => 'Hero Section',
+        'vision' => 'Vision Section',
+        // ...
+    ])
+    ->searchable()
+```
+
+### Toggle/Switch
+
+**MUST** use Toggle for boolean fields:
+
+```php
+FormComponents\Toggle::make('is_active')
+    ->label('Active')
+    ->default(true)
+    ->helperText('Show this section on the homepage')
+```
+
+### Repeater Fields
+
+**MUST** configure repeaters properly:
+
+```php
+FormComponents\Repeater::make('members')
+    ->label('Board Members')
+    ->schema([
+        FormComponents\TextInput::make('name')
+            ->required()
+            ->maxLength(255)
+            ->columnSpan(1),
+        
+        FormComponents\TextInput::make('title')
+            ->required()
+            ->maxLength(255)
+            ->columnSpan(1),
+    ])
+    ->defaultItems(1)
+    ->minItems(1)
+    ->collapsible()
+    ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'New Member')
+    ->columnSpanFull()
+```
+
+---
+
+## CUSTOM FILAMENT PAGES
+
+### Page Structure
+
+**MUST** follow this structure for custom pages:
+
+```php
+use Filament\Pages\Page;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+
+class CustomPage extends Page implements HasForms
+{
+    use InteractsWithForms;
+
+    protected static ?string $navigationIcon = 'heroicon-o-photo';
+    protected static string $view = 'filament.pages.custom-page';
+    protected static ?string $navigationLabel = 'Custom Page';
+    protected static string|UnitEnum|null $navigationGroup = 'Homepage Settings';
+    protected static ?int $navigationSort = 1;
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Components\Section::make('Title')
+                    ->schema([
+                        // Form fields
+                    ])
+                    ->columns(2),
+            ])
+            ->statePath('data');
+    }
+
+    protected function afterSave(): void
+    {
+        Cache::forget('homepage_v2_data');
+    }
+}
+```
+
+---
+
+## ROLE-BASED ACCESS CONTROL
+
+### Permission Configuration
+
+**MUST** use Spatie Permission for role-based access:
+
+```php
+// Roles: admin, editor, admissions_officer
+
+// In Resource
+public static function canViewAny(): bool
+{
+    return auth()->user()->can('manage_events');
+}
+
+// In Page
+public static function canAccess(): bool
+{
+    return auth()->user()->hasRole('admin') || auth()->user()->hasRole('editor');
+}
+```
+
+### Navigation Groups
+
+**MUST** organize navigation by groups:
+
+```php
+protected static string|UnitEnum|null $navigationGroup = 'Homepage Settings';
+protected static ?int $navigationSort = 1;
+```
+
+**MUST** use consistent navigation groups:
+- Homepage Settings
+- Content Management
+- Applications
+- Settings
+
+---
+
+## FILAMENT TABLES
+
+### Table Configuration
+
+**MUST** configure tables properly:
+
+```php
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('title')
+                ->searchable()
+                ->sortable(),
+            
+            Tables\Columns\IconColumn::make('is_active')
+                ->boolean()
+                ->sortable(),
+            
+            Tables\Columns\ImageColumn::make('image')
+                ->disk('public')
+                ->visibility('public'),
+        ])
+        ->filters([
+            Tables\Filters\TernaryFilter::make('is_active')
+                ->label('Active')
+                ->placeholder('All')
+                ->trueLabel('Active only')
+                ->falseLabel('Inactive only'),
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make()
+                ->after(function () {
+                    Cache::forget('homepage_v2_data');
+                }),
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ]);
+}
+```
+
+---
+
+## FILAMENT WIDGETS
+
+### Widget Structure
+
+**MUST** create widgets for dashboard:
+
+```php
+use Filament\Widgets\Widget;
+
+class StatsOverview extends Widget
+{
+    protected static string $view = 'filament.widgets.stats-overview';
+    
+    protected int | string | array $columnSpan = 'full';
+    
+    protected function getViewData(): array
+    {
+        return [
+            'stats' => [
+                'events' => Event::count(),
+                'notices' => Notice::count(),
+                // ...
+            ],
+        ];
+    }
+}
+```
+
+---
+
+## COLLAPSIBLE SIDEBAR
+
+### Homepage Settings Sidebar
+
+**MUST** use collapsible sidebar for Homepage Settings:
+
+```php
+// In custom pages
+protected static bool $shouldRegisterNavigation = true;
+
+// Use collapsible groups in navigation
+protected static string|UnitEnum|null $navigationGroup = 'Homepage Settings';
+```
+
+**MUST** organize related pages in same navigation group
+**MUST** use consistent navigation sorting
+
+---
+
+## FORM VALIDATION
+
+### Validation Rules
+
+**MUST** use proper validation in forms:
+
+```php
+FormComponents\TextInput::make('email')
+    ->email()
+    ->required()
+    ->unique(ignoreRecord: true)
+    ->maxLength(255)
+    ->rules(['email:rfc,dns'])
+```
+
+**MUST** validate file uploads:
+
+```php
+SpatieMediaLibraryFileUpload::make('image')
+    ->image()
+    ->maxSize(5120)
+    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+    ->required()
+```
+
+---
+
+## NOTIFICATIONS
+
+### Success Notifications
+
+**MUST** show notifications after actions:
+
+```php
+protected function afterSave(): void
+{
+    Cache::forget('homepage_v2_data');
+    
+    Notification::make()
+        ->title('Saved successfully')
+        ->success()
+        ->send();
+}
+```
+
+### Error Notifications
+
+**MUST** handle errors gracefully:
+
+```php
+try {
+    // Operation
+} catch (\Exception $e) {
+    Notification::make()
+        ->title('Error')
+        ->body($e->getMessage())
+        ->danger()
+        ->send();
+}
+```
+
+---
+
+## FILAMENT THEMING
+
+### Custom Theme
+
+**MUST** use consistent theming:
+
+```php
+// config/filament.php
+'brand' => [
+    'logo' => asset('images/logo.svg'),
+    'favicon' => asset('images/favicon.ico'),
+],
+```
+
+**MUST** use primary color from site settings
+**MUST** maintain consistent UI across admin panel
+
+---
+
+## BEST PRACTICES
+
+### Code Organization
+- **MUST** use Schema classes for complex forms
+- **MUST** extract reusable form components
+- **MUST** use concerns for shared functionality
+- **MUST** keep resources focused and single-purpose
+
+### Performance
+- **MUST** eager load relationships in tables
+- **MUST** use pagination for large datasets
+- **MUST** optimize queries
+- **MUST** cache expensive operations
+
+### User Experience
+- **MUST** provide helpful placeholder text
+- **MUST** include helper text for complex fields
+- **MUST** use proper labels
+- **MUST** validate in real-time when possible
+
+---
+
+**Last Updated**: 2025-11-18
+**Version**: 1.0.0

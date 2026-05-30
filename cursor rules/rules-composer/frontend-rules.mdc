@@ -1,0 +1,404 @@
+---
+description: Frontend standards, navbar, hero section, UI/UX design, and frontend patterns for Duha International School
+globs: resources/**/*.blade.php, resources/**/*.css, resources/**/*.js
+alwaysApply: true
+---
+
+# Frontend Rules - Duha International School
+
+## FRONTEND STANDARDS
+
+### JavaScript Framework
+- **MUST** use Alpine.js 3.4+ ONLY
+- **MUST NOT** use Vue, React, Livewire, or any other JavaScript framework
+- **MUST** use Alpine.js for all interactive components
+- **MUST** use Alpine.js directives: `x-data`, `x-show`, `x-if`, `x-for`, `@click`, `@scroll`, etc.
+
+### CSS Framework
+- **MUST** use Tailwind CSS 4.0 ONLY
+- **MUST NOT** use Bootstrap, Foundation, or any other CSS framework
+- **MUST** use mobile-first responsive design
+- **MUST** use Tailwind utility classes, not custom CSS when possible
+- **MUST** extend Tailwind config for custom colors and utilities
+
+### Image Handling
+- **MUST** use `<picture>` tag for responsive images with WebP fallback
+- **MUST** provide WebP source with fallback to original format
+- **MUST** use responsive image sizes (srcset)
+- **MUST** include proper alt text for accessibility
+
+### HTML Standards
+- **MUST** use semantic HTML5 elements (`<main>`, `<section>`, `<article>`, `<nav>`, `<header>`, `<footer>`)
+- **MUST** follow proper heading hierarchy (h1 → h2 → h3)
+- **MUST** include ARIA labels and roles for screen readers
+- **MUST** ensure WCAG 2.1 AA compliance
+- **MUST** provide skip to main content link
+
+### Responsive Design
+- **MUST** be mobile-first (design for mobile, enhance for desktop)
+- **MUST** use Tailwind breakpoints: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
+- **MUST** test on mobile devices (320px+)
+- **MUST** ensure touch targets are at least 44x44px
+
+---
+
+## NAVBAR IMPLEMENTATION
+
+### Navbar Behavior (EXACT SPEC)
+
+**MUST** implement navbar with the following exact behavior:
+
+1. **Transparent State (Homepage Hero)**
+   - **MUST** be transparent with backdrop blur when on homepage hero section
+   - **MUST** use `bg-transparent backdrop-blur-md` classes
+   - **MUST** have white text and logo (inverted)
+   - **MUST** use class: `navbar-transparent`
+
+2. **Scrolled State**
+   - **MUST** become solid white when scrolled > 50px
+   - **MUST** use `bg-white/95 backdrop-blur-md shadow-lg` classes
+   - **MUST** use primary color background (from site settings)
+   - **MUST** use class: `navbar-scrolled`
+   - **MUST** have dark text and normal logo
+
+3. **Zero Gap Requirement**
+   - **MUST** have zero gap between announcement bar, navbar, and hero
+   - **MUST** use `margin: 0 !important` and `padding: 0 !important`
+   - **MUST** position navbar directly below announcement bar
+   - **MUST** ensure hero section starts at absolute top
+
+4. **Alpine.js Implementation**
+   - **MUST** use Alpine.js for scroll detection: `x-data="{ scrolled: false }"`
+   - **MUST** use `@scroll.window` or `window.addEventListener('scroll')` in `x-init`
+   - **MUST** update `scrolled` state when `window.pageYOffset > 50`
+   - **MUST** use `:class` binding for dynamic classes
+
+5. **Fixed Positioning**
+   - **MUST** use `position: fixed` with `top: 0`
+   - **MUST** use `z-index: 50` (below announcement bar which is `z-60`)
+   - **MUST** use `w-full` for full width
+
+### Navbar Structure
+
+```blade
+<header
+    x-data="{ 
+        mobileMenuOpen: false,
+        transparent: {{ $transparent ? 'true' : 'false' }},
+        scrolled: false
+    }"
+    x-init="
+        function handleScroll() {
+            scrolled = window.pageYOffset > 50;
+        }
+        handleScroll();
+        window.addEventListener('scroll', () => handleScroll());
+    "
+    class="fixed top-0 left-0 w-full z-50"
+>
+    <nav
+        class="transition-all duration-300"
+        :class="{
+            'bg-white/95 backdrop-blur-md shadow-lg': scrolled || !transparent,
+            'bg-transparent': transparent && !scrolled
+        }"
+        :style="(scrolled || !transparent) ? 'background-color: {{ $primaryColor }}' : ''"
+    >
+        <!-- Navbar content -->
+    </nav>
+</header>
+```
+
+### Mobile Menu
+- **MUST** slide from right using Alpine.js
+- **MUST** use `x-show="mobileMenuOpen"` with transitions
+- **MUST** close on outside click: `@click.away="mobileMenuOpen = false"`
+- **MUST** close on escape key: `@keydown.escape="mobileMenuOpen = false"`
+- **MUST** be accessible with keyboard navigation
+
+---
+
+## HERO SECTION
+
+### Hero Section Requirements (ZERO GAP + OVERLAP)
+
+**MUST** implement hero section with the following exact specifications:
+
+1. **Absolute Top Positioning**
+   - **MUST** start at absolute top with `margin-top: 0 !important` and `padding-top: 0 !important`
+   - **MUST** have zero gap between navbar and hero
+   - **MUST** use `position: relative` for hero container
+   - **MUST** ensure hero content has `z-10` (navbar is `z-50`)
+
+2. **Navbar Overlap**
+   - **MUST** overlap navbar (navbar is fixed, hero content has `z-10`)
+   - **MUST** ensure hero background is behind navbar
+   - **MUST** add padding-top to hero content to account for navbar height
+
+3. **Background Support**
+   - **MUST** support image backgrounds
+   - **MUST** support video backgrounds with poster images
+   - **MUST** use `<video>` tag with `autoplay`, `muted`, `loop`, `playsinline`
+   - **MUST** provide poster image as fallback
+   - **MUST** use `object-fit: cover` for video
+
+4. **Hero Slider Management**
+   - **MUST** be managed exclusively via HeroSliderManager Filament page
+   - **MUST** clear `homepage_v2_data` cache on any change
+   - **MUST** support multiple slides with auto-play
+   - **MUST** support navigation arrows and dot indicators
+
+5. **Hero Content**
+   - **MUST** use responsive typography (text-2xl to text-6xl)
+   - **MUST** have white text on dark backgrounds
+   - **MUST** include CTA buttons with proper styling
+   - **MUST** support badge/crest display
+
+### Hero Section Structure
+
+```blade
+<section class="hero-section relative w-full h-screen overflow-hidden" 
+         style="margin: 0 !important; padding: 0 !important;">
+    <!-- Background Video/Image -->
+    <div class="absolute inset-0 w-full h-full overflow-hidden z-0">
+        <video id="hero-bg-video" 
+               class="absolute inset-0 w-full h-full object-cover"
+               autoplay muted loop playsinline
+               poster="{{ $videoPoster }}">
+            <source src="{{ $videoUrl }}" type="video/mp4">
+        </video>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-white/5 z-[5]"></div>
+    
+    <!-- Content Container -->
+    <div class="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 pb-12"
+         style="padding-top: 5rem;"> <!-- Account for navbar -->
+        <!-- Hero content -->
+    </div>
+</section>
+```
+
+### CSS Requirements
+
+```css
+/* Hero section starts at absolute top */
+.hero-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+    position: relative !important;
+    top: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+}
+
+/* Ensure no gap between navbar and hero */
+header + main .hero-section,
+.hero-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+```
+
+---
+
+## UI/UX DESIGN PLAN
+
+### Design System
+
+#### Color Palette
+**MUST** use the following color system from `tailwind.config.js`:
+
+```javascript
+colors: {
+    aisd: {
+        midnight: '#0C1B3D',  // Deep blue
+        ocean: '#173B7A',      // Medium blue
+        cobalt: '#0F224C',     // Dark blue
+        sky: '#6EC1F5',        // Light blue
+        gold: '#F4C430',       // Gold accent
+        cream: '#F8F5EB',      // Light cream
+        slate: '#7F8DB2',      // Gray-blue
+    },
+    brand: {
+        50: '#f0f4ff',
+        500: '#6366f1',        // Primary indigo
+        600: '#4f46e5',
+        700: '#4338ca',
+    },
+    accent: {
+        500: '#f58f0d',        // Orange accent
+    },
+    ink: {
+        900: '#131623',        // Dark text
+    },
+}
+```
+
+**MUST** use CSS variables when possible:
+```css
+:root {
+    --aisd-midnight: 15, 34, 76;
+    --aisd-ocean: 12, 27, 61;
+    --aisd-gold: 252, 211, 77;
+}
+```
+
+#### Typography
+- **MUST** use `'Plus Jakarta Sans'` or `'Inter'` for body text
+- **MUST** use `'Playfair Display'` for headings
+- **MUST** use responsive font sizes (text-sm to text-6xl)
+- **MUST** maintain proper line-height (leading-tight, leading-relaxed)
+
+#### Spacing
+- **MUST** use Tailwind spacing scale (4px base unit)
+- **MUST** use consistent padding/margin (p-4, m-6, etc.)
+- **MUST** use max-width containers (max-w-7xl mx-auto)
+
+#### Shadows
+- **MUST** use soft shadows: `shadow-soft` or `shadow-card`
+- **MUST** use `shadow-lg` for elevated elements
+
+### Components
+
+#### Buttons
+- **MUST** use consistent button styles
+- **MUST** have hover states with transitions
+- **MUST** use focus rings for accessibility
+- **MUST** support primary and secondary variants
+
+#### Cards
+- **MUST** use card-based design for content blocks
+- **MUST** have hover effects (translateY transform)
+- **MUST** use rounded corners (rounded-xl)
+- **MUST** include proper spacing
+
+#### Forms
+- **MUST** use Tailwind Forms plugin styling
+- **MUST** have proper labels and error messages
+- **MUST** use focus states
+- **MUST** validate on submit
+
+### Page Layouts
+
+#### Homepage
+- **MUST** have hero section at top
+- **MUST** have zero gap between navbar and hero
+- **MUST** include featured sections below hero
+- **MUST** use scroll-triggered fade-in animations
+
+#### Content Pages
+- **MUST** have consistent header structure
+- **MUST** use breadcrumbs when appropriate
+- **MUST** have proper content hierarchy
+- **MUST** include sidebar when needed
+
+### Mobile Responsiveness
+
+#### Breakpoints
+- **Mobile**: < 640px (default)
+- **Tablet**: 640px - 1024px (sm:, md:)
+- **Desktop**: > 1024px (lg:, xl:, 2xl:)
+
+#### Mobile Menu
+- **MUST** be full-screen overlay on mobile
+- **MUST** slide from right
+- **MUST** have close button
+- **MUST** be accessible with keyboard
+
+#### Touch Targets
+- **MUST** be at least 44x44px
+- **MUST** have adequate spacing between targets
+- **MUST** support swipe gestures where appropriate
+
+---
+
+## ANIMATIONS & INTERACTIONS
+
+### Scroll Animations
+- **MUST** use scroll-triggered fade-in animations
+- **MUST** use Intersection Observer API or Alpine.js
+- **MUST** respect `prefers-reduced-motion` media query
+- **MUST** have smooth transitions (300ms duration)
+
+### Hover Effects
+- **MUST** use subtle hover effects
+- **MUST** use transitions (transition-all duration-300)
+- **MUST** not be jarring or distracting
+
+### Loading States
+- **MUST** show loading indicators for async operations
+- **MUST** use skeleton screens when appropriate
+- **MUST** provide feedback for user actions
+
+---
+
+## ACCESSIBILITY REQUIREMENTS
+
+### WCAG 2.1 AA Compliance
+- **MUST** meet WCAG 2.1 AA standards
+- **MUST** have proper color contrast (4.5:1 for text)
+- **MUST** support keyboard navigation
+- **MUST** provide ARIA labels
+- **MUST** use semantic HTML
+
+### Keyboard Navigation
+- **MUST** support Tab navigation
+- **MUST** support Enter/Space for activation
+- **MUST** support Escape to close modals/menus
+- **MUST** have visible focus indicators
+
+### Screen Readers
+- **MUST** provide alt text for images
+- **MUST** use ARIA labels for interactive elements
+- **MUST** use proper heading hierarchy
+- **MUST** provide skip links
+
+---
+
+## PERFORMANCE OPTIMIZATION
+
+### Image Optimization
+- **MUST** use WebP format with fallbacks
+- **MUST** use responsive images (srcset)
+- **MUST** lazy load images below the fold
+- **MUST** optimize image sizes
+
+### JavaScript
+- **MUST** minimize JavaScript usage
+- **MUST** use Alpine.js efficiently
+- **MUST** avoid blocking scripts
+- **MUST** defer non-critical scripts
+
+### CSS
+- **MUST** use Tailwind's purge feature
+- **MUST** minimize custom CSS
+- **MUST** use CSS variables for theming
+- **MUST** avoid inline styles
+
+---
+
+## SEO REQUIREMENTS
+
+### Meta Tags
+- **MUST** include proper title tags
+- **MUST** include meta descriptions
+- **MUST** include Open Graph tags
+- **MUST** include Twitter Card tags
+
+### Structured Data
+- **MUST** include JSON-LD structured data
+- **MUST** use Schema.org vocabulary
+- **MUST** validate structured data
+
+### Semantic HTML
+- **MUST** use proper heading hierarchy
+- **MUST** use semantic elements
+- **MUST** include proper alt text
+
+---
+
+**Last Updated**: 2025-11-18
+**Version**: 1.0.0
