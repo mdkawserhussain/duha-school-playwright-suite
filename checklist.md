@@ -17,10 +17,10 @@
 
 ### 🔴 P0 — Security (this week)
 
-- [ ] **Remove hardcoded credentials** from `src/config.ts` — change `|| 'e232290012'` and `|| '01889534420'` to `|| ''`; add `process.exit(1)` in `validateConfig()` when empty
+- [x] **Remove hardcoded credentials** from `src/config.ts` — change `|| 'e232290012'` and `|| '01889534420'` to `|| ''`; add `process.exit(1)` in `validateConfig()` when empty
 - [ ] **Purge credentials from git history** using `git-filter-repo` or BFG
-- [ ] **Fix `.env.example` comment** — remove "leave blank to use DUHA defaults", replace with "Required — no defaults"
-- [ ] **Add undocumented env vars** to `.env.example`: `NAVIGATE_CONSOLE_MODE`, `LOGIN_URL`, `HEADLESS`
+- [x] **Fix `.env.example` comment** — remove "leave blank to use DUHA defaults", replace with "Required — no defaults"
+- [x] **Add undocumented env vars** to `.env.example`: `NAVIGATE_CONSOLE_MODE`, `LOGIN_URL`, `HEADED`
 
 ---
 

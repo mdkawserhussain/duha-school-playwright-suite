@@ -13,13 +13,13 @@ function parseList(val: string | undefined, fallback: string): string[] {
 export const CONFIG = {
   baseUrl: rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBaseUrl,
   credentials: {
-    username: process.env.PORTAL_USERNAME || 'e232290012',
-    password: process.env.PORTAL_PASSWORD || '01889534420',
+    username: process.env.PORTAL_USERNAME || '',
+    password: process.env.PORTAL_PASSWORD || '',
   },
   paths: {
     dashboard: '/dashboard',
     login: process.env.LOGIN_URL || '',
-    attendance: '/attendance/monitoring',
+    attendance: '/site/employee/attendance/master',
     finance: '/finance/due-payments', // Note: Sidebar navigation will be used instead
   },
   navigation: {
@@ -36,6 +36,12 @@ export const CONFIG = {
     shifts:  parseList(process.env.PORTAL_SHIFT, ''),
     classes: parseList(process.env.PORTAL_CLASS, ''),
     dueStudentsOnly: process.env.PORTAL_DUE_STUDENTS_ONLY !== 'false',
+  },
+  attendance: {
+    startDate: process.env.ATTENDANCE_START_DATE || '',
+    endDate: process.env.ATTENDANCE_END_DATE || '',
+    shiftId: Number(process.env.ATTENDANCE_SHIFT_ID) || 1,
+    isTeacher: Number(process.env.ATTENDANCE_IS_TEACHER) || 3,
   },
   extractors: {
     attendance: process.env.EXTRACT_ATTENDANCE === 'true',
@@ -68,8 +74,7 @@ export const CONFIG = {
 export function validateConfig(): void {
   const missingVars: string[] = [];
 
-  // Since we have defaults, we don't strictly crash if variables are not provided,
-  // but if username/password are empty we alert.
+  // Credentials are required — exit immediately if either is empty.
   if (!CONFIG.credentials.username) {
     missingVars.push('PORTAL_USERNAME');
   }
@@ -78,7 +83,7 @@ export function validateConfig(): void {
   }
 
   if (missingVars.length > 0) {
-    console.error(`\x1b[31m[FATAL] Configuration validation failed. Missing credentials.\x1b[0m`);
+    console.error(`\x1b[31m[FATAL] Configuration validation failed. Missing: ${missingVars.join(', ')}. Set them in .env\x1b[0m`);
     process.exit(1);
   }
 }

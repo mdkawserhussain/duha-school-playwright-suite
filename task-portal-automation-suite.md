@@ -57,7 +57,7 @@
 
 ## Instructions for Completing Tasks
 
-**IMPORTANT:** As you complete each task, check it off by changing `- [ ]` to `- [x]`. Update the file **after completing each atomic sub-sub-task**, not just after completing a parent task.
+**IMPORTANT:** As you complete each task, check it off by changing `- [ ]` to `- [x]`. Update the file AND run a git commit covering whats changed (feature/fuctionality+ filename:lineNumber) in commit message  **after completing each atomic sub-sub-task**, not just after completing a parent task.
 
 ---
 
@@ -66,24 +66,22 @@
 ### Phase 0: Setup
 
 - [ ] 0.0 Create feature branch
-  - [ ] 0.0.1 Run `git status` to confirm a clean working tree with no uncommitted changes [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-  - [ ] 0.0.2 Create and checkout new branch: `git checkout -b feature/portal-automation-suite` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-  - [ ] 0.0.3 Confirm active branch with `git branch --show-current` and verify output is `feature/portal-automation-suite` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+  - SKIP THIS
 
 ---
 
 ### Phase 1: Critical Security Hardening (P0)
 
-- [ ] 1.0 Remove hardcoded credentials from `config.ts` and purge git history
-  - [ ] 1.1 Patch credential fallback strings in `src/config.ts`
-    - [ ] 1.1.1 Open `src/config.ts` and locate the `username` field at L16 containing `|| 'e232290012'` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-    - [ ] 1.1.2 Replace `|| 'e232290012'` with `|| ''` on the username line [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-    - [ ] 1.1.3 Locate the `password` field at L17 containing `|| '01889534420'` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-    - [ ] 1.1.4 Replace `|| '01889534420'` with `|| ''` on the password line [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-    - [ ] 1.1.5 Locate `validateConfig()` function in `config.ts` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-    - [ ] 1.1.6 Add guard: `if (!config.credentials.username) { logger.error('PORTAL_USERNAME must be set in .env'); process.exit(1); }` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-    - [ ] 1.1.7 Add guard: `if (!config.credentials.password) { logger.error('PORTAL_PASSWORD must be set in .env'); process.exit(1); }` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-    - [ ] 1.1.8 Run `npm start` with `PORTAL_USERNAME=` left blank in `.env` and confirm the process exits with the descriptive error [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+- [x] 1.0 Remove hardcoded credentials from `config.ts` and purge git history
+  - [x] 1.1 Patch credential fallback strings in `src/config.ts`
+    - [x] 1.1.1 Open `src/config.ts` and locate the `username` field at L16 containing `|| 'e232290012'` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+    - [x] 1.1.2 Replace `|| 'e232290012'` with `|| ''` on the username line [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+    - [x] 1.1.3 Locate the `password` field at L17 containing `|| '01889534420'` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+    - [x] 1.1.4 Replace `|| '01889534420'` with `|| ''` on the password line [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+    - [x] 1.1.5 Locate `validateConfig()` function in `config.ts` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+    - [x] 1.1.6 Add guard: `if (!config.credentials.username) { logger.error('PORTAL_USERNAME must be set in .env'); process.exit(1); }` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+    - [x] 1.1.7 Add guard: `if (!config.credentials.password) { logger.error('PORTAL_PASSWORD must be set in .env'); process.exit(1); }` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+    - [x] 1.1.8 Run `npm start` with `PORTAL_USERNAME=` left blank in `.env` and confirm the process exits with the descriptive error [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
   - [ ] 1.2 Purge credentials from git history
     - [ ] 1.2.1 Install `git-filter-repo` if not present: `pip install git-filter-repo` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
     - [ ] 1.2.2 Create a replacements text file `replacements.txt` with content: `e232290012==>REDACTED_USER` and `01889534420==>REDACTED_PASS` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
@@ -105,11 +103,18 @@
   - [ ] 1.1.7 Run `git status` and confirm no `output/` files appear as untracked or staged [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
   - [ ] 1.1.8 Run `git check-ignore -v output/test.xlsx` and confirm the path is ignored [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
 
-- [ ] 1.2 Fix misleading `.env.example` comment
-  - [ ] 1.2.1 Open `.env.example` and locate the comment referencing "DUHA defaults" [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-  - [ ] 1.2.2 Delete the comment line containing "leave blank to use DUHA defaults" [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-  - [ ] 1.2.3 Replace with comment: `# Required — no defaults. Tool will exit if these are empty.` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
-  - [ ] 1.2.4 Verify `PORTAL_USERNAME=` and `PORTAL_PASSWORD=` lines remain blank in the example file [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+- [x] 1.2 Fix misleading `.env.example` comment
+  - [x] 1.2.1 Open `.env.example` and locate the comment referencing "DUHA defaults" [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+  - [x] 1.2.2 Delete the comment line containing "leave blank to use DUHA defaults" [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+  - [x] 1.2.3 Replace with comment: `# Required — no defaults. Tool will exit if these are empty.` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+  - [x] 1.2.4 Verify `PORTAL_USERNAME=` and `PORTAL_PASSWORD=` lines remain blank in the example file [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+
+- [x] 1.3 Add undocumented env vars to `.env.example`
+  - [x] 1.3.1 Open `src/config.ts` and `src/auth/authenticate.ts` to identify all `process.env.*` references [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+  - [x] 1.3.2 Add `LOGIN_URL=""` with comment `# Custom login URL override (leave empty to auto-detect from base URL)` to `.env.example` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+  - [x] 1.3.3 Add `NAVIGATE_CONSOLE_MODE="true"` with comment `# Navigation mode: "true" to use in-browser console click, "false" for standard click with auto-fallback` to `.env.example` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+  - [x] 1.3.4 Add `HEADED=""` with comment `# Browser mode: "true" to run in headed (visible) mode, "false" or empty for headless` to `.env.example` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
+  - [x] 1.3.5 Verify `.env.example` contains all env vars used in `config.ts` and `authenticate.ts` [Loop: Run project 2+ times back-to-back -> Check terminal logs for consistency. If OK, proceed. If failed/inconsistent, debug & repeat.]
 
 ---
 
