@@ -8,6 +8,8 @@ import { authenticate } from './auth/authenticate';
 import { extractAttendance } from './extractors/attendance';
 import { extractAccountsReceivable, printAccountsRunSummary } from './extractors/accountsReceivable';
 import { extractPaymentLedger } from './extractors/paymentLedger';
+import { extractWaivers, enrichWithWaivers } from './extractors/waiverExtractor';
+import { writeJsonOutput } from './utils/fileWriter';
 import { writeMetrics } from './utils/metricsCollector';
 import { generateHtmlDashboard } from './reporters/htmlDashboard';
 import { generateWhatsAppDashboard } from './reporters/whatsappReporter';
@@ -56,7 +58,7 @@ async function main(): Promise<void> {
     }
 
     // ── 7.1.2.4  Accounts receivable extraction ────────────────::::::::::
-    let arCounts: { rawCount: number; dueCount: number } | undefined;
+    let arCounts: { rawCount: number; dueCount: number; combos: any[] } | undefined;
     if (CONFIG.extractors.accountsReceivable) {
       log.step('Running accounts receivable extraction');
       arCounts = await extractAccountsReceivable(page);
@@ -86,6 +88,27 @@ async function main(): Promise<void> {
       }
     } else if (process.env.EXTRACT_PAYMENT_LEDGER === 'true') {
       log.info('Payment ledger skipped: no due students or AR extraction disabled');
+    }
+
+    // ── 7.1.2.4b  Waiver extraction (if enabled) ─────────────────────────
+    if (process.env.EXTRACT_WAIVERS === 'true' && arCounts && arCounts.combos.length > 0 && page) {
+      try {
+        const waivers = await extractWaivers(page, arCounts.combos);
+        // Enrich AR data with waiver columns if both waiver and AR data exist
+        if (waivers.length > 0) {
+          const enrichedPath = path.join(CONFIG.directories.output, `accounts_receivable_dues_enriched_${new Date().toISOString().slice(0, 10)}.json`);
+          if (fs.existsSync(enrichedPath)) {
+            const arData = JSON.parse(fs.readFileSync(enrichedPath, 'utf-8'));
+            const enriched = enrichWithWaivers(arData, waivers);
+            writeJsonOutput('accounts_receivable_dues_enriched', enriched);
+            log.info(`AR data enriched with waiver columns (${enriched.length} records)`);
+          }
+        }
+      } catch (wvErr) {
+        log.error('Waiver extraction failed:', wvErr as Error);
+      }
+    } else if (process.env.EXTRACT_WAIVERS === 'true') {
+      log.info('Waiver extraction skipped: no combos or AR extraction disabled');
     }
 
     // ── 7.1.2.5  Done ─────────────────────────────────────────────────────

@@ -311,7 +311,7 @@ async function extractCombo(
  *
  * @param page Playwright Page instance (already authenticated).
  */
-export async function extractAccountsReceivable(page: Page): Promise<{ rawCount: number; dueCount: number }> {
+export async function extractAccountsReceivable(page: Page): Promise<{ rawCount: number; dueCount: number; combos: Array<{ year: string; shift: string; cls: string; yearId: string; shiftId: string; classId: string }> }> {
   let allRaw: Record<string, any>[] = [];
 
   try {
@@ -614,7 +614,7 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
 
     log.info(`Accounts receivable dues report generation completed: ${xlsxPath}`);
 
-    return { rawCount: allRaw.length, dueCount: enrichedData.length };
+    return { rawCount: allRaw.length, dueCount: enrichedData.length, combos };
   } catch (err) {
     throw new Error(`extractAccountsReceivable failed: ${(err as Error).message}`, { cause: err as Error });
   }
