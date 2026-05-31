@@ -1,8 +1,11 @@
 {
-  "name": "playwright",
+  "name": "school-portal-scraper",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "School management portal automation suite — extracts attendance and financial data via Playwright",
+  "main": "src/cli.ts",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "tsx src/cli.ts",
     "start:headed": "HEADED=true tsx src/cli.ts",
