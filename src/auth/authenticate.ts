@@ -1,4 +1,5 @@
 // src/auth/authenticate.ts
+import * as fs from 'fs';
 import { chromium, BrowserContext, Page } from "@playwright/test";
 import { CONFIG } from "../config";
 import { log } from "../utils/logger";
@@ -25,6 +26,12 @@ export async function authenticate(): Promise<{ browser: BrowserContext; page: P
   try {
     log.info("Launching persistent browser context…");
     context = await chromium.launchPersistentContext(CONFIG.directories.userData, launchOptions);
+
+    // Restrict user-data directory permissions to owner-only (0700)
+    try {
+      fs.chmodSync(CONFIG.directories.userData, 0o700);
+    } catch { /* best-effort; directory may not exist yet */ }
+
     const pages = context.pages();
     page = pages.length > 0 ? pages[0] : await context.newPage();
 
