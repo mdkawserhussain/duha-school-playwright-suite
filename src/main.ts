@@ -16,6 +16,7 @@ import { generateWhatsAppDashboard } from './reporters/whatsappReporter';
 import { sendTelegramSummary } from './reporters/telegramNotifier';
 import { runPiCleanup } from './utils/piiCleanup';
 import { getCachedIdMap } from './utils/dropdownCache';
+import { runCloudSync } from './utils/cloudSync';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -169,6 +170,22 @@ async function main(): Promise<void> {
         dueCount: arCounts.dueCount,
       });
     }
+
+    // ── 7.1.2.12  Cloud sync (if enabled) ────────────────────────────────
+    if (process.env.ENABLE_CLOUD_SYNC === 'true') {
+      try {
+        const xlsxPath = path.join(CONFIG.directories.output, `accounts_receivable_report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        let duesData: Array<Record<string, any>> | undefined;
+        const enrichedPath = path.join(CONFIG.directories.output, `accounts_receivable_dues_enriched_${new Date().toISOString().slice(0, 10)}.json`);
+        if (fs.existsSync(enrichedPath)) {
+          duesData = JSON.parse(fs.readFileSync(enrichedPath, 'utf-8'));
+        }
+        await runCloudSync(fs.existsSync(xlsxPath) ? xlsxPath : undefined, duesData);
+      } catch (csErr) {
+        log.error('Cloud sync failed:', csErr as Error);
+      }
+    }
+
   } catch (err) {
     hasFailed = true;
     // ── 7.1.2.8  Fatal error handler (captures screenshots and logs) ──────
