@@ -18,6 +18,7 @@ import { runPiCleanup } from './utils/piiCleanup';
 import { getCachedIdMap } from './utils/dropdownCache';
 import { runCloudSync } from './utils/cloudSync';
 import { sendDesktopNotification } from './utils/desktopNotifier';
+import { pingHeartbeat } from './utils/heartbeat';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -42,6 +43,9 @@ async function main(): Promise<void> {
 
   // ── 7.1.2.1a  PII auto-cleanup ──────────────────────────────────────────
   runPiCleanup();
+
+  // ── 7.1.2.1b  Heartbeat ping (start) ───────────────────────────────────
+  await pingHeartbeat('start');
 
   let browser: BrowserContext | null = null;
   let page: Page | null = null;
@@ -196,6 +200,9 @@ async function main(): Promise<void> {
         log.error('Cloud sync failed:', csErr as Error);
       }
     }
+
+    // ── 7.1.2.14  Heartbeat ping (end) ───────────────────────────────────
+    await pingHeartbeat('end');
 
   } catch (err) {
     hasFailed = true;
