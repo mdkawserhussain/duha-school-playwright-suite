@@ -23,22 +23,28 @@ export function writeJsonOutput(prefix: string, data: any[]): void {
     const filename = `${prefix}_${dateString}.json`;
     const outputPath = path.join(CONFIG.directories.output, filename);
 
-    // Verify empty arrays to alert on possible extraction logic breakages
-    if (data.length === 0) {
-      log.warn(`Warning: The extracted dataset for "${prefix}" is completely empty. Overwriting target JSON with empty array.`);
-    }
-
     // Backup existing file if it exists (ERR-15)
+    let hasBackup = false;
     if (fs.existsSync(outputPath)) {
       const timestamp = Date.now();
       const backupFilename = `${prefix}_${dateString}_backup_${timestamp}.json`;
       const backupPath = path.join(CONFIG.directories.output, backupFilename);
       try {
         fs.renameSync(outputPath, backupPath);
+        hasBackup = true;
         log.warn(`Existing file found at ${outputPath}. Renamed/backed up to: ${backupFilename}`);
       } catch (backupError) {
         log.error(`Failed to backup existing file before writing: ${(backupError as Error).message}`);
       }
+    }
+
+    // If data is empty and we just backed up a valid file, preserve the backup
+    if (data.length === 0) {
+      if (hasBackup) {
+        log.error(`Empty extraction result for "${prefix}" — previous output preserved.`);
+        return;
+      }
+      log.error(`Empty extraction result for "${prefix}" — no previous output to preserve. Writing empty array.`);
     }
 
     // Write file
