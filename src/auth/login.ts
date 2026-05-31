@@ -64,8 +64,17 @@ export async function login(page: Page, username: string, password: string): Pro
 
     log.info("Login successful.");
   } catch (err) {
-    log.error("Login failed:", err as Error);
-    // Re-throw so the caller (authenticate) can handle via handleFatalError
+    const errMsg = (err as Error).message || '';
+
+    if (errMsg.toLowerCase().includes('timeout') && page.url().includes('/login')) {
+      log.error('Portal login page did not load. Check PORTAL_BASE_URL and network connectivity.');
+    } else if (errMsg.toLowerCase().includes('timeout')) {
+      log.error('Credentials may be incorrect. Check PORTAL_USERNAME and PORTAL_PASSWORD in .env.');
+    } else if (errMsg.toLowerCase().includes('waiting for selector') || errMsg.toLowerCase().includes('no element found')) {
+      log.error('Portal UI may have changed. Check selectors.ts for updated field labels.');
+    } else {
+      log.error('Login failed with unrecognized error:', err as Error);
+    }
     throw err;
   }
 }
