@@ -9,6 +9,7 @@ import { extractAttendance } from './extractors/attendance';
 import { extractAccountsReceivable, printAccountsRunSummary } from './extractors/accountsReceivable';
 import { writeMetrics } from './utils/metricsCollector';
 import { generateHtmlDashboard } from './reporters/htmlDashboard';
+import { generateWhatsAppDashboard } from './reporters/whatsappReporter';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -85,6 +86,22 @@ async function main(): Promise<void> {
         }
       } catch (dashErr) {
         log.error('Failed to generate HTML dashboard:', dashErr);
+      }
+    }
+
+    // ── 7.1.2.10  Generate WhatsApp dashboard (if enabled) ─────────────
+    if (process.env.GENERATE_WHATSAPP_DASHBOARD === 'true') {
+      try {
+        const rawPath = path.join(CONFIG.directories.output, `accounts_receivable_raw_${new Date().toISOString().slice(0, 10)}.json`);
+        const enrichedPath = path.join(CONFIG.directories.output, `accounts_receivable_dues_enriched_${new Date().toISOString().slice(0, 10)}.json`);
+        const attendancePath = path.join(CONFIG.directories.output, `attendance_${new Date().toISOString().slice(0, 10)}.json`);
+
+        const attendanceData = fs.existsSync(attendancePath) ? JSON.parse(fs.readFileSync(attendancePath, 'utf-8')) : [];
+        const duesData = fs.existsSync(enrichedPath) ? JSON.parse(fs.readFileSync(enrichedPath, 'utf-8')) : [];
+
+        generateWhatsAppDashboard(attendanceData, duesData);
+      } catch (waErr) {
+        log.error('Failed to generate WhatsApp dashboard:', waErr);
       }
     }
   } catch (err) {
