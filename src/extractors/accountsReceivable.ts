@@ -11,6 +11,7 @@ import { clickByText } from '../utils/consoleClick';
 import { flattenAccountsApiResponse, type ApiResponse } from '../utils/accountsApiFlattener';
 import { recordComboTiming } from '../utils/metricsCollector';
 import { formatDuration } from '../utils/formatHelpers';
+import { getCachedIdMap, setCachedIdMap, classCacheKey, shiftCacheKey } from '../utils/dropdownCache';
 
 interface RunRecord {
   timestamp: string;
@@ -333,54 +334,95 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
     const needDiscovery = CONFIG.filters.shifts.length === 0 || CONFIG.filters.classes.length === 0;
 
     if (needDiscovery) {
-      // Discover available shifts & classes from the portal dropdowns
+      // Discover available shifts & classes from the portal dropdowns (with cache)
       for (const year of CONFIG.filters.years) {
-        // Select year to populate shift dropdown and read its ID
-        try {
-          await selectOptionHelper(page, yearDropdown, year);
-        } catch (err) {
-          log.warn(`Year selection failed for "${year}": ${(err as Error).message}. Skipping.`);
-          continue;
-        }
-        const yearIdMap = await readDropdownIdMap(yearDropdown, 4, 1000, 2);
-        const yearId = yearIdMap.get(year) || '';
+        // ── Year ID: try cache first ──────────────────────────────────────
+        let yearIdMap = getCachedIdMap('years');
+        let yearId = yearIdMap?.get(year) || '';
 
+        if (!yearId) {
+          // Cache miss — live browser discovery
+          try {
+            await selectOptionHelper(page, yearDropdown, year);
+          } catch (err) {
+            log.warn(`Year selection failed for "${year}": ${(err as Error).message}. Skipping.`);
+            continue;
+          }
+          yearIdMap = await readDropdownIdMap(yearDropdown, 4, 1000, 2);
+          yearId = yearIdMap.get(year) || '';
+          if (yearIdMap.size > 0) setCachedIdMap('years', yearIdMap);
+        } else {
+          log.info(`Year "${year}" resolved from cache (id=${yearId})`);
+        }
+
+        // ── Shifts: try cache first ───────────────────────────────────────
         let shifts: string[];
-        try {
+        let shiftIdMap: Map<string, string>;
+
+        const cachedShiftMap = getCachedIdMap(shiftCacheKey(yearId));
+        if (cachedShiftMap && cachedShiftMap.size > 0) {
           shifts = CONFIG.filters.shifts.length > 0
             ? CONFIG.filters.shifts
-            : await readDropdownOptions(shiftDropdown, 4, 1000, 2);
-        } catch (err) {
-          log.warn(`Year discovery failed for "${year}": ${(err as Error).message}. Skipping.`);
-          continue;
+            : Array.from(cachedShiftMap.keys());
+          shiftIdMap = cachedShiftMap;
+          log.info(`Shifts resolved from cache: ${shifts.join(', ')}`);
+        } else {
+          try {
+            shifts = CONFIG.filters.shifts.length > 0
+              ? CONFIG.filters.shifts
+              : await readDropdownOptions(shiftDropdown, 4, 1000, 2);
+          } catch (err) {
+            log.warn(`Year discovery failed for "${year}": ${(err as Error).message}. Skipping.`);
+            continue;
+          }
+          shiftIdMap = await readDropdownIdMap(shiftDropdown, 4, 1000, 2);
+          if (shiftIdMap.size > 0) setCachedIdMap(shiftCacheKey(yearId), shiftIdMap);
         }
 
-        const shiftIdMap = await readDropdownIdMap(shiftDropdown, 4, 1000, 2);
-
         for (const shift of shifts) {
-          const shiftId = shiftIdMap.get(shift) || '';
-          try {
-            await selectOptionHelper(page, shiftDropdown, shift);
-          } catch (err) {
-            log.warn(`Shift "${shift}" (year "${year}") selection failed: ${(err as Error).message}. Skipping.`);
+          const shiftId = shiftIdMap.get(shift) ||
+            (() => { for (const [t, v] of shiftIdMap) { if (t.toLowerCase() === shift.toLowerCase()) return v; } return ''; })();
+
+          if (!shiftId) {
+            log.warn(`Shift "${shift}" has no ID mapping. Skipping.`);
             continue;
           }
-          await page.waitForTimeout(1000); // class dropdown depends on shift — give it extra time
 
+          // ── Classes: try cache first ────────────────────────────────────
           let classes: string[];
-          try {
+          let classIdMap: Map<string, string>;
+
+          const cKey = classCacheKey(yearId, shiftId);
+          const cachedClassMap = getCachedIdMap(cKey);
+          if (cachedClassMap && cachedClassMap.size > 0) {
             classes = CONFIG.filters.classes.length > 0
               ? CONFIG.filters.classes
-              : await readDropdownOptions(classDropdown);
-          } catch (err) {
-            log.warn(`Class discovery for year="${year}" shift="${shift}" failed: ${(err as Error).message}. Skipping shift.`);
-            continue;
+              : Array.from(cachedClassMap.keys());
+            classIdMap = cachedClassMap;
+            log.info(`Classes for shift "${shift}" resolved from cache: ${classes.length} options`);
+          } else {
+            // Need live browser interaction to read classes
+            try {
+              await selectOptionHelper(page, shiftDropdown, shift);
+            } catch (err) {
+              log.warn(`Shift "${shift}" (year "${year}") selection failed: ${(err as Error).message}. Skipping.`);
+              continue;
+            }
+            await page.waitForTimeout(1000); // class dropdown depends on shift
+
+            try {
+              classes = CONFIG.filters.classes.length > 0
+                ? CONFIG.filters.classes
+                : await readDropdownOptions(classDropdown);
+            } catch (err) {
+              log.warn(`Class discovery for year="${year}" shift="${shift}" failed: ${(err as Error).message}. Skipping shift.`);
+              continue;
+            }
+            classIdMap = await readDropdownIdMap(classDropdown, 4, 1000, 2);
+            if (classIdMap.size > 0) setCachedIdMap(cKey, classIdMap);
           }
 
-          const classIdMap = await readDropdownIdMap(classDropdown, 4, 1000, 2);
-
           for (const cls of classes) {
-            // Case-insensitive lookup: try exact first, then lowercase
             let classId = classIdMap.get(cls) || '';
             if (!classId) {
               const lower = cls.toLowerCase();
@@ -394,40 +436,93 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
       }
     } else {
       for (const year of CONFIG.filters.years) {
-        try {
-          await selectOptionHelper(page, yearDropdown, year);
-        } catch (err) {
-          log.warn(`Year selection failed for "${year}": ${(err as Error).message}. Skipping.`);
-          continue;
-        }
-        const yearIdMap = await readDropdownIdMap(yearDropdown, 4, 1000, 2);
-        const yearId = yearIdMap.get(year) || '';
+        // ── Year ID: try cache first ──────────────────────────────────────
+        let yearIdMap = getCachedIdMap('years');
+        let yearId = yearIdMap?.get(year) || '';
 
-        for (const shift of CONFIG.filters.shifts) {
+        if (!yearId) {
           try {
-            await selectOptionHelper(page, shiftDropdown, shift);
+            await selectOptionHelper(page, yearDropdown, year);
           } catch (err) {
-            log.warn(`Shift "${shift}" selection failed: ${(err as Error).message}. Skipping.`);
+            log.warn(`Year selection failed for "${year}": ${(err as Error).message}. Skipping.`);
             continue;
           }
-          await page.waitForTimeout(1000);
-          const shiftIdMap = await readDropdownIdMap(shiftDropdown, 4, 1000, 2);
-          const shiftId = shiftIdMap.get(shift) || '';
+          yearIdMap = await readDropdownIdMap(yearDropdown, 4, 1000, 2);
+          yearId = yearIdMap.get(year) || '';
+          if (yearIdMap.size > 0) setCachedIdMap('years', yearIdMap);
+        } else {
+          log.info(`Year "${year}" resolved from cache (id=${yearId})`);
+        }
 
-          // Wait for class dropdown to populate after shift selection
-          await page.waitForTimeout(1000);
+        for (const shift of CONFIG.filters.shifts) {
+          // ── Shift ID: try cache first ───────────────────────────────────
+          const cachedShiftMap = getCachedIdMap(shiftCacheKey(yearId));
+          let shiftId = cachedShiftMap?.get(shift) || '';
 
-          // Debug: check raw class dropdown options
-          const rawClassOpts = await classDropdown.evaluate((select: HTMLSelectElement) =>
-            Array.from(select.options).map(o => ({ text: o.text.trim(), value: o.value }))
-          );
-          console.error(`[DEBUG] Class dropdown raw options (${rawClassOpts.length}): ${rawClassOpts.map(o => `"${o.text}"→"${o.value}"`).join(', ')}`);
+          if (!shiftId) {
+            // Case-insensitive fallback on cached map
+            if (cachedShiftMap) {
+              for (const [t, v] of cachedShiftMap) {
+                if (t.toLowerCase() === shift.toLowerCase()) { shiftId = v; break; }
+              }
+            }
+          }
 
-          const classIdMap = await readDropdownIdMap(classDropdown, 4, 1000, 2);
-          log.info(`Class ID map: ${classIdMap.size} options for shift "${shift}"`);
+          if (!shiftId) {
+            // Cache miss — live browser discovery
+            try {
+              await selectOptionHelper(page, shiftDropdown, shift);
+            } catch (err) {
+              log.warn(`Shift "${shift}" selection failed: ${(err as Error).message}. Skipping.`);
+              continue;
+            }
+            await page.waitForTimeout(1000);
+            const liveShiftMap = await readDropdownIdMap(shiftDropdown, 4, 1000, 2);
+            shiftId = liveShiftMap.get(shift) || '';
+            if (!shiftId) {
+              for (const [t, v] of liveShiftMap) {
+                if (t.toLowerCase() === shift.toLowerCase()) { shiftId = v; break; }
+              }
+            }
+            if (liveShiftMap.size > 0) setCachedIdMap(shiftCacheKey(yearId), liveShiftMap);
+          } else {
+            log.info(`Shift "${shift}" resolved from cache (id=${shiftId})`);
+          }
+
+          if (!shiftId) {
+            log.warn(`Shift "${shift}" has no ID mapping. Skipping.`);
+            continue;
+          }
+
+          // ── Classes: try cache first ────────────────────────────────────
+          const cKey = classCacheKey(yearId, shiftId);
+          const cachedClassMap = getCachedIdMap(cKey);
+          let classIdMap: Map<string, string>;
+
+          if (cachedClassMap && cachedClassMap.size > 0) {
+            classIdMap = cachedClassMap;
+            log.info(`Classes for shift "${shift}" resolved from cache: ${classIdMap.size} options`);
+          } else {
+            // Need live browser interaction for class dropdown
+            try {
+              await selectOptionHelper(page, shiftDropdown, shift);
+            } catch (err) {
+              log.warn(`Shift "${shift}" re-selection failed: ${(err as Error).message}. Skipping.`);
+              continue;
+            }
+            await page.waitForTimeout(1000);
+
+            const rawClassOpts = await classDropdown.evaluate((select: HTMLSelectElement) =>
+              Array.from(select.options).map(o => ({ text: o.text.trim(), value: o.value }))
+            );
+            console.error(`[DEBUG] Class dropdown raw options (${rawClassOpts.length}): ${rawClassOpts.map(o => `"${o.text}"→"${o.value}"`).join(', ')}`);
+
+            classIdMap = await readDropdownIdMap(classDropdown, 4, 1000, 2);
+            log.info(`Class ID map: ${classIdMap.size} options for shift "${shift}"`);
+            if (classIdMap.size > 0) setCachedIdMap(cKey, classIdMap);
+          }
 
           for (const cls of CONFIG.filters.classes) {
-            // Case-insensitive lookup: try exact first, then lowercase
             let classId = classIdMap.get(cls) || '';
             if (!classId) {
               const lower = cls.toLowerCase();
