@@ -10,6 +10,7 @@ import { writeXlsxOutput } from '../utils/spreadsheetWriter';
 import { clickByText } from '../utils/consoleClick';
 import { flattenAccountsApiResponse, type ApiResponse } from '../utils/accountsApiFlattener';
 import { recordComboTiming } from '../utils/metricsCollector';
+import { formatDuration } from '../utils/formatHelpers';
 
 interface RunRecord {
   timestamp: string;
@@ -465,6 +466,11 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
         allRaw.push(...comboRaw);
         recordComboTiming(`${combo.year}/${combo.shift}/${combo.cls}`, Date.now() - comboStart, comboRaw.length);
         log.info(`Combo ${i + 1} done. ${comboRaw.length} records collected.`);
+        // Progress with ETA
+        const elapsed = Date.now() - startTime;
+        const avgPerCombo = elapsed / (i + 1);
+        const etaMs = avgPerCombo * (combos.length - i - 1);
+        log.info(`[Combo ${i + 1}/${combos.length}] Elapsed: ${formatDuration(elapsed)} | ETA: ~${formatDuration(etaMs)}`);
       } catch (err) {
         recordComboTiming(`${combo.year}/${combo.shift}/${combo.cls}`, Date.now() - comboStart, 0);
         failedCombos.push({ year: combo.year, shift: combo.shift, cls: combo.cls, error: (err as Error).message });
