@@ -7,6 +7,7 @@
     "start": "tsx src/cli.ts",
     "start:headed": "HEADED=true tsx src/cli.ts",
     "start:scheduler": "tsx src/scheduler.ts",
+    "check:selectors": "tsx src/selectorHealthCheck.ts",
     "test": "vitest run"
   },
   "keywords": [],
