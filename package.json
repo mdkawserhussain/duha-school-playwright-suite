@@ -6,6 +6,7 @@
   "scripts": {
     "start": "tsx src/cli.ts",
     "start:headed": "HEADED=true tsx src/cli.ts",
+    "start:scheduler": "tsx src/scheduler.ts",
     "test": "vitest run"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
     "commander": "^15.0.0",
     "dotenv": "^17.4.2",
     "exceljs": "^4.4.0",
+    "node-cron": "^4.2.1",
     "playwright": "^1.60.0",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
@@ -23,6 +25,7 @@
   "devDependencies": {
     "@types/exceljs": "^0.5.3",
     "@types/node": "^25.9.1",
+    "@types/node-cron": "^3.0.11",
     "vitest": "^4.1.7"
   }
 }
