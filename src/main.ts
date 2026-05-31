@@ -11,6 +11,7 @@ import { writeMetrics } from './utils/metricsCollector';
 import { generateHtmlDashboard } from './reporters/htmlDashboard';
 import { generateWhatsAppDashboard } from './reporters/whatsappReporter';
 import { sendTelegramSummary } from './reporters/telegramNotifier';
+import { runPiCleanup } from './utils/piiCleanup';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -32,6 +33,9 @@ async function main(): Promise<void> {
   log.info('Starting School Portal Automation Suite');
   log.info('='.repeat(60));
   const runStartTime = Date.now();
+
+  // ── 7.1.2.1a  PII auto-cleanup ──────────────────────────────────────────
+  runPiCleanup();
 
   let browser: BrowserContext | null = null;
   let page: Page | null = null;
