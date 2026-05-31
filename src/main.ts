@@ -19,6 +19,7 @@ import { getCachedIdMap } from './utils/dropdownCache';
 import { runCloudSync } from './utils/cloudSync';
 import { sendDesktopNotification } from './utils/desktopNotifier';
 import { pingHeartbeat } from './utils/heartbeat';
+import { recordRun, appendDuesHistory, closeHistoryDb } from './utils/historyDb';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -137,6 +138,23 @@ async function main(): Promise<void> {
     // ── 7.1.2.8  Write execution metrics ────────────────────────────────
     writeMetrics();
 
+    // ── 7.1.2.8a  Record to historical database (if enabled) ────────────
+    if (arCounts) {
+      const runId = recordRun({
+        durationMs: Date.now() - runStartTime,
+        rawCount: arCounts.rawCount,
+        dueCount: arCounts.dueCount,
+        failedCombos: 0,
+      });
+      if (runId > 0) {
+        const enrichedPath = path.join(CONFIG.directories.output, `accounts_receivable_dues_enriched_${new Date().toISOString().slice(0, 10)}.json`);
+        if (fs.existsSync(enrichedPath)) {
+          const duesData = JSON.parse(fs.readFileSync(enrichedPath, 'utf-8'));
+          appendDuesHistory(runId, duesData);
+        }
+      }
+    }
+
     // ── 7.1.2.9  Generate HTML dashboard (if enabled) ───────────────────
     if (process.env.GENERATE_HTML_DASHBOARD === 'true' && arCounts) {
       try {
@@ -220,6 +238,7 @@ async function main(): Promise<void> {
       log.info('Closing browser context cleanly...');
       await browser.close();
     }
+    closeHistoryDb();
     if (hasFailed) {
       log.error('Terminating process with exit code 1 due to execution failure.');
       process.exit(1);
