@@ -1,14 +1,28 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+src-tauri/target/
+
+# User data (session cookies, browser profile)
 user-data/
-errors/*
-!errors/.gitkeep
-output/*
-!output/.gitkeep
+
+# Generated output (PII — student data, financials)
+output/
+errors/
+
+# Environment secrets
 .env
+
+# Test artifacts
 playwright-report/
 test-results/
+
+# Logs
 *.log
-attendance_curl_request_response
-wa2.js
-src-tauri/target/
+
+# OS files
+.DS_Store
+Thumbs.db
+web/dist/
