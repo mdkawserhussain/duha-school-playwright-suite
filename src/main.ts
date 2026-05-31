@@ -7,11 +7,13 @@ import { handleFatalError } from './utils/errorHandler';
 import { authenticate } from './auth/authenticate';
 import { extractAttendance } from './extractors/attendance';
 import { extractAccountsReceivable, printAccountsRunSummary } from './extractors/accountsReceivable';
+import { extractPaymentLedger } from './extractors/paymentLedger';
 import { writeMetrics } from './utils/metricsCollector';
 import { generateHtmlDashboard } from './reporters/htmlDashboard';
 import { generateWhatsAppDashboard } from './reporters/whatsappReporter';
 import { sendTelegramSummary } from './reporters/telegramNotifier';
 import { runPiCleanup } from './utils/piiCleanup';
+import { getCachedIdMap } from './utils/dropdownCache';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -60,6 +62,30 @@ async function main(): Promise<void> {
       arCounts = await extractAccountsReceivable(page);
     } else {
       log.info('Skipping accounts receivable extraction (disabled in config)');
+    }
+
+    // ── 7.1.2.4a  Payment Ledger extraction (if enabled) ─────────────────
+    if (process.env.EXTRACT_PAYMENT_LEDGER === 'true' && arCounts && arCounts.dueCount > 0) {
+      try {
+        const enrichedPath = path.join(CONFIG.directories.output, `accounts_receivable_dues_enriched_${new Date().toISOString().slice(0, 10)}.json`);
+        if (fs.existsSync(enrichedPath)) {
+          const dueStudents = JSON.parse(fs.readFileSync(enrichedPath, 'utf-8'));
+          // Get yearId from dropdown cache
+          const yearIdMap = getCachedIdMap('years');
+          const yearId = yearIdMap?.get(CONFIG.filters.years[0]) || '';
+          if (yearId && page) {
+            await extractPaymentLedger(page, dueStudents, yearId);
+          } else if (!yearId) {
+            log.warn('Payment ledger skipped: could not resolve year ID from cache');
+          }
+        } else {
+          log.warn('Payment ledger skipped: enriched dues file not found');
+        }
+      } catch (plErr) {
+        log.error('Payment ledger extraction failed:', plErr as Error);
+      }
+    } else if (process.env.EXTRACT_PAYMENT_LEDGER === 'true') {
+      log.info('Payment ledger skipped: no due students or AR extraction disabled');
     }
 
     // ── 7.1.2.5  Done ─────────────────────────────────────────────────────
