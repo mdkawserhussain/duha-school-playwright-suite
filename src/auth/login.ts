@@ -4,6 +4,7 @@ import { log } from "../utils/logger";
 import { SELECTORS } from "../utils/selectors";
 import { CONFIG } from "../config";
 import { withRetry } from "../utils/retry";
+import { humanType, humanClick } from "../utils/humanInteraction";
 
 /**
  * Performs user login using semantic selectors.
@@ -49,13 +50,13 @@ export async function login(page: Page, username: string, password: string): Pro
       .or(page.locator('input[type="password"]'))
       .first();
 
-    await usernameLocator.fill(username);
-    await passwordLocator.fill(password);
+    await humanType(page, usernameLocator, username);
+    await humanType(page, passwordLocator, password);
 
     // Click submit and wait for navigation to complete
     await Promise.all([
       page.waitForURL("**/dashboard**", { timeout: CONFIG.timeouts.navigation }),
-      page.getByRole("button", { name: SELECTORS.login.submitButton.name }).click(),
+      humanClick(page, page.getByRole("button", { name: SELECTORS.login.submitButton.name })),
     ]);
 
     // Verify successful login – check for breadcrumb element
