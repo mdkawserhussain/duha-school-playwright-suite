@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsx src/main.ts",
     "start:headed": "HEADED=true tsx src/main.ts",
-    "test": "playwright test"
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@types/exceljs": "^0.5.3",
-    "@types/node": "^25.9.1"
+    "@types/node": "^25.9.1",
+    "vitest": "^4.1.7"
   }
 }
