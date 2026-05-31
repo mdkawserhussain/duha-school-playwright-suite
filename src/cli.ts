@@ -19,6 +19,7 @@ program
   .option('--headed', 'Run browser in headed (visible) mode', false)
   .option('--no-cache', 'Skip dropdown cache and force fresh discovery', false)
   .option('--min-due <amount>', 'Minimum due amount to include in dues-only filter', parseFloat)
+  .option('--setup', 'Run first-time setup wizard to create .env file', false)
   .parse(process.argv);
 
 const opts = program.opts();
@@ -61,8 +62,21 @@ if (opts.minDue !== undefined) {
   process.env.MIN_DUE_AMOUNT = String(opts.minDue);
 }
 
-// Import and run main
-import('./main.js').catch((err) => {
+// First-run setup wizard: check for .env and run wizard if missing
+import { envExists, runSetupWizard } from './utils/setupWizard';
+
+async function run() {
+  if (opts.setup || !envExists()) {
+    const ok = await runSetupWizard();
+    if (!ok) process.exit(1);
+    // If --setup was used, exit after writing .env
+    if (opts.setup) return;
+  }
+  // Import and run main
+  await import('./main.js');
+}
+
+run().catch((err) => {
   console.error('Failed to start:', err);
   process.exit(1);
 });
