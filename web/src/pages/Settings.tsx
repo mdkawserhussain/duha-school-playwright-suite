@@ -42,16 +42,16 @@ export default function Settings() {
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-lg font-semibold mb-4">Configuration</h2>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <h2 className="text-lg font-semibold mb-4 dark:text-white">Configuration</h2>
       <div className="space-y-3">
         {fields.map(key => (
           <div key={key} className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
-            <label className="text-sm font-medium text-gray-700">{key}</label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{key}</label>
             <input
               value={config[key] || ''}
               onChange={e => update(key, e.target.value)}
-              className="col-span-2 border rounded px-3 py-2 text-sm"
+              className="col-span-2 border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               type={key.includes('PASSWORD') ? 'password' : 'text'}
             />
           </div>
@@ -61,7 +61,7 @@ export default function Settings() {
         <button
           onClick={save}
           disabled={saving}
-          className="bg-indigo-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
+          className="bg-indigo-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition"
         >
           {saving ? 'Saving...' : 'Save'}
         </button>

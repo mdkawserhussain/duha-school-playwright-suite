@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { useQuery } from 'react-query';
+import { api } from '../lib/api';
 
 export default function Controls() {
   const [running, setRunning] = useState(false);
@@ -7,6 +9,16 @@ export default function Controls() {
   const [shift, setShift] = useState('');
   const [cls, setCls] = useState('');
   const logRef = useRef<HTMLDivElement>(null);
+
+  const { data: status } = useQuery('status', () => api<{ running: boolean; pid: number | null }>('/status'), {
+    refetchInterval: 2000,
+  });
+
+  useEffect(() => {
+    if (status && !status.running && running) {
+      setRunning(false);
+    }
+  }, [status, running]);
 
   useEffect(() => {
     if (logRef.current) {
@@ -31,7 +43,6 @@ export default function Controls() {
       });
       const { runId } = await res.json();
 
-      // Connect to SSE log stream
       const evtSource = new EventSource(`/api/run/${runId}/logs`);
       evtSource.onmessage = (event) => {
         const { message } = JSON.parse(event.data);
@@ -45,6 +56,18 @@ export default function Controls() {
       setRunning(false);
       setLogs(prev => [...prev, 'Failed to start extraction']);
     }
+  };
+
+  const downloadFile = async (prefix: string) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const url = `/output/${prefix}_${today}.json`;
+    const res = await fetch(url);
+    if (!res.ok) { alert('File not found'); return; }
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${prefix}_${today}.json`;
+    a.click();
   };
 
   return (
@@ -90,9 +113,33 @@ export default function Controls() {
                   : 'bg-indigo-600 hover:bg-indigo-700'
               }`}
             >
-              {running ? 'Running...' : 'Start Extraction'}
+              {running ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Running...
+                </span>
+              ) : 'Start Extraction'}
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Export */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold mb-4">Export Data</h2>
+        <div className="flex gap-3">
+          <button onClick={() => downloadFile('accounts_receivable_dues_enriched')}
+            className="px-4 py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 transition">
+            Download Dues JSON
+          </button>
+          <button onClick={() => downloadFile('accounts_receivable_raw')}
+            className="px-4 py-2 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 transition">
+            Download Raw JSON
+          </button>
+          <button onClick={() => downloadFile('attendance')}
+            className="px-4 py-2 bg-purple-600 text-white rounded text-sm font-medium hover:bg-purple-700 transition">
+            Download Attendance
+          </button>
         </div>
       </div>
 
