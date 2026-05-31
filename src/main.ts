@@ -17,6 +17,7 @@ import { sendTelegramSummary } from './reporters/telegramNotifier';
 import { runPiCleanup } from './utils/piiCleanup';
 import { getCachedIdMap } from './utils/dropdownCache';
 import { runCloudSync } from './utils/cloudSync';
+import { sendDesktopNotification } from './utils/desktopNotifier';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -171,7 +172,17 @@ async function main(): Promise<void> {
       });
     }
 
-    // ── 7.1.2.12  Cloud sync (if enabled) ────────────────────────────────
+    // ── 7.1.2.12  Desktop notification (if enabled) ──────────────────────
+    if (arCounts) {
+      sendDesktopNotification({
+        durationMs: Date.now() - runStartTime,
+        rawCount: arCounts.rawCount,
+        dueCount: arCounts.dueCount,
+        failedCombos: 0,
+      });
+    }
+
+    // ── 7.1.2.13  Cloud sync (if enabled) ────────────────────────────────
     if (process.env.ENABLE_CLOUD_SYNC === 'true') {
       try {
         const xlsxPath = path.join(CONFIG.directories.output, `accounts_receivable_report_${new Date().toISOString().slice(0, 10)}.xlsx`);

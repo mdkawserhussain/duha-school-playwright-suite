@@ -20,6 +20,7 @@
     "exceljs": "^4.4.0",
     "googleapis": "^173.0.0",
     "node-cron": "^4.2.1",
+    "node-notifier": "^10.0.1",
     "playwright": "^1.60.0",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
@@ -28,6 +29,7 @@
     "@types/exceljs": "^0.5.3",
     "@types/node": "^25.9.1",
     "@types/node-cron": "^3.0.11",
+    "@types/node-notifier": "^8.0.5",
     "vitest": "^4.1.7"
   }
 }
