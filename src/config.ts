@@ -63,6 +63,7 @@ export const CONFIG = {
     settleDelay: 500,
     profileTimeout: 10000,
   },
+  maxTotalRuntimeMs: Number(process.env.MAX_TOTAL_RUNTIME_MS) || 600000,
   directories: {
     userData: path.join(projectRoot, 'user-data'),
     output: path.join(projectRoot, 'output'),

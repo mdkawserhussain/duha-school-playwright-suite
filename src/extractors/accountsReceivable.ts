@@ -190,6 +190,17 @@ async function extractCombo(
 ): Promise<Record<string, any>[]> {
   log.step(`Extracting combo: Year="${year}" | Shift="${shift}" | Class="${cls}" (IDs: ${yearId}/${shiftId}/${classId})`);
 
+  // Reset window state machine from any previous combo to prevent stale data
+  await page.evaluate(() => {
+    const w = window as any;
+    delete w.__arSession;
+    delete w.__arState;
+    delete w.__arPhase2Start;
+    delete w.__arFirstCellContent;
+    delete w.__arStableCount;
+    delete w.__arStablePolls;
+  });
+
   // ── 1. Extract XSRF token from cookies ────────────────────────────────
   const xsrfToken = await page.evaluate(() => {
     const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
@@ -439,6 +450,12 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
     const startTime = Date.now();
 
     for (let i = 0; i < combos.length; i++) {
+      // Check global execution timeout
+      if (Date.now() - startTime > CONFIG.maxTotalRuntimeMs) {
+        log.warn(`Execution timed out after ${i} combos (${Math.round((Date.now() - startTime) / 1000)}s). Writing partial results.`);
+        break;
+      }
+
       const combo = combos[i];
       log.step(`Combo ${i + 1}/${combos.length}: Year="${combo.year}" | Shift="${combo.shift}" | Class="${combo.cls}"`);
 
