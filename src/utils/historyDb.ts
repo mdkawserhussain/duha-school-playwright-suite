@@ -16,7 +16,7 @@ const DB_PATH = path.join(__dirname, '../../user-data/history.db');
 
 let db: Database.Database | null = null;
 
-function getDb(): Database.Database {
+export function getDb(): Database.Database {
   if (db) return db;
 
   const dir = path.dirname(DB_PATH);
