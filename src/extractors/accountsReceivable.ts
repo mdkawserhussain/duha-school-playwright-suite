@@ -9,6 +9,7 @@ import { filterDuesRows } from '../utils/duesFilter';
 import { writeXlsxOutput } from '../utils/spreadsheetWriter';
 import { clickByText } from '../utils/consoleClick';
 import { flattenAccountsApiResponse, type ApiResponse } from '../utils/accountsApiFlattener';
+import { recordComboTiming } from '../utils/metricsCollector';
 
 interface RunRecord {
   timestamp: string;
@@ -441,11 +442,14 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
       const combo = combos[i];
       log.step(`Combo ${i + 1}/${combos.length}: Year="${combo.year}" | Shift="${combo.shift}" | Class="${combo.cls}"`);
 
+      const comboStart = Date.now();
       try {
         const comboRaw = await extractCombo(page, combo.yearId, combo.shiftId, combo.classId, combo.year, combo.shift, combo.cls);
         allRaw.push(...comboRaw);
+        recordComboTiming(`${combo.year}/${combo.shift}/${combo.cls}`, Date.now() - comboStart, comboRaw.length);
         log.info(`Combo ${i + 1} done. ${comboRaw.length} records collected.`);
       } catch (err) {
+        recordComboTiming(`${combo.year}/${combo.shift}/${combo.cls}`, Date.now() - comboStart, 0);
         failedCombos.push({ year: combo.year, shift: combo.shift, cls: combo.cls, error: (err as Error).message });
         log.warn(`Combo ${i + 1} failed: ${(err as Error).message}. Skipping and continuing.`);
       }

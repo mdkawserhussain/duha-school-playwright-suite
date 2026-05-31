@@ -5,6 +5,7 @@ import { handleFatalError } from './utils/errorHandler';
 import { authenticate } from './auth/authenticate';
 import { extractAttendance } from './extractors/attendance';
 import { extractAccountsReceivable, printAccountsRunSummary } from './extractors/accountsReceivable';
+import { writeMetrics } from './utils/metricsCollector';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -67,6 +68,12 @@ async function main(): Promise<void> {
     if (arCounts) {
       printAccountsRunSummary(arCounts.rawCount, arCounts.dueCount);
     }
+
+    // ── 7.1.2.8  Write execution metrics ────────────────────────────────
+    writeMetrics();
+
+    // ── 7.1.2.8  Write execution metrics ──────────────────────────────────
+    writeMetrics();
   } catch (err) {
     hasFailed = true;
     // ── 7.1.2.8  Fatal error handler (captures screenshots and logs) ──────
