@@ -11,3 +11,4 @@ test-results/
 *.log
 attendance_curl_request_response
 wa2.js
+src-tauri/target/

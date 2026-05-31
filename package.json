@@ -11,6 +11,8 @@
     "web": "concurrently \"npx tsx src/server/index.ts\" \"npx vite --config web/vite.config.ts\"",
     "web:build": "npx vite build --config web/vite.config.ts",
     "web:server": "npx tsx src/server/index.ts",
+    "tauri": "tauri dev",
+    "tauri:build": "tauri build",
     "test": "vitest run"
   },
   "keywords": [],
@@ -29,10 +31,13 @@
     "node-cron": "^4.2.1",
     "node-notifier": "^10.0.1",
     "playwright": "^1.60.0",
+    "react-query": "^3.39.3",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
+    "@tauri-apps/api": "^2.11.0",
+    "@tauri-apps/cli": "^2.11.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.19",
     "@types/exceljs": "^0.5.3",
