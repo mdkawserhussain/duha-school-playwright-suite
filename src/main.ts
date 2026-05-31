@@ -1,4 +1,6 @@
 // src/main.ts
+import * as fs from 'fs';
+import * as path from 'path';
 import { CONFIG, validateConfig } from './config';
 import { log } from './utils/logger';
 import { handleFatalError } from './utils/errorHandler';
@@ -6,6 +8,7 @@ import { authenticate } from './auth/authenticate';
 import { extractAttendance } from './extractors/attendance';
 import { extractAccountsReceivable, printAccountsRunSummary } from './extractors/accountsReceivable';
 import { writeMetrics } from './utils/metricsCollector';
+import { generateHtmlDashboard } from './reporters/htmlDashboard';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -72,8 +75,18 @@ async function main(): Promise<void> {
     // ── 7.1.2.8  Write execution metrics ────────────────────────────────
     writeMetrics();
 
-    // ── 7.1.2.8  Write execution metrics ──────────────────────────────────
-    writeMetrics();
+    // ── 7.1.2.9  Generate HTML dashboard (if enabled) ───────────────────
+    if (process.env.GENERATE_HTML_DASHBOARD === 'true' && arCounts) {
+      try {
+        const rawPath = path.join(CONFIG.directories.output, `accounts_receivable_raw_${new Date().toISOString().slice(0, 10)}.json`);
+        if (fs.existsSync(rawPath)) {
+          const data = JSON.parse(fs.readFileSync(rawPath, 'utf-8'));
+          generateHtmlDashboard(data);
+        }
+      } catch (dashErr) {
+        log.error('Failed to generate HTML dashboard:', dashErr);
+      }
+    }
   } catch (err) {
     hasFailed = true;
     // ── 7.1.2.8  Fatal error handler (captures screenshots and logs) ──────
