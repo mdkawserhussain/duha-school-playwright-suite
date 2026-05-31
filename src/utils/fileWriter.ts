@@ -51,3 +51,44 @@ export function writeJsonOutput(prefix: string, data: any[]): void {
     throw error;
   }
 }
+
+/**
+ * Writes a run manifest JSON file with combo results, timing, and errors.
+ */
+export interface RunManifest {
+  totalCombos: number;
+  successfulCombos: number;
+  failedCombos: Array<{ year: string; shift: string; cls: string; error: string }>;
+  totalRawRecords: number;
+  totalDueRecords: number;
+  startTime: string;
+  endTime: string;
+  durationMs: number;
+}
+
+export function writeRunManifest(data: RunManifest): void {
+  try {
+    if (!fs.existsSync(CONFIG.directories.output)) {
+      fs.mkdirSync(CONFIG.directories.output, { recursive: true });
+    }
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    const filename = `run_manifest_${dateString}.json`;
+    const outputPath = path.join(CONFIG.directories.output, filename);
+
+    const serializedData = JSON.stringify(data, null, 2);
+    fs.writeFileSync(outputPath, serializedData, 'utf-8');
+
+    if (data.failedCombos.length > 0) {
+      log.warn(`Run manifest written with ${data.failedCombos.length} failed combo(s): ${outputPath}`);
+    } else {
+      log.info(`Run manifest written: ${outputPath}`);
+    }
+  } catch (error) {
+    log.error('Failed to write run manifest:', error);
+  }
+}

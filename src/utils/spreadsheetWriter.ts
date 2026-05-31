@@ -63,7 +63,7 @@ function shouldIncludeColumn(key: string, filterTerms: string[]): boolean {
  */
 export async function writeXlsxOutput(
   data: Record<string, any>[],
-  filterInfo: { years: string[]; shifts: string[]; classes: string[] }
+  filterInfo: { years: string[]; shifts: string[]; classes: string[]; failedCombos?: Array<{ year: string; shift: string; cls: string; error: string }> }
 ): Promise<string> {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Outstanding Dues');
@@ -163,7 +163,18 @@ export async function writeXlsxOutput(
     sheet.addRow(item.rowObj);
   }
 
-  // ── 6. Summary row ────────────────────────────────────────────────────────
+  // ── 6. INCOMPLETE banner (if any combos failed) ──────────────────────
+  const failedCombos = filterInfo.failedCombos ?? [];
+  if (failedCombos.length > 0) {
+    const bannerRow = sheet.addRow({
+      [selectedKeys[0]]: `⚠ INCOMPLETE — ${failedCombos.length} combo(s) failed. See run_manifest.json for details.`,
+    });
+    bannerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFF0000' } };
+    bannerRow.font = { color: { argb: 'FFFFFFFF' }, bold: true };
+    sheet.addRow({}); // spacer after banner
+  }
+
+  // ── 7. Summary row ────────────────────────────────────────────────────────
   const totalDuesSum = rows.reduce((sum, r) => sum + r.dueAmount, 0);
   const totalCount   = rows.length;
 

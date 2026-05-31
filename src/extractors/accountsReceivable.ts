@@ -4,11 +4,11 @@ import * as path from 'path';
 import { CONFIG } from '../config';
 import { log } from '../utils/logger';
 import { SELECTORS } from '../utils/selectors';
-import { extractPaginatedTable, PartialExtractionError } from '../utils/pagination';
-import { writeJsonOutput } from '../utils/fileWriter';
+import { writeJsonOutput, writeRunManifest } from '../utils/fileWriter';
 import { filterDuesRows } from '../utils/duesFilter';
 import { writeXlsxOutput } from '../utils/spreadsheetWriter';
 import { clickByText } from '../utils/consoleClick';
+import { flattenAccountsApiResponse, type ApiResponse } from '../utils/accountsApiFlattener';
 
 interface RunRecord {
   timestamp: string;
@@ -150,180 +150,144 @@ async function readDropdownOptions(dropdown: Locator, retries = 3, delayMs = 100
 }
 
 /**
+ * Reads dropdown options and returns a Map of text → value (numeric ID).
+ * Used to map display labels (e.g. "2026") to API IDs (e.g. 19).
+ */
+async function readDropdownIdMap(dropdown: Locator, retries = 3, delayMs = 1000, minCount = 1): Promise<Map<string, string>> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const opts = await dropdown.evaluate((select: HTMLSelectElement) =>
+      Array.from(select.options)
+        .filter(opt => opt.value !== '' && opt.text.trim() !== '' && !opt.text.toLowerCase().includes('select'))
+        .map(opt => ({ text: opt.text.trim(), value: opt.value }))
+    );
+    if (opts.length >= minCount) {
+      const map = new Map<string, string>();
+      for (const opt of opts) map.set(opt.text, opt.value);
+      return map;
+    }
+    if (attempt < retries) {
+      log.warn(`readDropdownIdMap: only ${opts.length}/${minCount} options (attempt ${attempt}/${retries}), retrying...`);
+      await new Promise(r => setTimeout(r, delayMs));
+    }
+  }
+  return new Map();
+}
+
+/**
  * Applies filters (year, shift, class) on the already-loaded report page,
- * checks the Due Student checkbox, clicks Get Report, waits, then extracts
- * the table. Returns raw records tagged with the combo metadata.
+ * makes a direct API call for the combo, and returns raw records tagged
+ * with the combo metadata.
  */
 async function extractCombo(
   page: Page,
+  yearId: string,
+  shiftId: string,
+  classId: string,
   year: string,
   shift: string,
-  cls: string
+  cls: string,
 ): Promise<Record<string, any>[]> {
-  log.step(`Extracting combo: Year="${year}" | Shift="${shift}" | Class="${cls}"`);
+  log.step(`Extracting combo: Year="${year}" | Shift="${shift}" | Class="${cls}" (IDs: ${yearId}/${shiftId}/${classId})`);
 
-  const yearDropdown  = page.locator(SELECTORS.finance.yearDropdown);
-  const shiftDropdown = page.locator(SELECTORS.finance.shiftDropdown);
-  const classDropdown = page.locator(SELECTORS.finance.classDropdown);
-
-  // Select Year
-  await selectOptionHelper(page, yearDropdown, year);
-  log.info(`Selected Year: ${year}`);
-
-  // Select Shift
-  await selectOptionHelper(page, shiftDropdown, shift);
-  log.info(`Selected Shift: ${shift}`);
-
-  // Let portal repopulate class dropdown after shift change before touching it
-  await page.waitForTimeout(500);
-
-  // Select Class
-  await selectOptionHelper(page, classDropdown, cls);
-  log.info(`Selected Class: ${cls}`);
-
-  // Let the portal settle after class selection before touching the checkbox
-  await page.waitForTimeout(400);
-
-  // Ensure "Show Only Due Student" checkbox is in the correct state per config
-  try {
-    const dueCheckbox = page.locator('input[type="checkbox"]').first();
-    const wantChecked = CONFIG.filters.dueStudentsOnly;
-
-    // Set + verify + retry (portal may reset checkbox asynchronously after filter changes)
-    for (let attempt = 0; attempt < 3; attempt++) {
-      if (wantChecked) {
-        await dueCheckbox.check({ timeout: 3000 });
-      } else {
-        await dueCheckbox.uncheck({ timeout: 3000 });
-      }
-      const actual = await dueCheckbox.isChecked();
-      if (actual === wantChecked) break;
-      log.warn(`Due-student checkbox reset by portal (attempt ${attempt + 1}/3), retrying...`);
-      await page.waitForTimeout(500);
-    }
-    log.info(`Due-student filter ${wantChecked ? 'enabled' : 'disabled'}.`);
-  } catch (err) {
-    log.warn(`Could not toggle due-student filter: ${(err as Error).message}`);
-  }
-
-  // Wait for button's click handler to be bound, then click
-  await page.waitForTimeout(1000);
-
-  const beforeClickCount = await page.evaluate(() =>
-    document.querySelectorAll('tbody tr').length
-  );
-
-  // Use Playwright's standard click (with actionability checks)
-  const getReportBtn = page.getByRole('button', { name: /get report/i });
-  await getReportBtn.click();
-  log.info('Standard click on Get Report button.');
-
-  // Three-phase table refresh detection:
-  //   Phase 1 – wait for old data to clear (row count drops OR content changes for small classes)
-  //   Phase 2 – wait for new data to load (row count rises above cleared value)
-  //            For small classes where new count equals cleared count, wait 1s then proceed
-  //   Phase 3 – wait for new data to stabilize (same count for 2 consecutive polls)
-  try {
-    await page.waitForFunction(
-      (beforeCount: number) => {
-        // Reset state machine when a new combo starts
-        if ((window as any).__arSession !== beforeCount) {
-          (window as any).__arSession = beforeCount;
-          (window as any).__arState = 'decrease';
-          (window as any).__arPhase2Start = 0;
-          (window as any).__arFirstCellContent = undefined;
-          (window as any).__arStablePolls = 0;
-        }
-        const state = (window as any).__arState;
-        const count = document.querySelectorAll('tbody tr').length;
-
-        if (state === 'decrease') {
-          // Large previous class: wait for row count to drop
-          if (count < beforeCount) {
-            (window as any).__arClearedCount = count;
-            (window as any).__arState = 'increase';
-            (window as any).__arPhase2Start = Date.now();
-            return false;
-          }
-          // Small previous class (<=3 rows): wait for first cell content to change
-          if (beforeCount <= 3) {
-            const firstRow = document.querySelector('tbody tr');
-            const firstCell = firstRow?.querySelector('td');
-            const currentContent = firstCell?.textContent?.trim() ?? '';
-            if ((window as any).__arFirstCellContent === undefined) {
-              (window as any).__arFirstCellContent = currentContent;
-              return false;
-            }
-            if (currentContent !== (window as any).__arFirstCellContent && currentContent !== '') {
-              (window as any).__arClearedCount = count;
-              (window as any).__arState = 'increase';
-              (window as any).__arPhase2Start = Date.now();
-              return false;
-            }
-          }
-          return false;
-        }
-
-        if (state === 'increase') {
-          if (count > (window as any).__arClearedCount) {
-            (window as any).__arState = 'stable';
-            (window as any).__arStableCount = count;
-            return false;
-          }
-          // For genuinely small classes: if the PREVIOUS class was also small
-          // (beforeCount <= 2) AND the cleared count is very small (<=2) AND 3s
-          // have passed, assume the cleared state IS the new data.
-          // Only fire when both sides are small to avoid false positives when
-          // transitioning from a large class (e.g. 22 rows) to a large class.
-          if (beforeCount <= 2 && (window as any).__arClearedCount <= 2 &&
-              Date.now() - (window as any).__arPhase2Start >= 3000) {
-            (window as any).__arState = 'stable';
-            (window as any).__arStableCount = count;
-            return false;
-          }
-          return false;
-        }
-
-        if (state === 'stable') {
-          if (count === (window as any).__arStableCount && count > 0) {
-            (window as any).__arStablePolls = ((window as any).__arStablePolls || 0) + 1;
-            if ((window as any).__arStablePolls >= 8) {
-              (window as any).__arState = 'decrease';
-              return true;
-            }
-            return false;
-          }
-          (window as any).__arStableCount = count;
-          (window as any).__arStablePolls = 0;
-          return false;
-        }
-
-        return false;
-      },
-      beforeClickCount,
-      { timeout: 15000, polling: 500 }
-    );
-    log.info('Fresh table data detected after report generation.');
-  } catch {
-    log.warn('Table refresh detection timed out. Proceeding with available data...');
-  }
-
-  await verifyFiltersAfterLoad(page, year, shift, cls);
-
-  // Extract table
-  const rawData = await extractPaginatedTable(page, {
-    tableSelector: SELECTORS.finance.dataTable,
+  // ── 1. Extract XSRF token from cookies ────────────────────────────────
+  const xsrfToken = await page.evaluate(() => {
+    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
   });
 
-  log.info(`Extracted ${rawData.length} raw records for combo Year="${year}" Shift="${shift}" Class="${cls}"`);
+  // ── 2. Make direct API call ───────────────────────────────────────────
+  const monthList = [
+    { id: 8, name: 'Sports Fee', type: 'general', check_status: true },
+    { id: 15, name: 'Session Fee', type: 'general', check_status: true },
+    { id: 31, name: 'Admission Fee', type: 'general', check_status: true },
+    { id: 52, name: 'TC Fee', type: 'general', check_status: true },
+    { id: 67, name: 'Testimonial Fee', type: 'general', check_status: true },
+    { id: 218, name: 'Summer Assessment Test', type: 'general', check_status: true },
+    { id: 219, name: 'Winter Assessment Test', type: 'general', check_status: true },
+    { id: 221, name: 'Outing Fee', type: 'general', check_status: true },
+    { id: 222, name: 'Convocation Fee', type: 'general', check_status: true },
+    { id: 223, name: 'Program Fee', type: 'general', check_status: true },
+    { id: 224, name: 'Logo, ID Card & Name Plate Fee', type: 'general', check_status: true },
+    { id: 149, name: 'Others Fee', type: 'general', check_status: true },
+    { id: 241, name: 'Books & Others Fee', type: 'general', check_status: true },
+    { id: 6, name: 'Stationary Fee', type: 'general', check_status: true },
+    { id: 425, name: 'Spring Summative Assessment Fee', type: 'general', check_status: true },
+    { id: 426, name: 'Summer Summative Assessment Fee', type: 'general', check_status: true },
+    { id: 427, name: 'Autumn Summative Assessment Fee', type: 'general', check_status: true },
+    { id: 1, name: 'January', type: 'monthly', check_status: true },
+    { id: 2, name: 'February', type: 'monthly', check_status: true },
+    { id: 3, name: 'March', type: 'monthly', check_status: true },
+    { id: 4, name: 'April', type: 'monthly', check_status: true },
+    { id: 5, name: 'May', type: 'monthly', check_status: true },
+    { id: 6, name: 'June', type: 'monthly', check_status: true },
+    { id: 7, name: 'July', type: 'monthly', check_status: true },
+    { id: 8, name: 'August', type: 'monthly', check_status: true },
+    { id: 9, name: 'September', type: 'monthly', check_status: true },
+    { id: 10, name: 'October', type: 'monthly', check_status: true },
+    { id: 11, name: 'November', type: 'monthly', check_status: true },
+    { id: 12, name: 'December', type: 'monthly', check_status: true },
+  ];
 
-  // Tag every record with its source combo so we can identify them in the merged output
-  return rawData.map((r) => ({
-    _year: year,
-    _shift: shift,
-    _class: cls,
-    ...r,
-  }));
+  const responseBody: ApiResponse = await page.evaluate(async (args) => {
+    const resp = await fetch(args.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-XSRF-TOKEN': args.xsrfToken,
+      },
+      body: JSON.stringify({
+        academic_version_id: 2,
+        academic_year_id: Number(args.yearId),
+        academic_class_id: Number(args.classId),
+        academic_department_id: null,
+        academic_section_id: null,
+        academic_shift_id: Number(args.shiftId),
+        academic_class_group_id: null,
+        academic_class_group_present: false,
+        academic_session_id: null,
+        academic_student_category_id: null,
+        academic_student_type_id: null,
+        academic_student_admission_type_id: null,
+        student_wise_status: 1,
+        head_type: 'generandmonthly',
+        monthList: args.monthList,
+        active_status: 'Active',
+        academic_residence_id: null,
+        monthlyHeadShow: false,
+        omit_background_color_status: false,
+      }),
+    });
+    return resp.json();
+  }, {
+    url: `${CONFIG.baseUrl}/site/fee/student-payment-report/get-site-class-student-subhead-base-fee-collect-list`,
+    yearId,
+    shiftId,
+    classId,
+    xsrfToken,
+    monthList,
+  });
+
+  const studentCount = Array.isArray(responseBody[0]) ? responseBody[0].length : 0;
+  log.info(`API returned ${studentCount} students`);
+
+  // Debug: log first student if available
+  if (studentCount > 0) {
+    const first = responseBody[0][0];
+    log.info(`First student: ${first.std_name} (${first.total_due_amount} due)`);
+  } else {
+    log.info(`Response structure: isArray=${Array.isArray(responseBody)}, length=${responseBody?.length}`);
+    if (responseBody && typeof responseBody === 'object' && !Array.isArray(responseBody)) {
+      log.info(`Error response: ${JSON.stringify(responseBody)}`);
+    }
+  }
+
+  // ── 3. Flatten into per-student records ───────────────────────────────
+  const flatRecords = flattenAccountsApiResponse(responseBody, year, shift, cls);
+  log.info(`Flattened into ${flatRecords.length} records`);
+
+  return flatRecords;
 }
 
 /**
@@ -352,15 +316,24 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
     // ── 2. Build combos (from config or discover from dropdowns) ───────
     const shiftDropdown = page.locator(SELECTORS.finance.shiftDropdown);
     const classDropdown = page.locator(SELECTORS.finance.classDropdown);
-    const combos: Array<{ year: string; shift: string; cls: string }> = [];
+    const combos: Array<{ year: string; shift: string; cls: string; yearId: string; shiftId: string; classId: string }> = [];
     const needDiscovery = CONFIG.filters.shifts.length === 0 || CONFIG.filters.classes.length === 0;
 
     if (needDiscovery) {
       // Discover available shifts & classes from the portal dropdowns
       for (const year of CONFIG.filters.years) {
-        let shifts: string[];
+        // Select year to populate shift dropdown and read its ID
         try {
           await selectOptionHelper(page, yearDropdown, year);
+        } catch (err) {
+          log.warn(`Year selection failed for "${year}": ${(err as Error).message}. Skipping.`);
+          continue;
+        }
+        const yearIdMap = await readDropdownIdMap(yearDropdown, 4, 1000, 2);
+        const yearId = yearIdMap.get(year) || '';
+
+        let shifts: string[];
+        try {
           shifts = CONFIG.filters.shifts.length > 0
             ? CONFIG.filters.shifts
             : await readDropdownOptions(shiftDropdown, 4, 1000, 2);
@@ -368,7 +341,11 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
           log.warn(`Year discovery failed for "${year}": ${(err as Error).message}. Skipping.`);
           continue;
         }
+
+        const shiftIdMap = await readDropdownIdMap(shiftDropdown, 4, 1000, 2);
+
         for (const shift of shifts) {
+          const shiftId = shiftIdMap.get(shift) || '';
           try {
             await selectOptionHelper(page, shiftDropdown, shift);
           } catch (err) {
@@ -376,6 +353,7 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
             continue;
           }
           await page.waitForTimeout(1000); // class dropdown depends on shift — give it extra time
+
           let classes: string[];
           try {
             classes = CONFIG.filters.classes.length > 0
@@ -385,17 +363,66 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
             log.warn(`Class discovery for year="${year}" shift="${shift}" failed: ${(err as Error).message}. Skipping shift.`);
             continue;
           }
+
+          const classIdMap = await readDropdownIdMap(classDropdown, 4, 1000, 2);
+
           for (const cls of classes) {
-            combos.push({ year, shift, cls });
+            // Case-insensitive lookup: try exact first, then lowercase
+            let classId = classIdMap.get(cls) || '';
+            if (!classId) {
+              const lower = cls.toLowerCase();
+              for (const [text, value] of classIdMap) {
+                if (text.toLowerCase() === lower) { classId = value; break; }
+              }
+            }
+            combos.push({ year, shift, cls, yearId, shiftId, classId });
           }
         }
       }
     } else {
-      // Fast path: Cartesian product from config
       for (const year of CONFIG.filters.years) {
+        try {
+          await selectOptionHelper(page, yearDropdown, year);
+        } catch (err) {
+          log.warn(`Year selection failed for "${year}": ${(err as Error).message}. Skipping.`);
+          continue;
+        }
+        const yearIdMap = await readDropdownIdMap(yearDropdown, 4, 1000, 2);
+        const yearId = yearIdMap.get(year) || '';
+
         for (const shift of CONFIG.filters.shifts) {
+          try {
+            await selectOptionHelper(page, shiftDropdown, shift);
+          } catch (err) {
+            log.warn(`Shift "${shift}" selection failed: ${(err as Error).message}. Skipping.`);
+            continue;
+          }
+          await page.waitForTimeout(1000);
+          const shiftIdMap = await readDropdownIdMap(shiftDropdown, 4, 1000, 2);
+          const shiftId = shiftIdMap.get(shift) || '';
+
+          // Wait for class dropdown to populate after shift selection
+          await page.waitForTimeout(1000);
+
+          // Debug: check raw class dropdown options
+          const rawClassOpts = await classDropdown.evaluate((select: HTMLSelectElement) =>
+            Array.from(select.options).map(o => ({ text: o.text.trim(), value: o.value }))
+          );
+          console.error(`[DEBUG] Class dropdown raw options (${rawClassOpts.length}): ${rawClassOpts.map(o => `"${o.text}"→"${o.value}"`).join(', ')}`);
+
+          const classIdMap = await readDropdownIdMap(classDropdown, 4, 1000, 2);
+          log.info(`Class ID map: ${classIdMap.size} options for shift "${shift}"`);
+
           for (const cls of CONFIG.filters.classes) {
-            combos.push({ year, shift, cls });
+            // Case-insensitive lookup: try exact first, then lowercase
+            let classId = classIdMap.get(cls) || '';
+            if (!classId) {
+              const lower = cls.toLowerCase();
+              for (const [text, value] of classIdMap) {
+                if (text.toLowerCase() === lower) { classId = value; break; }
+              }
+            }
+            combos.push({ year, shift, cls, yearId, shiftId, classId });
           }
         }
       }
@@ -407,20 +434,28 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
       `Classes=[${CONFIG.filters.classes.length ? CONFIG.filters.classes.join(', ') : 'discovered'}]`);
 
     // ── 3. Loop over every combo ──────────────────────────────────────────
+    const failedCombos: Array<{ year: string; shift: string; cls: string; error: string }> = [];
+    const startTime = Date.now();
+
     for (let i = 0; i < combos.length; i++) {
-      const { year, shift, cls } = combos[i];
-      log.step(`Combo ${i + 1}/${combos.length}: Year="${year}" | Shift="${shift}" | Class="${cls}"`);
+      const combo = combos[i];
+      log.step(`Combo ${i + 1}/${combos.length}: Year="${combo.year}" | Shift="${combo.shift}" | Class="${combo.cls}"`);
 
       try {
-        const comboRaw = await extractCombo(page, year, shift, cls);
+        const comboRaw = await extractCombo(page, combo.yearId, combo.shiftId, combo.classId, combo.year, combo.shift, combo.cls);
         allRaw.push(...comboRaw);
         log.info(`Combo ${i + 1} done. ${comboRaw.length} records collected.`);
       } catch (err) {
+        failedCombos.push({ year: combo.year, shift: combo.shift, cls: combo.cls, error: (err as Error).message });
         log.warn(`Combo ${i + 1} failed: ${(err as Error).message}. Skipping and continuing.`);
       }
     }
 
+    const endTime = Date.now();
+    const durationMs = endTime - startTime;
+
     log.info(`Total raw records across all combos: ${allRaw.length}`);
+    log.info(`Combos: ${combos.length - failedCombos.length} succeeded, ${failedCombos.length} failed`);
 
     // ── 4. Save merged raw JSON ───────────────────────────────────────────
     writeJsonOutput('accounts_receivable_raw', allRaw);
@@ -431,28 +466,34 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
       : allRaw;
     log.info(`Collected ${enrichedData.length} student records (${CONFIG.filters.dueStudentsOnly ? 'due students only' : 'all students'}).`);
 
-    // ── 6. Save enriched data ─────────────────────────────────────────────
+    // ── 6. Write run manifest ──────────────────────────────────────────────
+    writeRunManifest({
+      totalCombos: combos.length,
+      successfulCombos: combos.length - failedCombos.length,
+      failedCombos,
+      totalRawRecords: allRaw.length,
+      totalDueRecords: enrichedData.length,
+      startTime: new Date(startTime).toISOString(),
+      endTime: new Date(endTime).toISOString(),
+      durationMs,
+    });
+
+    // ── 7. Save enriched data ─────────────────────────────────────────────
     writeJsonOutput('accounts_receivable_dues_enriched', enrichedData);
 
-    // ── 7. Write unified Excel report ─────────────────────────────────────
+    // ── 8. Write unified Excel report ─────────────────────────────────────
     log.step('Writing final XLSX Excel spreadsheet report');
     const xlsxPath = await writeXlsxOutput(enrichedData, {
       years:   CONFIG.filters.years,
       shifts:  CONFIG.filters.shifts,
       classes: CONFIG.filters.classes,
+      failedCombos,
     });
 
     log.info(`Accounts receivable dues report generation completed: ${xlsxPath}`);
 
     return { rawCount: allRaw.length, dueCount: enrichedData.length };
   } catch (err) {
-    if (err instanceof PartialExtractionError) {
-      const partialData = err.partialResults;
-      if (partialData && partialData.length > 0) {
-        log.warn(`Saving ${partialData.length} partial records before failure.`);
-        writeJsonOutput('accounts_receivable_partial', partialData);
-      }
-    }
     throw new Error(`extractAccountsReceivable failed: ${(err as Error).message}`, { cause: err as Error });
   }
 }
