@@ -10,6 +10,7 @@ import { extractAccountsReceivable, printAccountsRunSummary } from './extractors
 import { writeMetrics } from './utils/metricsCollector';
 import { generateHtmlDashboard } from './reporters/htmlDashboard';
 import { generateWhatsAppDashboard } from './reporters/whatsappReporter';
+import { sendTelegramSummary } from './reporters/telegramNotifier';
 import { BrowserContext, Page } from '@playwright/test';
 
 // Setup process-level error listeners to prevent silent crashes (ERR-18)
@@ -30,6 +31,7 @@ async function main(): Promise<void> {
   log.info('='.repeat(60));
   log.info('Starting School Portal Automation Suite');
   log.info('='.repeat(60));
+  const runStartTime = Date.now();
 
   let browser: BrowserContext | null = null;
   let page: Page | null = null;
@@ -103,6 +105,16 @@ async function main(): Promise<void> {
       } catch (waErr) {
         log.error('Failed to generate WhatsApp dashboard:', waErr);
       }
+    }
+
+    // ── 7.1.2.11  Send Telegram notification (if enabled) ──────────────
+    if (process.env.ENABLE_TELEGRAM_NOTIFICATIONS === 'true' && arCounts) {
+      const totalMs = Date.now() - runStartTime;
+      await sendTelegramSummary({
+        durationMs: totalMs,
+        rawCount: arCounts.rawCount,
+        dueCount: arCounts.dueCount,
+      });
     }
   } catch (err) {
     hasFailed = true;
