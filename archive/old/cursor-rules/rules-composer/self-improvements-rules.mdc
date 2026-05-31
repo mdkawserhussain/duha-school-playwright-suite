@@ -1,0 +1,427 @@
+---
+description: Guidelines for continuously improving Cursor rules based on emerging code patterns and best practices
+globs: **/*
+alwaysApply: true
+---
+
+# Self-Improvements Rules - Duha International School
+
+## RULE IMPROVEMENT TRIGGERS
+
+### When to Add New Rules
+
+**MUST** add new rules when:
+- A new code pattern is used in 3+ files
+- Common bugs could be prevented by a rule
+- Code reviews repeatedly mention the same feedback
+- New security or performance patterns emerge
+- New libraries or tools are consistently used
+- Emerging best practices in the codebase are identified
+
+### When to Modify Existing Rules
+
+**MUST** modify existing rules when:
+- Better examples exist in the codebase
+- Additional edge cases are discovered
+- Related rules have been updated
+- Implementation details have changed
+- Patterns have evolved
+
+### When to Deprecate Rules
+
+**MUST** deprecate rules when:
+- Patterns are no longer used
+- Libraries are removed
+- Better alternatives exist
+- Breaking changes require new approaches
+
+---
+
+## ANALYSIS PROCESS
+
+### Pattern Recognition
+
+**MUST** compare new code with existing rules:
+- Identify patterns that should be standardized
+- Look for repeated implementations
+- Check for consistency across files
+- Monitor for deviations from established patterns
+
+### Code Review Monitoring
+
+**MUST** monitor for:
+- Repeated similar implementations across files
+- Common error patterns that could be prevented
+- References to external documentation
+- Consistent error handling patterns
+- Test patterns and coverage
+
+### Example Pattern Recognition
+
+If you see repeated patterns like:
+
+```php
+// Pattern appears in 3+ files
+const data = await prisma.user.findMany({
+    select: { id: true, email: true },
+    where: { status: 'ACTIVE' }
+});
+```
+
+**MUST** consider adding to rules:
+- Standard select fields
+- Common where conditions
+- Performance optimization patterns
+
+---
+
+## RULE UPDATES
+
+### Adding New Rules
+
+**MUST** follow this process:
+
+1. **Identify the Pattern**
+   - Document where the pattern appears
+   - Note why it's important
+   - Gather examples from codebase
+
+2. **Write the Rule**
+   - Use strict language (MUST, NEVER, ALWAYS)
+   - Include code examples (good and bad)
+   - Reference actual files when possible
+   - Explain the reasoning
+
+3. **Test the Rule**
+   - Verify it applies correctly
+   - Check for false positives
+   - Ensure it's actionable
+
+4. **Update Documentation**
+   - Add to appropriate rule file
+   - Update change log
+   - Cross-reference related rules
+
+### Modifying Existing Rules
+
+**MUST** follow this process:
+
+1. **Identify What Changed**
+   - What pattern evolved?
+   - What new information exists?
+   - What edge cases were discovered?
+
+2. **Update the Rule**
+   - Modify existing content
+   - Add new examples
+   - Clarify ambiguous language
+   - Remove outdated information
+
+3. **Maintain Consistency**
+   - Update related rules
+   - Check for conflicts
+   - Verify examples still work
+
+### Deprecating Rules
+
+**MUST** follow this process:
+
+1. **Mark as Deprecated**
+   - Add deprecation notice
+   - Explain why it's deprecated
+   - Provide migration path
+
+2. **Update References**
+   - Remove from active rules
+   - Update cross-references
+   - Document breaking changes
+
+3. **Remove After Period**
+   - Keep deprecated rules for 1-2 versions
+   - Remove after migration period
+   - Update documentation
+
+---
+
+## RULE QUALITY CHECKS
+
+### Rule Requirements
+
+**MUST** ensure rules are:
+- **Actionable**: Clear instructions on what to do
+- **Specific**: No ambiguity about requirements
+- **Examples**: Include good and bad examples
+- **Up-to-date**: References are current
+- **Consistent**: Patterns are consistently enforced
+
+### Example Quality
+
+**MUST** ensure examples:
+- Come from actual codebase when possible
+- Show both correct and incorrect patterns
+- Include context and explanation
+- Are production-ready
+- Match current codebase style
+
+### Reference Quality
+
+**MUST** ensure references:
+- Are up to date
+- Link to relevant documentation
+- Point to actual files when possible
+- Include version numbers
+- Are accessible
+
+---
+
+## CONTINUOUS IMPROVEMENT
+
+### Monitoring Code Reviews
+
+**MUST** monitor:
+- Code review comments for patterns
+- Common development questions
+- Repeated feedback points
+- Areas of confusion
+
+### Tracking Questions
+
+**MUST** track:
+- Frequently asked questions
+- Common misunderstandings
+- Areas needing clarification
+- Missing documentation
+
+### Updating After Refactors
+
+**MUST** update rules after:
+- Major refactors
+- Architecture changes
+- Library updates
+- Pattern migrations
+
+### Documentation Updates
+
+**MUST** keep documentation:
+- Synchronized with code
+- Updated with examples
+- Cross-referenced properly
+- Free of broken links
+
+---
+
+## RULE DEPRECATION
+
+### Deprecation Process
+
+**MUST** follow this process:
+
+1. **Mark as Deprecated**
+   ```markdown
+   > **DEPRECATED**: This pattern is no longer recommended.
+   > Use [new pattern] instead.
+   > Migration guide: [link]
+   ```
+
+2. **Document Migration**
+   - Explain why deprecated
+   - Show migration path
+   - Provide examples
+   - Set removal date
+
+3. **Update References**
+   - Remove from active sections
+   - Update cross-references
+   - Notify in change log
+
+4. **Remove After Period**
+   - Keep for 1-2 versions
+   - Remove after migration
+   - Update all references
+
+---
+
+## DOCUMENTATION UPDATES
+
+### Keeping Examples Current
+
+**MUST**:
+- Update examples when code changes
+- Remove outdated examples
+- Add new examples from codebase
+- Verify examples still work
+
+### Updating External References
+
+**MUST**:
+- Check links are still valid
+- Update version numbers
+- Verify documentation exists
+- Update when libraries change
+
+### Maintaining Cross-References
+
+**MUST**:
+- Keep links between related rules
+- Update when rules change
+- Remove broken references
+- Add new cross-references
+
+### Documenting Breaking Changes
+
+**MUST**:
+- Document in change log
+- Explain impact
+- Provide migration guide
+- Set effective date
+
+---
+
+## CHANGE LOG
+
+### Change Log Format
+
+**MUST** maintain change log in each rule file:
+
+```markdown
+## CHANGE LOG
+
+### 2025-11-18 - Version 1.0.0
+- Initial rule creation
+- Added core patterns
+- Documented existing patterns
+
+### 2025-11-20 - Version 1.1.0
+- Added new Filament pattern
+- Updated cache clearing rules
+- Fixed example code
+```
+
+### Change Log Requirements
+
+**MUST** include:
+- Date of change
+- Version number
+- What changed
+- Why it changed
+- Migration notes (if breaking)
+
+---
+
+## RULE ENFORCEMENT
+
+### Consistency Checks
+
+**MUST** verify:
+- Rules are consistently applied
+- No conflicting rules exist
+- Examples match current codebase
+- Patterns are enforced
+
+### Pattern Validation
+
+**MUST** validate:
+- Patterns match actual usage
+- Rules prevent common errors
+- Examples are correct
+- Guidelines are clear
+
+### Regular Reviews
+
+**MUST** conduct regular reviews:
+- Monthly pattern analysis
+- Quarterly rule updates
+- Annual comprehensive review
+- Ad-hoc updates as needed
+
+---
+
+## FEEDBACK LOOP
+
+### Collecting Feedback
+
+**MUST** collect:
+- Developer questions
+- Code review comments
+- Common errors
+- Pattern deviations
+
+### Processing Feedback
+
+**MUST** process:
+- Identify patterns in feedback
+- Determine if rule needed
+- Prioritize rule updates
+- Plan implementation
+
+### Implementing Changes
+
+**MUST** implement:
+- Write/update rules
+- Test rule application
+- Update documentation
+- Communicate changes
+
+---
+
+## BEST PRACTICES
+
+### Rule Writing
+
+**MUST**:
+- Use strict language (MUST, NEVER, ALWAYS)
+- Include examples (good and bad)
+- Explain reasoning
+- Reference actual code
+- Keep rules focused
+
+### Rule Maintenance
+
+**MUST**:
+- Review regularly
+- Update promptly
+- Remove outdated content
+- Keep examples current
+- Maintain consistency
+
+### Rule Organization
+
+**MUST**:
+- Group related rules
+- Use clear headings
+- Cross-reference properly
+- Maintain table of contents
+- Keep files focused
+
+---
+
+## AUTOMATED CHECKS
+
+### Pattern Detection
+
+**SHOULD** use tools to:
+- Detect repeated patterns
+- Identify rule violations
+- Find outdated examples
+- Check for consistency
+
+### Code Analysis
+
+**SHOULD** analyze:
+- Code patterns
+- Common errors
+- Performance issues
+- Security concerns
+
+### Documentation Checks
+
+**SHOULD** verify:
+- Links are valid
+- Examples work
+- References exist
+- Version numbers current
+
+---
+
+**Last Updated**: 2025-11-18
+**Version**: 1.0.0

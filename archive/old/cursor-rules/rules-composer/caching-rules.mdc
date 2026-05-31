@@ -1,0 +1,415 @@
+---
+description: Caching strategy, cache keys, cache clearing, and performance optimization for Duha International School
+globs: app/**/*.php
+alwaysApply: true
+---
+
+# Caching Rules - Duha International School
+
+## CACHING STRATEGY & KEYS (EXACT — NEVER CHANGE)
+
+### Cache Keys (Sacred - Must Not Change)
+
+**MUST** use these exact cache keys:
+
+| Cache Key | Purpose | Cleared On | TTL |
+|-----------|---------|------------|-----|
+| `homepage_v2_data` | Entire homepage data | Any change to Page/Event/Notice/HeroSlide/HomePageSection/HomePageContent | 3600s (1 hour) |
+| `events_index_{hash}` | Events listing page | Event save/delete | 3600s (1 hour) |
+| `notices_index_{hash}` | Notices listing page | Notice save/delete | 3600s (1 hour) |
+| `site_settings` | Global site settings | Settings page save | 86400s (24 hours) |
+
+**MUST** generate hash for index caches based on filters:
+```php
+$hash = md5($category . $upcoming . $fromDate . $toDate . $request->get('page', 1));
+$cacheKey = 'events_index_' . $hash;
+```
+
+### Cache Clearing Requirements
+
+**MUST** clear cache in observers using `afterSave` and `afterDelete` hooks:
+
+```php
+// app/Observers/HomePageSectionObserver.php
+public function updated(HomePageSection $homePageSection): void
+{
+    $this->clearHomepageCache();
+}
+
+protected function clearHomepageCache(): void
+{
+    Cache::forget('homepage_v2_data');
+    
+    // Also clear tagged cache if supported
+    try {
+        Cache::tags(['homepage', 'homepage_sections'])->flush();
+    } catch (\Exception $e) {
+        // Tags not supported by cache driver, that's okay
+    }
+}
+```
+
+**MUST** clear cache in Filament resource hooks:
+
+```php
+// app/Filament/Resources/HomePageSections/Pages/EditHomePageSection.php
+protected function afterSave(): void
+{
+    Cache::forget('homepage_v2_data');
+}
+```
+
+---
+
+## CACHE DRIVERS
+
+### Production (Redis)
+- **MUST** use Redis for caching in production
+- **MUST** configure Redis in `.env`:
+```env
+CACHE_STORE=redis
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=null
+```
+
+### Development (Database/File)
+- **MUST** use database or file cache for development
+- **MUST** configure in `.env`:
+```env
+CACHE_STORE=database  # or 'file'
+```
+
+### Cache Driver Selection
+- **MUST** check cache driver support for tags
+- **MUST** handle exceptions when tags are not supported
+- **MUST** fallback gracefully when Redis is unavailable
+
+---
+
+## CACHE IMPLEMENTATION PATTERNS
+
+### Service-Level Caching
+
+**MUST** implement caching in services:
+
+```php
+// app/Services/EventService.php
+public function getFeaturedEvents(): Collection
+{
+    $cacheKey = 'events_featured';
+    $cacheTime = 3600; // 1 hour
+    
+    return Cache::remember($cacheKey, $cacheTime, function () {
+        return $this->eventRepository
+            ->getFeatured()
+            ->load('media'); // Eager load relationships
+    });
+}
+```
+
+### Controller-Level Caching
+
+**MUST** cache expensive queries in controllers:
+
+```php
+// app/Http/Controllers/HomeController.php
+public function index()
+{
+    $cacheKey = 'homepage_v2_data';
+    $cacheTime = 3600; // 1 hour
+
+    $data = cache()->remember($cacheKey, $cacheTime, function () {
+        // Eager load media relationships
+        $sections = HomePageSection::active()
+            ->ordered()
+            ->with('media')
+            ->get();
+        
+        return [
+            'hero' => $this->mapHeroBlock($heroSlides, $sectionsByKey),
+            'featuredEvents' => $this->eventService->getFeaturedEvents(),
+            // ... more data
+        ];
+    });
+
+    return response()
+        ->view('pages.home', $data)
+        ->header('Cache-Control', 'public, max-age=3600');
+}
+```
+
+### HTTP Cache Headers
+
+**MUST** set HTTP cache headers for public pages:
+
+```php
+return response()
+    ->view('pages.home', $data)
+    ->header('Cache-Control', 'public, max-age=3600')
+    ->header('ETag', md5(json_encode($data)));
+```
+
+---
+
+## CACHE INVALIDATION
+
+### Observer-Based Invalidation
+
+**MUST** clear cache in model observers:
+
+```php
+// app/Observers/EventObserver.php
+class EventObserver
+{
+    public function created(Event $event): void
+    {
+        $this->clearEventCaches();
+    }
+
+    public function updated(Event $event): void
+    {
+        $this->clearEventCaches();
+    }
+
+    public function deleted(Event $event): void
+    {
+        $this->clearEventCaches();
+    }
+
+    protected function clearEventCaches(): void
+    {
+        // Clear homepage cache (events are featured)
+        Cache::forget('homepage_v2_data');
+        
+        // Clear all event index caches (pattern-based)
+        // Note: This is expensive, consider using cache tags
+        $keys = Cache::getRedis()->keys('events_index_*');
+        foreach ($keys as $key) {
+            Cache::forget($key);
+        }
+    }
+}
+```
+
+### Filament Resource Hooks
+
+**MUST** clear cache in Filament resource lifecycle hooks:
+
+```php
+// app/Filament/Resources/Events/Pages/EditEvent.php
+protected function afterSave(): void
+{
+    Cache::forget('homepage_v2_data');
+    // Clear event-specific caches
+    $this->clearEventCaches();
+}
+
+protected function afterDelete(): void
+{
+    Cache::forget('homepage_v2_data');
+    $this->clearEventCaches();
+}
+```
+
+### Manual Cache Clearing
+
+**MUST** provide Artisan commands for manual cache clearing:
+
+```bash
+php artisan cache:clear              # Clear all cache
+php artisan config:clear              # Clear config cache
+php artisan route:clear              # Clear route cache
+php artisan view:clear                # Clear view cache
+```
+
+---
+
+## CACHE TAGS (WHEN SUPPORTED)
+
+### Tagged Cache Usage
+
+**MUST** use cache tags when Redis is available:
+
+```php
+// Store with tags
+Cache::tags(['homepage', 'homepage_sections'])
+    ->put('homepage_v2_data', $data, 3600);
+
+// Clear by tags
+Cache::tags(['homepage'])->flush();
+```
+
+**MUST** handle tag support gracefully:
+
+```php
+protected function clearHomepageCache(): void
+{
+    // Always clear main cache key
+    Cache::forget('homepage_v2_data');
+    
+    // Try to clear tagged cache if supported
+    try {
+        Cache::tags(['homepage', 'homepage_content'])->flush();
+    } catch (\Exception $e) {
+        // Tags not supported, that's okay
+        // Main cache key is already cleared
+    }
+}
+```
+
+---
+
+## CACHE WARMING
+
+### Pre-Warming Strategy
+
+**MUST** warm critical caches after deployment:
+
+```php
+// app/Console/Commands/WarmCache.php
+public function handle()
+{
+    // Warm homepage cache
+    Cache::remember('homepage_v2_data', 3600, function () {
+        return app(HomeController::class)->index()->getData();
+    });
+    
+    // Warm site settings
+    Cache::remember('site_settings', 86400, function () {
+        return SiteSettings::getSettings();
+    });
+}
+```
+
+---
+
+## PERFORMANCE OPTIMIZATION
+
+### Eager Loading
+
+**MUST** eager load relationships before caching:
+
+```php
+$sections = HomePageSection::active()
+    ->ordered()
+    ->with('media')  // Eager load media
+    ->get();
+```
+
+### Query Optimization
+
+**MUST** optimize queries before caching:
+
+```php
+// Use select() to limit columns
+$events = Event::select('id', 'title', 'slug', 'start_date')
+    ->where('is_featured', true)
+    ->get();
+```
+
+### Cache Size Management
+
+**MUST** monitor cache size:
+- **MUST** set appropriate TTL values
+- **MUST** clear old cache entries
+- **MUST** use Redis memory limits
+
+---
+
+## CACHE MONITORING
+
+### Cache Hit/Miss Tracking
+
+**MUST** monitor cache performance:
+- **MUST** log cache misses for critical paths
+- **MUST** track cache hit rates
+- **MUST** alert on cache failures
+
+### Redis Monitoring
+
+**MUST** monitor Redis:
+- **MUST** check Redis memory usage
+- **MUST** monitor Redis connections
+- **MUST** set up alerts for Redis failures
+
+---
+
+## CACHE KEY NAMING CONVENTIONS
+
+### Pattern
+- **MUST** use lowercase with underscores
+- **MUST** include resource name
+- **MUST** include action/type
+- **MUST** include identifier when needed
+
+### Examples
+```php
+'homepage_v2_data'                    // Homepage data
+'events_index_' . $hash              // Events listing with filters
+'events_featured'                    // Featured events
+'notices_index_' . $hash             // Notices listing
+'site_settings'                      // Site settings
+'staff_featured'                     // Featured staff
+```
+
+---
+
+## CACHE TESTING
+
+### Cache Testing Requirements
+
+**MUST** test cache behavior:
+- **MUST** test cache storage
+- **MUST** test cache retrieval
+- **MUST** test cache invalidation
+- **MUST** test cache expiration
+
+### Test Examples
+
+```php
+// tests/Feature/CacheTest.php
+public function test_homepage_cache_is_cleared_on_section_update()
+{
+    // Warm cache
+    $this->get(route('home'));
+    $this->assertTrue(Cache::has('homepage_v2_data'));
+    
+    // Update section
+    $section = HomePageSection::first();
+    $section->update(['title' => 'New Title']);
+    
+    // Cache should be cleared
+    $this->assertFalse(Cache::has('homepage_v2_data'));
+}
+```
+
+---
+
+## CACHE DEBUGGING
+
+### Debug Mode
+
+**MUST** provide cache debugging:
+- **MUST** log cache operations in development
+- **MUST** show cache status in debug toolbar
+- **MUST** provide cache inspection commands
+
+### Cache Inspection
+
+```php
+// Check if cache exists
+if (Cache::has('homepage_v2_data')) {
+    $data = Cache::get('homepage_v2_data');
+}
+
+// Get cache value or default
+$data = Cache::get('homepage_v2_data', function () {
+    return $this->buildHomepageData();
+});
+```
+
+---
+
+**Last Updated**: 2025-11-18
+**Version**: 1.0.0

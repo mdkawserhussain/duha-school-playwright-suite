@@ -1,0 +1,494 @@
+---
+description: Technical architecture, tech stack, project structure, and system design for Duha International School
+globs: **/*
+alwaysApply: true
+---
+
+# Architecture Rules - Duha International School
+
+## PROJECT OVERVIEW & GOALS
+
+### High-Level Overview
+Duha International School website is a modern, production-ready Laravel 12 application providing:
+- **Public Website**: Fast, responsive, mobile-first design with SEO optimization
+- **Admin Panel**: Filament-based content management system for non-technical staff
+- **Dynamic Content**: Events, notices, staff directory, admissions, careers
+- **Form Handling**: Contact forms, admission applications, career applications with file uploads
+- **Newsletter Integration**: Mailchimp integration for email marketing
+- **Media Management**: Image optimization, WebP conversion, S3-ready storage
+
+### Project Purpose
+To provide a comprehensive, user-friendly website solution for Duha International School that enables:
+- Easy content management for school administrators
+- Excellent user experience for students, parents, and visitors
+- High performance and SEO optimization
+- Scalable architecture for future growth
+
+### Goals & Success Criteria
+- **Performance**: Page load < 2 seconds, handle 1000 concurrent users
+- **SEO**: Full structured data, sitemap, meta tags
+- **Accessibility**: WCAG 2.1 AA compliance
+- **Maintainability**: Clean code, proper patterns, comprehensive documentation
+- **Security**: Secure file uploads, CSRF protection, input validation
+- **Scalability**: Redis caching, queue workers, S3 storage ready
+
+---
+
+## PROJECT SUMMARY
+
+The Duha International School website is a Laravel 12 application with Filament 4.2 admin panel. It uses a service-oriented architecture with clear separation of concerns: Controllers → Services → Repositories. The frontend uses Blade templates with Tailwind CSS 4.0 and Alpine.js exclusively. All images are automatically converted to WebP format and original files are deleted. The system uses Redis for caching in production with database/file fallback for development. Content is managed through Filament resources with role-based access control.
+
+---
+
+## TECHNICAL ARCHITECTURE
+
+### System Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Public Website                           │
+│  (Blade Templates + Tailwind CSS 4.0 + Alpine.js)          │
+└───────────────────────┬─────────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Laravel 12 Application                    │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │
+│  │ Controllers  │→ │   Services   │→ │ Repositories  │    │
+│  └──────────────┘  └──────────────┘  └──────────────┘    │
+│         │                  │                  │            │
+│         └──────────────────┼──────────────────┘            │
+│                            │                                │
+│                    ┌───────▼───────┐                        │
+│                    │ Eloquent ORM  │                        │
+│                    └───────┬───────┘                        │
+└────────────────────────────┼────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      Data Layer                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │
+│  │   MySQL 8.0  │  │    Redis     │  │  S3 Storage   │    │
+│  └──────────────┘  └──────────────┘  └──────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Filament Admin Panel                      │
+│  (Resources, Pages, Widgets, Role-Based Access)              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Backend Architecture
+- **Framework**: Laravel 12.0
+- **PHP**: 8.3+
+- **Pattern**: Service-Oriented Architecture (Controller → Service → Repository)
+- **ORM**: Eloquent
+- **Validation**: FormRequest classes
+- **Caching**: Redis (production), Database/File (development)
+- **Queue**: Laravel Horizon with Redis
+- **Media**: Spatie Media Library with WebP conversion
+
+### Frontend Architecture
+- **Templates**: Blade (server-side rendering)
+- **CSS**: Tailwind CSS 4.0 (mobile-first)
+- **JavaScript**: Alpine.js 3.4+ (ONLY - no Vue/React)
+- **Build Tool**: Vite 7.0
+- **Responsive**: Mobile-first approach
+- **Images**: WebP format with `<picture>` tag fallbacks
+
+### Deployment Architecture
+- **Web Server**: Nginx
+- **PHP**: PHP-FPM 8.3+
+- **Database**: MySQL 8.0+ / MariaDB 10.6+
+- **Cache**: Redis
+- **Storage**: Local (dev) / S3 (production)
+- **Queue Workers**: Supervisor/systemd
+- **Cron**: Laravel Scheduler
+
+### Request Lifecycle Flow
+
+```
+1. Request → Nginx
+2. Nginx → PHP-FPM
+3. Laravel Bootstrap
+4. Route Resolution
+5. Middleware Stack
+6. Controller → Service → Repository
+7. Database Query (with caching)
+8. Response Generation
+9. Blade Template Rendering
+10. Asset Compilation (Vite)
+11. Response → Nginx → Client
+```
+
+---
+
+## RECOMMENDED TECH STACK
+
+### Backend
+| Component | Package | Version | Notes |
+|-----------|---------|---------|-------|
+| Framework | laravel/framework | ^12.0 | MUST use Laravel 12 |
+| PHP | php | ^8.3 | MUST enforce PHP 8.3+ |
+| Admin Panel | filament/filament | ^4.2 | MUST use Filament v4 patterns |
+| Media Library | spatie/laravel-medialibrary | ^11.17 | MUST use for ALL file uploads |
+| Permissions | spatie/laravel-permission | ^6.23 | MUST use Spatie Permission |
+| Queue Dashboard | laravel/horizon | ^5.39 | MUST monitor queues with Horizon |
+| Search | laravel/scout | ^10.21 | Database driver + optional Meilisearch |
+| Image Processing | intervention/image | ^3.11 | For WebP conversion |
+| Newsletter | spatie/laravel-newsletter | ^5.3 | Mailchimp integration |
+| Sitemap | spatie/laravel-sitemap | ^7.3 | SEO sitemap generation |
+| Error Tracking | sentry/sentry-laravel | ^4.18 | Production error monitoring |
+
+### Frontend
+| Component | Package | Version | Notes |
+|-----------|---------|---------|-------|
+| CSS Framework | tailwindcss | ^4.1.17 | MUST use Tailwind 4 only |
+| JavaScript | alpinejs | ^3.4.2 | ONLY Alpine.js — NO Vue/React |
+| Build Tool | vite | ^7.0.7 | MUST compile assets with Vite |
+| Forms | @tailwindcss/forms | ^0.5.2 | Form styling |
+| Lightbox | lightbox2 | ^2.11.5 | Image gallery |
+
+### Database
+- **Primary**: MySQL 8.0+ / MariaDB 10.6+
+- **Optional**: PostgreSQL (supported but not primary)
+- **Cache**: Redis (required for production)
+- **Search**: Meilisearch (optional, for Scout)
+
+### DevOps Tools
+- **Container**: Docker / Docker Compose
+- **Process Manager**: Supervisor (for queue workers)
+- **Monitoring**: Laravel Horizon, Sentry
+- **Backup**: Custom scripts in `scripts/` directory
+
+---
+
+## PROJECT STRUCTURE
+
+### Folder Structure
+
+```
+duha-school/
+├── app/
+│   ├── Console/Commands/        # Artisan commands
+│   ├── Filament/               # Filament admin resources
+│   │   ├── Concerns/           # Shared Filament concerns
+│   │   ├── Pages/              # Custom Filament pages
+│   │   │   ├── HeroSliderManager.php
+│   │   │   ├── VisionMissionSection.php
+│   │   │   └── ...
+│   │   ├── Resources/          # CRUD resources
+│   │   │   ├── EventResource/
+│   │   │   ├── NoticeResource/
+│   │   │   ├── HomePageSections/
+│   │   │   └── ...
+│   │   └── Widgets/            # Dashboard widgets
+│   ├── Helpers/                # Helper classes
+│   │   └── SiteSettingsHelper.php
+│   ├── Http/
+│   │   ├── Controllers/        # Public & admin controllers
+│   │   ├── Middleware/         # Custom middleware
+│   │   └── Requests/           # Form request validation
+│   ├── Mail/                   # Mailable classes
+│   ├── Models/                 # Eloquent models
+│   ├── Observers/              # Model observers
+│   │   ├── MediaObserver.php
+│   │   ├── HomePageSectionObserver.php
+│   │   └── HomePageContentObserver.php
+│   ├── Providers/              # Service providers
+│   ├── Repositories/           # Data access layer
+│   ├── Services/               # Business logic layer
+│   │   ├── EventService.php
+│   │   ├── NoticeService.php
+│   │   └── StaffService.php
+│   ├── Traits/                 # Reusable traits
+│   │   └── HasWebPMedia.php
+│   └── View/                   # View composers
+├── database/
+│   ├── factories/              # Model factories
+│   ├── migrations/             # Database migrations
+│   └── seeders/               # Database seeders
+├── resources/
+│   ├── views/
+│   │   ├── components/         # Blade components
+│   │   │   ├── navbar.blade.php
+│   │   │   ├── header.blade.php
+│   │   │   └── homepage/
+│   │   │       └── hero-section.blade.php
+│   │   ├── emails/            # Email templates
+│   │   ├── feeds/             # RSS/Atom feeds
+│   │   ├── layouts/           # Layout templates
+│   │   └── pages/             # Page templates
+│   ├── css/                   # Tailwind CSS
+│   │   └── app.css
+│   └── js/                    # JavaScript
+│       └── app.js
+├── routes/
+│   ├── web.php                # Web routes
+│   └── auth.php               # Authentication routes (Breeze)
+├── .cursor/
+│   └── rules/                 # Cursor AI rules
+├── scripts/
+│   ├── setup.sh               # Initial setup script
+│   ├── deploy.sh              # Production deployment script
+│   └── backup.sh              # Database backup script
+└── config/                    # Configuration files
+```
+
+### Modular Separation
+- **Controllers**: Handle HTTP requests, delegate to services
+- **Services**: Business logic, orchestration
+- **Repositories**: Data access, query building
+- **Models**: Eloquent models with relationships
+- **Observers**: Side effects (cache clearing, media processing)
+- **FormRequests**: Validation rules
+- **Filament Resources**: Admin CRUD operations
+
+### Domain-Driven Grouping
+- **Homepage**: HomePageSection, HomePageContent models and Filament pages
+- **Content**: Event, Notice, Page models
+- **People**: Staff, User models
+- **Applications**: AdmissionApplication, CareerApplication models
+- **Settings**: SiteSettings model
+
+### Naming Conventions
+- **Controllers**: `{Resource}Controller` (e.g., `EventController`)
+- **Services**: `{Resource}Service` (e.g., `EventService`)
+- **Repositories**: `{Resource}Repository` (e.g., `EventRepository`)
+- **Models**: Singular PascalCase (e.g., `Event`, `HomePageSection`)
+- **Filament Resources**: `{Resource}Resource` (e.g., `EventResource`)
+- **Filament Pages**: Descriptive names (e.g., `HeroSliderManager`)
+- **Cache Keys**: `{resource}_{action}_{identifier}` (e.g., `homepage_v2_data`)
+
+---
+
+## CODING PATTERNS
+
+### Controller → Service → Repository Pattern
+
+**MUST** follow this pattern for all business logic:
+
+```php
+// Controller (app/Http/Controllers/EventController.php)
+public function index(Request $request)
+{
+    $events = $this->eventService->getFilteredEvents($request->all());
+    return view('pages.events.index', compact('events'));
+}
+
+// Service (app/Services/EventService.php)
+public function getFilteredEvents(array $filters): Collection
+{
+    return $this->eventRepository->getFiltered($filters);
+}
+
+// Repository (app/Repositories/EventRepository.php)
+public function getFiltered(array $filters): Collection
+{
+    $query = $this->model->newQuery();
+    // Apply filters
+    return $query->get();
+}
+```
+
+### FormRequest Validation
+
+**MUST** use FormRequest classes for validation:
+
+```php
+// app/Http/Requests/StoreEventRequest.php
+class StoreEventRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'unique:events,slug'],
+            'description' => ['required', 'string'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['nullable', 'date', 'after:start_date'],
+        ];
+    }
+}
+```
+
+### Caching Strategy
+
+**MUST** implement caching in services:
+
+```php
+public function getFeaturedEvents(): Collection
+{
+    $cacheKey = 'events_featured';
+    $cacheTime = 3600; // 1 hour
+    
+    return Cache::remember($cacheKey, $cacheTime, function () {
+        return $this->eventRepository->getFeatured();
+    });
+}
+```
+
+**MUST** clear cache in observers:
+
+```php
+// app/Observers/EventObserver.php
+public function updated(Event $event): void
+{
+    Cache::forget('events_featured');
+    Cache::forget('events_index_' . md5(...));
+}
+```
+
+### Queues/Jobs
+
+**MUST** use queues for heavy operations:
+
+```php
+// app/Jobs/ProcessImageConversion.php
+class ProcessImageConversion implements ShouldQueue
+{
+    public function handle(): void
+    {
+        // Heavy image processing
+    }
+}
+```
+
+### Policy/Permission Structure
+
+**MUST** use Spatie Permission for role-based access:
+
+```php
+// Roles: admin, editor, admissions_officer
+// Permissions: manage_events, manage_notices, manage_admissions
+
+if (auth()->user()->can('manage_events')) {
+    // Allow access
+}
+```
+
+---
+
+## REQUIRED PACKAGES
+
+### Composer Dependencies (Production)
+```json
+{
+    "php": "^8.3",
+    "filament/filament": "^4.2",
+    "intervention/image": "^3.11",
+    "laravel/framework": "^12.0",
+    "laravel/horizon": "^5.39",
+    "laravel/scout": "^10.21",
+    "sentry/sentry-laravel": "^4.18",
+    "spatie/laravel-medialibrary": "^11.17",
+    "spatie/laravel-newsletter": "^5.3",
+    "spatie/laravel-permission": "^6.23",
+    "spatie/laravel-sitemap": "^7.3"
+}
+```
+
+### NPM Dependencies (Development)
+```json
+{
+    "@tailwindcss/forms": "^0.5.2",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@tailwindcss/vite": "^4.1.17",
+    "alpinejs": "^3.4.2",
+    "autoprefixer": "^10.4.2",
+    "axios": "^1.11.0",
+    "concurrently": "^9.0.1",
+    "laravel-vite-plugin": "^2.0.0",
+    "lightbox2": "^2.11.5",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^4.1.17",
+    "vite": "^7.0.7"
+}
+```
+
+---
+
+## TOOLS & COMMANDS CHEAT SHEET
+
+### Composer Commands
+```bash
+composer install          # Install dependencies
+composer update           # Update dependencies
+composer require <package> # Add new package
+composer dump-autoload    # Regenerate autoloader
+```
+
+### NPM Commands
+```bash
+npm install              # Install dependencies
+npm run dev              # Start Vite dev server
+npm run build            # Build for production
+```
+
+### Artisan Commands
+```bash
+php artisan migrate              # Run migrations
+php artisan migrate:fresh --seed # Fresh migration with seeders
+php artisan cache:clear          # Clear application cache
+php artisan config:clear         # Clear config cache
+php artisan route:clear          # Clear route cache
+php artisan view:clear           # Clear view cache
+php artisan queue:work           # Process queue jobs
+php artisan horizon               # Start Horizon dashboard
+php artisan storage:link         # Create storage symlink
+php artisan scout:import "App\Models\Event" # Import to search index
+```
+
+### Filament Commands
+```bash
+php artisan filament:upgrade     # Upgrade Filament
+php artisan make:filament-resource ModelName # Create resource
+php artisan make:filament-page PageName     # Create page
+```
+
+---
+
+## SECURITY, USABILITY, SCALABILITY & MAINTAINABILITY
+
+### Security
+- **MUST** use FormRequest validation for all inputs
+- **MUST** use CSRF protection on all forms
+- **MUST** sanitize user input before display
+- **MUST** use parameterized queries (Eloquent)
+- **MUST** implement rate limiting on forms
+- **MUST** validate file uploads (type, size)
+- **MUST** use HTTPS in production
+- **MUST** implement role-based access control
+
+### Usability
+- **MUST** be mobile-first responsive
+- **MUST** follow WCAG 2.1 AA accessibility standards
+- **MUST** provide clear error messages
+- **MUST** implement loading states
+- **MUST** use semantic HTML
+- **MUST** provide keyboard navigation
+
+### Scalability
+- **MUST** use Redis for caching in production
+- **MUST** use queue workers for heavy operations
+- **MUST** implement database indexing
+- **MUST** use eager loading to prevent N+1 queries
+- **MUST** optimize images (WebP conversion)
+- **MUST** use CDN for static assets (production)
+- **MUST** implement pagination for large datasets
+
+### Maintainability
+- **MUST** follow PSR-12 coding standards
+- **MUST** use Laravel Pint for code formatting
+- **MUST** write comprehensive PHPDoc comments
+- **MUST** keep controllers thin
+- **MUST** extract business logic to services
+- **MUST** use dependency injection
+- **MUST** write tests for critical functionality
+- **MUST** update documentation when adding features
+
+---
+
+**Last Updated**: 2025-11-18
+**Version**: 1.0.0
