@@ -106,8 +106,8 @@ fn bootstrap_server(res_dir: &PathBuf, data_dir: &PathBuf) -> Result<PathBuf, St
 }
 
 fn start_server(server_dir: &PathBuf) {
-    match Command::new("node")
-        .arg("src/server/index.ts")
+    match Command::new("npx")
+        .args(["tsx", "src/server/index.ts"])
         .current_dir(server_dir)
         .spawn()
     {
