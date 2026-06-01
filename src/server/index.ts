@@ -8,14 +8,11 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'node:path';
-
-// Express 5 Router breaks with ESM `import` in tsx CJS mode.
-// Using require() for route imports to avoid this.
-const { dashboardRouter } = require('./routes/dashboard');
-const { runsRouter } = require('./routes/runs');
-const { duesRouter } = require('./routes/dues');
-const { controlRouter } = require('./routes/control');
-const { configRouter } = require('./routes/config');
+import { dashboardRouter } from './routes/dashboard';
+import { runsRouter } from './routes/runs';
+import { duesRouter } from './routes/dues';
+import { controlRouter } from './routes/control';
+import { configRouter } from './routes/config';
 
 const app = express();
 const PORT = parseInt(process.env.WEB_PORT || '3000', 10);
@@ -44,6 +41,6 @@ app.use((_req, res, next) => {
   res.sendFile(path.join(webDist, 'index.html'));
 });
 
-app.listen(PORT, '127.0.0.1', () => {
+const server = app.listen(PORT, '127.0.0.1', () => {
   console.log(`[server] Web UI running at http://localhost:${PORT}`);
 });
