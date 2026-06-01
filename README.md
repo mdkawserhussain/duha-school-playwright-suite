@@ -1,5 +1,7 @@
 # School Management Portal Automation Suite
 
+[![Build Desktop Apps](https://github.com/mdkawserhussain/duha-school-playwright-suite/actions/workflows/build.yml/badge.svg)](https://github.com/mdkawserhussain/duha-school-playwright-suite/actions/workflows/build.yml)
+
 A complete browser automation toolkit for extracting attendance and financial data from eduexpert24 school management portals. Features a CLI, web dashboard, desktop app, and automated scheduling.
 
 ## Quick Start
@@ -92,8 +94,12 @@ npm run tauri:build    # Build production binary + packages
 ```
 
 Output in `src-tauri/target/release/bundle/`:
-- `School Portal Scraper_1.0.0_amd64.deb` — Debian/Ubuntu
-- `School Portal Scraper-1.0.0-1.x86_64.rpm` — Fedora/RHEL
+- `bundle/msis/School Portal Scraper_1.0.0_x64Setup.msi` — Windows
+- `bundle/nsis/School Portal Scraper_1.0.0_x64-setup.exe` — Windows (NSIS)
+- `bundle/deb/School Portal Scraper_1.0.0_amd64.deb` — Debian/Ubuntu
+- `bundle/macos/School Portal Scraper.app` — macOS (universal)
+
+CI builds all three platforms automatically via GitHub Actions on push to `main` or tag `v*`.
 
 ## Nightly Scheduler
 
