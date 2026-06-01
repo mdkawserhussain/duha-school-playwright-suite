@@ -31,6 +31,13 @@
       "icons/icon.icns"
     ],
     "targets": ["deb", "msi", "nsis", "app"],
+    "resources": {
+      "../src/server/": "_up_/src/server/",
+      "../src/utils/historyDb.ts": "_up_/src/utils/historyDb.ts",
+      "../src/utils/logger.ts": "_up_/src/utils/logger.ts",
+      "../src/config.ts": "_up_/src/config.ts",
+      "server-package.json": "package.json"
+    },
     "linux": {
       "deb": {
         "depends": ["libwebkit2gtk-4.1-0", "libgtk-3-0"]
