@@ -26,3 +26,6 @@ test-results/
 .DS_Store
 Thumbs.db
 web/dist/
+
+# Cloned skill repos
+.skills/
