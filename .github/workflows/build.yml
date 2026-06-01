@@ -14,11 +14,11 @@ jobs:
       matrix:
         include:
           - platform: ubuntu-22.04
-            args: ''
+            args: '--bundles deb'
           - platform: windows-latest
-            args: '--target x86_64-pc-windows-msvc'
+            args: '--target x86_64-pc-windows-msvc --bundles msi,nsis'
           - platform: macos-latest
-            args: '--target aarch64-apple-darwin'
+            args: '--target aarch64-apple-darwin --bundles app'
 
     runs-on: ${{ matrix.platform }}
 
@@ -53,13 +53,11 @@ jobs:
         run: npm run web:build
 
       - name: Build Tauri app
-        uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx tauri build ${{ matrix.args }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'School Portal Scraper ${{ github.ref_name }}'
-          releaseBody: 'See assets for download.'
-          releaseDraft: false
-          prerelease: false
-          args: ${{ matrix.args }}
+          name: build-${{ matrix.platform }}
+          path: src-tauri/target/release/bundle/**/*
+          if-no-files-found: warn
