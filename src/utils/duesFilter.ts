@@ -33,7 +33,7 @@ export function isJunkRow(row: Record<string, string>): boolean {
   }
 
   // If all fields are empty or only one is non-empty, skip
-  const nonEmpValues = Object.values(row).filter((v) => v.trim() !== '');
+  const nonEmpValues = Object.values(row).filter((v) => String(v ?? '').trim() !== '');
   if (nonEmpValues.length <= 1) {
     return true;
   }
