@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { CONFIG } from '../config';
 import { log } from './logger';
 import { parseNumeric } from './duesFilter';
-import { MONTHS, computeMonthlyTotal, computeGrandTotal, groupByClass, computeGroupSummary } from './monthlyTotals';
+import { MONTHS, parseMonthlyCell } from './monthlyTotals';
 
 const EXCLUDED_COLUMNS = [
   'logo, id card & name plate fee',
@@ -75,10 +75,31 @@ function addGridlines(sheet: ExcelJS.Worksheet) {
 }
 
 /**
+ * Compute per-column sums for a group of rows.
+ */
+function computeColumnSums(rows: Record<string, any>[], columns: string[]): Record<string, number> {
+  const sums: Record<string, number> = {};
+  for (const col of columns) {
+    if (MONTHS.includes(col)) {
+      sums[col] = rows.reduce((sum, r) => sum + parseMonthlyCell(r[col]), 0);
+    } else if (col === 'Total Paid' || col === 'Total Due') {
+      const val = r[col] ?? 0;
+      sums[col] = rows.reduce((sum, r) => {
+        const v = r[col] ?? 0;
+        if (typeof v === 'number') return sum + v;
+        const s = String(v);
+        const num = parseFloat(s.replace(/,/g, ''));
+        return sum + (isNaN(num) ? 0 : num);
+      }, 0);
+    }
+  }
+  return sums;
+}
+
+/**
  * Generates an Excel spreadsheet containing selected student dues records.
- * Columns are driven by REPORT_COLUMNS env var (comma-separated substrings).
- * If REPORT_COLUMNS is empty, all original table columns are included.
- * Adds computed Total and Grand Total columns, plus class-level and overall summaries.
+ * Columns are driven by REPORT_COLUMNS env var.
+ * Adds per-column summary rows after each class group and at the bottom.
  */
 export async function writeXlsxOutput(
   data: Record<string, any>[],
@@ -112,7 +133,7 @@ export async function writeXlsxOutput(
     Object.keys(record).forEach((k) => allKeys.add(k));
   }
 
-  // Strip internal metadata; enriched keys will be appended explicitly
+  // Strip internal metadata
   allKeys.delete('profileHref');
   allKeys.delete('parentName');
   allKeys.delete('contactNumber');
@@ -134,14 +155,8 @@ export async function writeXlsxOutput(
     selectedKeys.unshift(slKey);
   }
 
-  // ── 3. Add computed columns ──────────────────────────────────────────────
-  const hasMonthly = selectedKeys.some(k => MONTHS.includes(k));
-  const finalKeys = [...selectedKeys];
-  if (hasMonthly) finalKeys.push('Total');
-  finalKeys.push('Grand Total');
-
-  // ── 4. Build ExcelJS column definitions ──────────────────────────────────
-  const colDefs: Partial<ExcelJS.Column>[] = finalKeys.map((key) => ({
+  // ── 3. Build ExcelJS column definitions (no computed columns) ─────────────
+  const colDefs: Partial<ExcelJS.Column>[] = selectedKeys.map((key) => ({
     header: DISPLAY_NAMES[key] ?? key,
     key,
     width: Math.max(15, (DISPLAY_NAMES[key] ?? key).length + 4),
@@ -149,24 +164,19 @@ export async function writeXlsxOutput(
 
   sheet.columns = colDefs as ExcelJS.Column[];
 
-  // ── 5. Map records, compute due amount for sorting ────────────────────────
+  // ── 4. Map records, compute due amount for sorting ────────────────────────
   const rows = data.map((record) => {
     const rowObj: Record<string, any> = {};
-
     for (const key of selectedKeys) {
       rowObj[key] = record[key] ?? '';
     }
-
-    if (hasMonthly) rowObj['Total'] = computeMonthlyTotal(record);
-    rowObj['Grand Total'] = computeGrandTotal(record);
-
     const dueAmount = dueColKey ? parseNumeric(record[dueColKey]) : 0;
     const cls = (record._class || '').toLowerCase();
     const shift = (record._shift || '').toLowerCase();
     return { rowObj, dueAmount, cls, shift };
   });
 
-  // ── 6. Sort by class (custom order), then shift, then descending due amount ──
+  // ── 5. Sort by class, then shift, then descending due amount ──────────────
   const CLASS_SORT_ORDER = [
     'pre play', 'play', 'nursery', 'kg', 'reception',
     'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
@@ -184,7 +194,7 @@ export async function writeXlsxOutput(
     return b.dueAmount - a.dueAmount;
   });
 
-  // ── 7. Group by class and add rows + class summaries ──────────────────────
+  // ── 6. Group by class and add rows + class summary rows ───────────────────
   const classGroups = new Map<string, typeof rows>();
   for (const item of rows) {
     const cls = item.rowObj._class || item.rowObj.Class || 'Unknown';
@@ -192,83 +202,73 @@ export async function writeXlsxOutput(
     classGroups.get(cls)!.push(item);
   }
 
-  // Track grand totals
-  const grandSummary: Record<string, number> = {};
-  for (const m of [...MONTHS, 'Total', 'Grand Total']) grandSummary[m] = 0;
+  const grandSums: Record<string, number> = {};
+  for (const key of selectedKeys) grandSums[key] = 0;
 
   for (const [className, classItems] of classGroups) {
-    // Add class rows
+    // Add all student rows for this class
     for (const item of classItems) {
       sheet.addRow(item.rowObj);
     }
 
-    // Class summary row
-    const summaryData = classItems.map(i => {
-      const flat: Record<string, any> = {};
-      for (const k of selectedKeys) flat[k] = i.rowObj[k];
-      flat._class = className;
-      return flat;
-    });
-    const classSummary = computeGroupSummary(summaryData);
-
+    // Class summary row — sum of each column for this class
     const summaryObj: Record<string, any> = {};
-    if (finalKeys[0]) summaryObj[finalKeys[0]] = `${className} Total`;
-    if (finalKeys[1]) summaryObj[finalKeys[1]] = `${classItems.length} students`;
-    for (const m of MONTHS) {
-      if (selectedKeys.includes(m)) summaryObj[m] = classSummary[m] || 0;
+    summaryObj[selectedKeys[0]] = `${className} Total`;
+    summaryObj[selectedKeys[1]] = `${classItems.length} students`;
+    for (const key of selectedKeys.slice(2)) {
+      if (MONTHS.includes(key) || key === 'Total Paid' || key === 'Total Due') {
+        summaryObj[key] = classItems.reduce((sum, item) => {
+          const val = item.rowObj[key] ?? 0;
+          if (typeof val === 'number') return sum + val;
+          if (MONTHS.includes(key)) return sum + parseMonthlyCell(val);
+          const s = String(val);
+          const num = parseFloat(s.replace(/,/g, ''));
+          return sum + (isNaN(num) ? 0 : num);
+        }, 0);
+      } else {
+        summaryObj[key] = '';
+      }
     }
-    if (hasMonthly) summaryObj['Total'] = classSummary['Total'] || 0;
-    summaryObj['Grand Total'] = classSummary['Grand Total'] || 0;
-
     const summaryRow = sheet.addRow(summaryObj);
     styleSummaryRow(summaryRow, true);
 
     // Accumulate grand totals
-    for (const m of [...MONTHS, 'Total', 'Grand Total']) {
-      grandSummary[m] += classSummary[m] || 0;
+    for (const key of selectedKeys) {
+      if (typeof summaryObj[key] === 'number') {
+        grandSums[key] += summaryObj[key];
+      }
     }
 
     // Spacer between classes
     sheet.addRow({});
   }
 
-  // ── 8. Overall grand summary ──────────────────────────────────────────────
+  // ── 7. Overall grand summary ──────────────────────────────────────────────
   const grandObj: Record<string, any> = {};
-  if (finalKeys[0]) grandObj[finalKeys[0]] = 'GRAND TOTAL';
-  if (finalKeys[1]) grandObj[finalKeys[1]] = `${rows.length} students`;
-  for (const m of MONTHS) {
-    if (selectedKeys.includes(m)) grandObj[m] = grandSummary[m] || 0;
+  grandObj[selectedKeys[0]] = 'GRAND TOTAL';
+  grandObj[selectedKeys[1]] = `${rows.length} students`;
+  for (const key of selectedKeys.slice(2)) {
+    grandObj[key] = grandSums[key] || '';
   }
-  if (hasMonthly) grandObj['Total'] = grandSummary['Total'] || 0;
-  grandObj['Grand Total'] = grandSummary['Grand Total'] || 0;
-
   const grandRow = sheet.addRow(grandObj);
   styleSummaryRow(grandRow, false);
 
-  // ── 9. Number formatting ──────────────────────────────────────────────────
-  for (const m of MONTHS) {
-    if (selectedKeys.includes(m) && finalKeys.includes(m)) {
-      sheet.getColumn(m).eachCell((cell, rowNumber) => {
+  // ── 8. Number formatting ──────────────────────────────────────────────────
+  for (const key of selectedKeys) {
+    if (MONTHS.includes(key) || key === 'Total Paid' || key === 'Total Due') {
+      sheet.getColumn(key).eachCell((cell, rowNumber) => {
         if (rowNumber > 1) cell.numFmt = '#,##0';
       });
     }
   }
-  if (hasMonthly) {
-    sheet.getColumn('Total').eachCell((cell, rowNumber) => {
-      if (rowNumber > 1) cell.numFmt = '#,##0';
-    });
-  }
-  sheet.getColumn('Grand Total').eachCell((cell, rowNumber) => {
-    if (rowNumber > 1) cell.numFmt = '#,##0';
-  });
 
-  // ── 10. Header styling ────────────────────────────────────────────────────
+  // ── 9. Header styling ────────────────────────────────────────────────────
   styleHeaderRow(sheet.getRow(1));
 
-  // ── 11. Gridlines ──────────────────────────────────────────────────────────
+  // ── 10. Gridlines ──────────────────────────────────────────────────────────
   addGridlines(sheet);
 
-  // ── 12. Save ──────────────────────────────────────────────────────────────
+  // ── 11. Save ──────────────────────────────────────────────────────────────
   const outputDir = CONFIG.directories.output;
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 

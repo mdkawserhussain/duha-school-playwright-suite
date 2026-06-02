@@ -5,7 +5,6 @@ import { api } from '../lib/api';
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const IDENTITY = ['_year', '_shift', '_class', 'SL', 'Std Name', 'User ID', 'Roll', 'Contact No'];
 const TOTALS = ['Total Paid', 'Total Due'];
-const COMPUTED = ['Total', 'Grand Total'];
 
 function parseDueFromCell(value: any): number {
   if (typeof value === 'number') return value;
@@ -58,10 +57,9 @@ function passesFilters(
 const STORAGE_KEY = 'export-columns';
 
 function groupColumns(columns: string[]): Record<string, string[]> {
-  const groups: Record<string, string[]> = { Identity: [], Fees: [], Monthly: [], Totals: [], Computed: [] };
+  const groups: Record<string, string[]> = { Identity: [], Fees: [], Monthly: [], Totals: [] };
   for (const col of columns) {
-    if (COMPUTED.includes(col)) groups.Computed.push(col);
-    else if (IDENTITY.includes(col)) groups.Identity.push(col);
+    if (IDENTITY.includes(col)) groups.Identity.push(col);
     else if (MONTHS.includes(col)) groups.Monthly.push(col);
     else if (TOTALS.includes(col)) groups.Totals.push(col);
     else groups.Fees.push(col);
@@ -91,7 +89,6 @@ const GROUP_COLORS: Record<string, string> = {
   Fees: 'bg-blue-50 text-blue-700 border-blue-300',
   Monthly: 'bg-amber-50 text-amber-700 border-amber-300',
   Totals: 'bg-green-50 text-green-700 border-green-300',
-  Computed: 'bg-purple-50 text-purple-700 border-purple-300',
 };
 
 export default function Controls() {

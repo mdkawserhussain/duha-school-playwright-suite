@@ -2,7 +2,7 @@ import { Router } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import ExcelJS from 'exceljs';
-import { MONTHS, computeMonthlyTotal, computeGrandTotal, groupByClass, computeGroupSummary } from '../../utils/monthlyTotals';
+import { MONTHS, parseMonthlyCell } from '../../utils/monthlyTotals';
 
 export const exportRouter = Router();
 
@@ -98,11 +98,23 @@ function addGridlines(sheet: ExcelJS.Worksheet) {
   });
 }
 
-function formatNumber(val: number): string {
-  return val.toLocaleString('en-IN');
+/**
+ * Compute per-column sums for a group of rows.
+ * Sums monthly columns (Jan-Dec), Total Paid, and Total Due.
+ */
+function computeColumnSums(rows: Record<string, any>[], columns: string[]): Record<string, number> {
+  const sums: Record<string, number> = {};
+  for (const col of columns) {
+    if (MONTHS.includes(col)) {
+      sums[col] = rows.reduce((sum, r) => sum + parseMonthlyCell(r[col]), 0);
+    } else if (col === 'Total Paid' || col === 'Total Due') {
+      sums[col] = rows.reduce((sum, r) => sum + parseDueFromCell(r[col]), 0);
+    }
+  }
+  return sums;
 }
 
-// POST /api/export/xlsx — generate XLSX with selected columns, computed columns, and summaries
+// POST /api/export/xlsx — generate XLSX with selected columns and per-column summaries
 exportRouter.post('/xlsx', async (req, res) => {
   try {
     let columns: string[] = req.body.columns;
@@ -137,16 +149,8 @@ exportRouter.post('/xlsx', async (req, res) => {
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('Dues Report');
 
-    // Build column list: selected columns + computed columns
-    const hasMonthly = columns.some(c => MONTHS.includes(c));
-    const allColumns = [...columns];
-    if (hasMonthly) {
-      allColumns.push('Total');
-    }
-    allColumns.push('Grand Total');
-
-    // Column definitions
-    sheet.columns = allColumns.map(col => ({
+    // Column definitions — only user-selected columns, no computed columns
+    sheet.columns = columns.map(col => ({
       header: col,
       key: col,
       width: Math.max(15, col.length + 4),
@@ -155,88 +159,67 @@ exportRouter.post('/xlsx', async (req, res) => {
     // Style header
     styleHeaderRow(sheet.getRow(1));
 
-    // Group data by class for summary rows
-    const classGroups = groupByClass(data);
+    // Group data by class
+    const classGroups = new Map<string, Record<string, any>[]>();
+    for (const row of data) {
+      const cls = row._class || row.Class || 'Unknown';
+      if (!classGroups.has(cls)) classGroups.set(cls, []);
+      classGroups.get(cls)!.push(row);
+    }
 
     // Track grand totals across all classes
-    const grandSummary: Record<string, number> = {};
-    for (const m of [...MONTHS, 'Total', 'Grand Total']) grandSummary[m] = 0;
+    const grandSums: Record<string, number> = {};
+    for (const col of columns) grandSums[col] = 0;
 
-    let rowIndex = 2; // Start after header
-
+    // Add rows per class with class summary after each group
     for (const [className, classRows] of classGroups) {
-      // Add class rows
+      // Add all student rows for this class
       for (const row of classRows) {
         const rowObj: Record<string, any> = {};
         for (const col of columns) {
           rowObj[col] = row[col] ?? '';
         }
-        if (hasMonthly) {
-          rowObj['Total'] = computeMonthlyTotal(row);
-        }
-        rowObj['Grand Total'] = computeGrandTotal(row);
         sheet.addRow(rowObj);
-        rowIndex++;
       }
 
-      // Add class summary row
-      const classSummary = computeGroupSummary(classRows);
+      // Class summary row
+      const classSums = computeColumnSums(classRows, columns);
       const summaryObj: Record<string, any> = {};
-      summaryObj[allColumns[0]] = `${className} Total`;
-      summaryObj[allColumns[1]] = `${classRows.length} students`;
-      for (const m of MONTHS) {
-        if (columns.includes(m)) {
-          summaryObj[m] = classSummary[m] || 0;
-        }
+      summaryObj[columns[0]] = `${className} Total`;
+      summaryObj[columns[1]] = `${classRows.length} students`;
+      for (const col of columns.slice(2)) {
+        summaryObj[col] = classSums[col] || 0;
       }
-      if (hasMonthly) summaryObj['Total'] = classSummary['Total'] || 0;
-      summaryObj['Grand Total'] = classSummary['Grand Total'] || 0;
-
       const summaryRow = sheet.addRow(summaryObj);
       styleSummaryRow(summaryRow, true);
-      rowIndex++;
 
       // Accumulate grand totals
-      for (const m of [...MONTHS, 'Total', 'Grand Total']) {
-        grandSummary[m] += classSummary[m] || 0;
+      for (const col of columns) {
+        grandSums[col] += classSums[col] || 0;
       }
 
-      // Add spacer between classes
+      // Spacer between classes
       sheet.addRow({});
-      rowIndex++;
     }
 
-    // Add overall grand summary
+    // Overall grand summary
     const grandObj: Record<string, any> = {};
-    grandObj[allColumns[0]] = 'GRAND TOTAL';
-    grandObj[allColumns[1]] = `${data.length} students`;
-    for (const m of MONTHS) {
-      if (columns.includes(m)) {
-        grandObj[m] = grandSummary[m] || 0;
-      }
+    grandObj[columns[0]] = 'GRAND TOTAL';
+    grandObj[columns[1]] = `${data.length} students`;
+    for (const col of columns.slice(2)) {
+      grandObj[col] = grandSums[col] || 0;
     }
-    if (hasMonthly) grandObj['Total'] = grandSummary['Total'] || 0;
-    grandObj['Grand Total'] = grandSummary['Grand Total'] || 0;
-
     const grandRow = sheet.addRow(grandObj);
     styleSummaryRow(grandRow, false);
 
-    // Number formatting for computed columns
-    for (const m of MONTHS) {
-      if (columns.includes(m)) {
-        sheet.getColumn(m).eachCell((cell, rowNumber) => {
+    // Number formatting for sum columns
+    for (const col of columns) {
+      if (MONTHS.includes(col) || col === 'Total Paid' || col === 'Total Due') {
+        sheet.getColumn(col).eachCell((cell, rowNumber) => {
           if (rowNumber > 1) cell.numFmt = '#,##0';
         });
       }
     }
-    if (hasMonthly) {
-      sheet.getColumn('Total').eachCell((cell, rowNumber) => {
-        if (rowNumber > 1) cell.numFmt = '#,##0';
-      });
-    }
-    sheet.getColumn('Grand Total').eachCell((cell, rowNumber) => {
-      if (rowNumber > 1) cell.numFmt = '#,##0';
-    });
 
     addGridlines(sheet);
 
