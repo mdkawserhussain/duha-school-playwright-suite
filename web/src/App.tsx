@@ -3,13 +3,17 @@ import Dashboard from './pages/Dashboard';
 import RunHistory from './pages/RunHistory';
 import Trends from './pages/Trends';
 import Controls from './pages/Controls';
+import WhatsApp from './pages/WhatsApp';
 import Settings from './pages/Settings';
+import Logs from './pages/Logs';
 
 const PAGES = [
   { key: 'dashboard', label: 'Dashboard', icon: '📊' },
   { key: 'runs', label: 'History', icon: '📋' },
   { key: 'trends', label: 'Trends', icon: '📈' },
   { key: 'run', label: 'Controls', icon: '▶️' },
+  { key: 'whatsapp', label: 'WhatsApp', icon: '📱' },
+  { key: 'logs', label: 'Logs', icon: '📝' },
   { key: 'settings', label: 'Settings', icon: '⚙️' },
 ];
 
@@ -71,6 +75,8 @@ export default function App() {
         {page === 'runs' && <RunHistory />}
         {page === 'trends' && <Trends />}
         {page === 'run' && <Controls />}
+        {page === 'whatsapp' && <WhatsApp />}
+        {page === 'logs' && <Logs />}
         {page === 'settings' && <Settings />}
       </main>
     </div>
