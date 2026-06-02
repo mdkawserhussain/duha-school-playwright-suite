@@ -2,7 +2,7 @@ import { Router } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import ExcelJS from 'exceljs';
-import { MONTHS, parseMonthlyCell } from '../../utils/monthlyTotals';
+import { MONTHS, parsePaidFromCell, parseDueFromCell } from '../../utils/monthlyTotals';
 
 export const exportRouter = Router();
 
@@ -18,11 +18,9 @@ function findLatestFile(prefix: string): string | null {
   }
 }
 
-function parseDueFromCell(value: any): number {
+function parseTotalDue(value: any): number {
   if (typeof value === 'number') return value;
   const s = String(value ?? '');
-  const match = s.match(/due\s*:\s*([\d,]+)/i);
-  if (match) return parseFloat(match[1].replace(/,/g, '')) || 0;
   const num = parseFloat(s.replace(/,/g, ''));
   return isNaN(num) ? 0 : num;
 }
@@ -48,11 +46,11 @@ function passesRowFilters(row: Record<string, any>, filters: RowFilters, selecte
     if (selectedColumns && selectedColumns.length > 0) {
       if (!hasDueInColumns(row, selectedColumns)) return false;
     } else {
-      if (parseDueFromCell(row['Total Due'] || row.totalDue || 0) <= 0) return false;
+      if (parseTotalDue(row['Total Due'] || row.totalDue || 0) <= 0) return false;
     }
   }
   if (filters.minAmount && filters.minAmount > 0) {
-    if (parseDueFromCell(row['Total Due'] || row.totalDue || 0) < filters.minAmount) return false;
+    if (parseTotalDue(row['Total Due'] || row.totalDue || 0) < filters.minAmount) return false;
   }
   if (filters.classFilter) {
     const rowClass = String(row._class || row.Class || '').toLowerCase();
@@ -75,14 +73,19 @@ function styleHeaderRow(row: ExcelJS.Row) {
   row.alignment = { vertical: 'middle', horizontal: 'left' };
 }
 
-function styleSummaryRow(row: ExcelJS.Row, isClassTotal: boolean) {
-  row.font = { bold: true };
-  if (isClassTotal) {
-    row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E2F3' } };
-  } else {
-    row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F497D' } };
-    row.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-  }
+function stylePaidRow(row: ExcelJS.Row) {
+  row.font = { bold: true, color: { argb: 'FF1B5E20' } };
+  row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC8E6C9' } };
+}
+
+function styleDueRow(row: ExcelJS.Row) {
+  row.font = { bold: true, color: { argb: 'FFB71C1C' } };
+  row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFCDD2' } };
+}
+
+function styleGrandTotalRow(row: ExcelJS.Row) {
+  row.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F497D' } };
 }
 
 function addGridlines(sheet: ExcelJS.Worksheet) {
@@ -98,23 +101,15 @@ function addGridlines(sheet: ExcelJS.Worksheet) {
   });
 }
 
-/**
- * Compute per-column sums for a group of rows.
- * Sums monthly columns (Jan-Dec), Total Paid, and Total Due.
- */
-function computeColumnSums(rows: Record<string, any>[], columns: string[]): Record<string, number> {
-  const sums: Record<string, number> = {};
-  for (const col of columns) {
-    if (MONTHS.includes(col)) {
-      sums[col] = rows.reduce((sum, r) => sum + parseMonthlyCell(r[col]), 0);
-    } else if (col === 'Total Paid' || col === 'Total Due') {
-      sums[col] = rows.reduce((sum, r) => sum + parseDueFromCell(r[col]), 0);
-    }
-  }
-  return sums;
+function parseValue(row: Record<string, any>, col: string): number {
+  const val = row[col] ?? 0;
+  if (typeof val === 'number') return val;
+  const s = String(val);
+  const num = parseFloat(s.replace(/,/g, ''));
+  return isNaN(num) ? 0 : num;
 }
 
-// POST /api/export/xlsx — generate XLSX with selected columns and per-column summaries
+// POST /api/export/xlsx — generate XLSX with selected columns and Paid/Due summary rows
 exportRouter.post('/xlsx', async (req, res) => {
   try {
     let columns: string[] = req.body.columns;
@@ -149,7 +144,7 @@ exportRouter.post('/xlsx', async (req, res) => {
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('Dues Report');
 
-    // Column definitions — only user-selected columns, no computed columns
+    // Column definitions
     sheet.columns = columns.map(col => ({
       header: col,
       key: col,
@@ -167,52 +162,87 @@ exportRouter.post('/xlsx', async (req, res) => {
       classGroups.get(cls)!.push(row);
     }
 
-    // Track grand totals across all classes
-    const grandSums: Record<string, number> = {};
-    for (const col of columns) grandSums[col] = 0;
+    // Track grand totals (Paid and Due separately)
+    const grandPaid: Record<string, number> = {};
+    const grandDue: Record<string, number> = {};
+    for (const col of columns) { grandPaid[col] = 0; grandDue[col] = 0; }
 
-    // Add rows per class with class summary after each group
+    // Add rows per class with two summary rows (Paid + Due)
     for (const [className, classRows] of classGroups) {
-      // Add all student rows for this class
+      // Add all student rows
       for (const row of classRows) {
         const rowObj: Record<string, any> = {};
-        for (const col of columns) {
-          rowObj[col] = row[col] ?? '';
-        }
+        for (const col of columns) rowObj[col] = row[col] ?? '';
         sheet.addRow(rowObj);
       }
 
-      // Class summary row
-      const classSums = computeColumnSums(classRows, columns);
-      const summaryObj: Record<string, any> = {};
-      summaryObj[columns[0]] = `${className} Total`;
-      summaryObj[columns[1]] = `${classRows.length} students`;
-      for (const col of columns.slice(2)) {
-        summaryObj[col] = classSums[col] || 0;
+      // Compute Paid and Due sums per column for this class
+      const classPaid: Record<string, number> = {};
+      const classDue: Record<string, number> = {};
+      for (const col of columns) { classPaid[col] = 0; classDue[col] = 0; }
+
+      for (const row of classRows) {
+        for (const col of columns) {
+          if (MONTHS.includes(col)) {
+            classPaid[col] += parsePaidFromCell(row[col]);
+            classDue[col] += parseDueFromCell(row[col]);
+          } else if (col === 'Total Paid' || col === 'Total Due') {
+            classPaid[col] += parseValue(row, col);
+          }
+        }
       }
-      const summaryRow = sheet.addRow(summaryObj);
-      styleSummaryRow(summaryRow, true);
+
+      // Paid summary row
+      const paidObj: Record<string, any> = {};
+      paidObj[columns[0]] = `${className} Paid`;
+      paidObj[columns[1]] = `${classRows.length} students`;
+      for (const col of columns.slice(2)) {
+        paidObj[col] = classPaid[col] || '';
+      }
+      const paidRow = sheet.addRow(paidObj);
+      stylePaidRow(paidRow);
+
+      // Due summary row
+      const dueObj: Record<string, any> = {};
+      dueObj[columns[0]] = `${className} Due`;
+      dueObj[columns[1]] = `${classRows.length} students`;
+      for (const col of columns.slice(2)) {
+        dueObj[col] = classDue[col] || '';
+      }
+      const dueRow = sheet.addRow(dueObj);
+      styleDueRow(dueRow);
 
       // Accumulate grand totals
       for (const col of columns) {
-        grandSums[col] += classSums[col] || 0;
+        grandPaid[col] += classPaid[col];
+        grandDue[col] += classDue[col];
       }
 
       // Spacer between classes
       sheet.addRow({});
     }
 
-    // Overall grand summary
-    const grandObj: Record<string, any> = {};
-    grandObj[columns[0]] = 'GRAND TOTAL';
-    grandObj[columns[1]] = `${data.length} students`;
+    // Grand Total Paid row
+    const grandPaidObj: Record<string, any> = {};
+    grandPaidObj[columns[0]] = 'GRAND TOTAL Paid';
+    grandPaidObj[columns[1]] = `${data.length} students`;
     for (const col of columns.slice(2)) {
-      grandObj[col] = grandSums[col] || 0;
+      grandPaidObj[col] = grandPaid[col] || '';
     }
-    const grandRow = sheet.addRow(grandObj);
-    styleSummaryRow(grandRow, false);
+    const grandPaidRow = sheet.addRow(grandPaidObj);
+    styleGrandTotalRow(grandPaidRow);
 
-    // Number formatting for sum columns
+    // Grand Total Due row
+    const grandDueObj: Record<string, any> = {};
+    grandDueObj[columns[0]] = 'GRAND TOTAL Due';
+    grandDueObj[columns[1]] = `${data.length} students`;
+    for (const col of columns.slice(2)) {
+      grandDueObj[col] = grandDue[col] || '';
+    }
+    const grandDueRow = sheet.addRow(grandDueObj);
+    styleGrandTotalRow(grandDueRow);
+
+    // Number formatting for numeric columns
     for (const col of columns) {
       if (MONTHS.includes(col) || col === 'Total Paid' || col === 'Total Due') {
         sheet.getColumn(col).eachCell((cell, rowNumber) => {

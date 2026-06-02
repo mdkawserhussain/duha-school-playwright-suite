@@ -6,18 +6,33 @@ export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
 
 /**
+ * Parse the PAID amount from a monthly cell like "Paid : 3,300" or "Due : 3,300".
+ * Returns the numeric value only if the cell contains "Paid".
+ */
+export function parsePaidFromCell(value: any): number {
+  if (typeof value === 'number') return 0; // plain numbers are ambiguous, treat as 0 for "paid"
+  const s = String(value ?? '');
+  const match = s.match(/paid\s*:\s*([\d,]+)/i);
+  return match ? parseFloat(match[1].replace(/,/g, '')) || 0 : 0;
+}
+
+/**
+ * Parse the DUE amount from a monthly cell like "Due : 3,300" or "Paid : 3,300".
+ * Returns the numeric value only if the cell contains "Due".
+ */
+export function parseDueFromCell(value: any): number {
+  if (typeof value === 'number') return 0; // plain numbers are ambiguous, treat as 0 for "due"
+  const s = String(value ?? '');
+  const match = s.match(/due\s*:\s*([\d,]+)/i);
+  return match ? parseFloat(match[1].replace(/,/g, '')) || 0 : 0;
+}
+
+/**
  * Parse a monthly cell value like "Due : 3,300" or "Paid : 3,300" or "3300"
- * Returns the numeric value.
+ * Returns the numeric value (both Paid and Due combined).
  */
 export function parseMonthlyCell(value: any): number {
-  if (typeof value === 'number') return value;
-  const s = String(value ?? '');
-  // Match "Due : 3,300" or "Paid : 3,300" pattern
-  const match = s.match(/(?:due|paid)\s*:\s*([\d,]+)/i);
-  if (match) return parseFloat(match[1].replace(/,/g, '')) || 0;
-  // Fallback: try parsing as number
-  const num = parseFloat(s.replace(/,/g, ''));
-  return isNaN(num) ? 0 : num;
+  return parsePaidFromCell(value) + parseDueFromCell(value);
 }
 
 /**
