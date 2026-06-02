@@ -39,6 +39,7 @@ interface LogsData {
   paths: FilePath;
   errors: ErrorScreenshot[];
   logs: ExtractionLog[];
+  errorLog: { content: string; lines: number; sizeKB: number };
 }
 
 interface LogContent {
@@ -60,6 +61,7 @@ export default function Logs() {
     paths: true,
     errors: true,
     logs: true,
+    errorLog: true,
   });
 
   useEffect(() => {
@@ -249,6 +251,23 @@ export default function Logs() {
                 </button>
               </div>
             ))}
+          </div>
+        )}
+      </Section>
+
+      {/* Error Log */}
+      <Section
+        title={`Error Log (${data?.errorLog?.lines || 0} lines, ${data?.errorLog?.sizeKB || 0} KB)`}
+        expanded={expandedSections.errorLog}
+        onToggle={() => toggleSection('errorLog')}
+      >
+        {(!data?.errorLog || data.errorLog.lines === 0) ? (
+          <p className="text-gray-500 text-sm">No errors logged yet</p>
+        ) : (
+          <div className="bg-gray-900 rounded-lg overflow-hidden">
+            <pre className="p-4 text-sm text-red-400 overflow-auto max-h-96 font-mono leading-relaxed">
+              {data.errorLog.content}
+            </pre>
           </div>
         )}
       </Section>

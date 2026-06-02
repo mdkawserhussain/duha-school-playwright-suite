@@ -583,8 +583,10 @@ export async function extractAccountsReceivable(page: Page): Promise<{ rawCount:
     writeJsonOutput('accounts_receivable_raw', allRaw);
 
     // ── 5. Filter to students with outstanding dues (skip when dueStudentsOnly=false) ──
+    // Row filters (dueOnly, minDue) are separate from column selection.
+    // Column selection only controls which columns appear in export, not which rows.
     const enrichedData = CONFIG.filters.dueStudentsOnly
-      ? filterDuesRows(allRaw, CONFIG.report.columns.length > 0 ? CONFIG.report.columns : undefined)
+      ? filterDuesRows(allRaw)
       : allRaw;
     log.info(`Collected ${enrichedData.length} student records (${CONFIG.filters.dueStudentsOnly ? 'due students only' : 'all students'}).`);
 

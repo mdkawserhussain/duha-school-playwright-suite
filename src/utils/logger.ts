@@ -1,6 +1,26 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { CONFIG } from '../config';
 
 const isJsonMode = process.env.LOG_FORMAT === 'json';
+
+const logsDir = path.join(CONFIG.directories.userData, 'logs');
+const errorLogPath = path.join(logsDir, 'error.log');
+
+function ensureLogsDir(): void {
+  try {
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+  } catch { /* ignore */ }
+}
+
+function appendToFile(filePath: string, line: string): void {
+  try {
+    ensureLogsDir();
+    fs.appendFileSync(filePath, line + '\n', 'utf-8');
+  } catch { /* ignore file write errors */ }
+}
 
 /**
  * Global Logger utility with integrated credential redaction layers
@@ -8,7 +28,6 @@ const isJsonMode = process.env.LOG_FORMAT === 'json';
  */
 function redact(message: string): string {
   let clean = message;
-  // Safely check CONFIG presence as the logger is imported during CONFIG initialization
   if (CONFIG?.credentials?.username) {
     clean = clean.replaceAll(CONFIG.credentials.username, '[REDACTED_USERNAME]');
   }
@@ -41,16 +60,26 @@ export const log = {
   },
 
   error(message: string, error?: any): void {
+    const timestamp = new Date().toISOString();
+    const cleanMsg = redact(message);
+
     if (isJsonMode) {
       emitJson('ERROR', message, error);
     } else {
-      const timestamp = new Date().toISOString();
-      console.error(`\x1b[31m[${timestamp}] [ERROR] ${redact(message)}\x1b[0m`);
+      console.error(`\x1b[31m[${timestamp}] [ERROR] ${cleanMsg}\x1b[0m`);
       if (error) {
         const errMessage = error instanceof Error ? error.stack || error.message : String(error);
         console.error(`\x1b[31m${redact(errMessage)}\x1b[0m`);
       }
     }
+
+    // Write to error.log
+    let logLine = `[${timestamp}] [ERROR] ${cleanMsg}`;
+    if (error) {
+      const errMessage = error instanceof Error ? error.stack || error.message : String(error);
+      logLine += `\n${redact(errMessage)}`;
+    }
+    appendToFile(errorLogPath, logLine);
   },
 
   step(stepName: string): void {

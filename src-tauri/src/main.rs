@@ -66,6 +66,7 @@ fn bootstrap_server(res_dir: &PathBuf, data_dir: &PathBuf) -> Result<PathBuf, St
             ("_up_/src/config.ts", "config.ts"),
             ("_up_/src/utils/historyDb.ts", "utils/historyDb.ts"),
             ("_up_/src/utils/logger.ts", "utils/logger.ts"),
+            ("_up_/src/utils/monthlyTotals.ts", "utils/monthlyTotals.ts"),
         ] {
             let src_path = res_dir.join(rel);
             if src_path.exists() {
@@ -112,7 +113,7 @@ fn start_server(server_dir: &PathBuf) {
         .spawn()
     {
         Ok(_child) => {
-            eprintln!("[tauri] Express server started on port 3000");
+            eprintln!("[tauri] Express server started on port 3001");
         }
         Err(e) => {
             eprintln!("[tauri] ERROR: failed to start node: {e}");

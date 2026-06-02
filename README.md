@@ -30,18 +30,19 @@ npm start
 - **Diff Engine** — Day-over-day comparison (new defaulters, cleared dues, increases)
 
 ### Notifications & Reporting
-- **WhatsApp Dashboard** — One-click links for parent dues reminders and staff salary slips
-- **Telegram Bot** — Post-run summary to any Telegram chat
+- **WhatsApp Messages** — Per-column dues breakdown (monthly + fee dues) with period filtering
+- **XLSX Reports** — Formatted Excel with per-class Paid/Due summary rows and Grand Total
 - **HTML Dashboard** — Interactive charts (Chart.js) for dues by class, collection rate, trends
-- **XLSX Reports** — Formatted Excel spreadsheets with custom column filtering
 - **Desktop Notifications** — OS notifications on run completion
 
 ### Web UI
-- **Dashboard** — Summary cards, charts, student search
+- **Dashboard** — Summary cards, student search with dropdown, period selector, click-to-expand detail view
+- **Controls** — Unified filter strip (Due Only, Min Amount, Class, Shift, Year, Period), column selection, extraction, Excel/JSON/WhatsApp export
+- **WhatsApp** — Per-column dues breakdown (monthly + fee badges), Send All, Open Dashboard
+- **Logs** — System info, error screenshots, extraction logs, error.log viewer
+- **Settings** — Collapsible grouped config, PORTAL_COLUMNS management
 - **Run History** — Full extraction log from SQLite
 - **Trends** — Dues over time with line charts
-- **Controls** — Trigger extractions, live log viewer, export buttons
-- **Settings** — Edit configuration from the browser
 
 ### Desktop App
 - **Tauri** — Native cross-platform app (~8MB)
@@ -68,23 +69,24 @@ npm start                                    # Normal run
 npm start -- --year 2026 --shift "Day"       # Filter by year and shift
 npm start -- --class "One,Two,Three"         # Filter by class
 npm start -- --type dues                     # Only extract dues
+npm start -- --period "January,February"     # Period filter (till latest month)
+npm start -- --min-due 5000                  # Only students with ≥ 5000 due
 npm start -- --whatsapp                      # Generate WhatsApp dashboard
 npm start -- --preview                       # Dry-run (no file writes)
 npm start -- --headed                        # Visible browser
 npm start -- --no-cache                      # Force fresh dropdown discovery
-npm start -- --min-due 5000                  # Only students with ≥ 5000 due
 npm start -- --setup                         # Re-run setup wizard
 ```
 
 ## Web UI
 
 ```bash
-npm run web            # Start server (3000) + Vite dev (5173)
-npm run web:server     # API server only
+npm run web            # Start server + Vite dev (dynamic ports)
+npm run web:server     # API server only (default port 3001)
 npm run web:build      # Build frontend for production
 ```
 
-Open `http://localhost:5173` (dev) or `http://localhost:3000` (production).
+Open `http://localhost:5173` (dev) or serve `web/dist` for production.
 
 ## Desktop App
 
@@ -94,10 +96,10 @@ npm run tauri:build    # Build production binary + packages
 ```
 
 Output in `src-tauri/target/release/bundle/`:
-- `bundle/msis/School Portal Scraper_1.0.0_x64Setup.msi` — Windows
-- `bundle/nsis/School Portal Scraper_1.0.0_x64-setup.exe` — Windows (NSIS)
-- `bundle/deb/School Portal Scraper_1.0.0_amd64.deb` — Debian/Ubuntu
-- `bundle/macos/School Portal Scraper.app` — macOS (universal)
+- `bundle/deb/` — Debian/Ubuntu
+- `bundle/msi/` — Windows
+- `bundle/nsis/` — Windows (NSIS installer)
+- `bundle/macos/` — macOS
 
 CI builds all three platforms automatically via GitHub Actions on push to `main` or tag `v*`.
 
@@ -126,7 +128,10 @@ SCHEDULE="0 8 * * 1-5" npm run start:scheduler  # Weekdays at 8 AM
 | `PORTAL_SHIFT` | (all) | Shift filter (e.g., `Day Shift`) |
 | `PORTAL_CLASS` | (all) | Class filter (e.g., `One,Two,Three`) |
 | `PORTAL_DUE_STUDENTS_ONLY` | `true` | Only students with outstanding dues |
-| `REPORT_COLUMNS` | (all) | Column substrings to include (e.g., `january,session`) |
+| `PORTAL_MIN_DUE` | `0` | Minimum due amount threshold |
+| `PORTAL_COLUMN_FILTER` | (all) | Fee columns to check for dues (comma-separated) |
+| `PORTAL_PERIOD_MONTHS` | (all) | Month names for period filter (e.g., `January,February,March`) |
+| `PORTAL_COLUMNS` | (all) | Columns for export and WhatsApp (single source of truth for web UI + CLI) |
 
 ### Feature Toggles
 
@@ -134,14 +139,9 @@ SCHEDULE="0 8 * * 1-5" npm run start:scheduler  # Weekdays at 8 AM
 |----------|---------|-------------|
 | `EXTRACT_ATTENDANCE` | `false` | Extract staff attendance |
 | `EXTRACT_ACCOUNTS_RECEIVABLE` | `true` | Extract student dues |
-| `EXTRACT_PAYMENT_LEDGER` | `false` | Extract payment installments |
-| `EXTRACT_WAIVERS` | `false` | Extract fee waivers |
-| `GENERATE_HTML_DASHBOARD` | `false` | Generate Chart.js dashboard |
-| `GENERATE_WHATSAPP_DASHBOARD` | `false` | Generate WhatsApp links |
-| `ENABLE_TELEGRAM_NOTIFICATIONS` | `false` | Send Telegram post-run summary |
+| `ENABLE_HISTORY_DB` | `true` | SQLite historical ledger |
+| `GENERATE_WHATSAPP_DASHBOARD` | `false` | Generate WhatsApp dashboard |
 | `ENABLE_DESKTOP_NOTIFICATIONS` | `false` | OS notifications |
-| `ENABLE_CLOUD_SYNC` | `false` | Google Drive/Sheets upload |
-| `ENABLE_HISTORY_DB` | `false` | SQLite historical ledger |
 | `ENABLE_GHOST_CURSOR` | `false` | Anti-bot mouse movements |
 
 ### Notifications
@@ -152,14 +152,6 @@ SCHEDULE="0 8 * * 1-5" npm run start:scheduler  # Weekdays at 8 AM
 | `TELEGRAM_CHAT_ID` | Telegram chat ID |
 | `HEARTBEAT_URL` | Uptime monitoring ping URL |
 
-### Cloud Sync
-
-| Variable | Description |
-|----------|-------------|
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | Path to service account JSON key |
-| `GOOGLE_DRIVE_FOLDER_ID` | Target Drive folder |
-| `GOOGLE_SHEETS_SPREADSHEET_ID` | Target Sheets spreadsheet |
-
 ### Advanced
 
 | Variable | Default | Description |
@@ -168,9 +160,8 @@ SCHEDULE="0 8 * * 1-5" npm run start:scheduler  # Weekdays at 8 AM
 | `MAX_OUTPUT_AGE_DAYS` | `30` | PII cleanup threshold |
 | `MAX_TOTAL_RUNTIME_MS` | `600000` | Global execution timeout |
 | `LOG_FORMAT` | (colorized) | Set to `json` for structured logs |
+| `WEB_PORT` | `3001` | Express server port |
 | `HEADED` | `false` | Run browser visibly |
-
-See [docs/FILTERS.md](docs/FILTERS.md) for detailed filter interaction.
 
 ## Project Structure
 
@@ -184,10 +175,13 @@ src/
   extractors/              # Data extraction (accounts, attendance, payments, waivers)
   processors/              # Pure-function data processing
   reporters/               # Output generation (HTML, WhatsApp, Telegram)
-  utils/                   # Shared utilities (logger, file writer, cache, etc.)
+  utils/                   # Shared utilities (logger, file writer, cache, monthlyTotals, etc.)
   server/                  # Express API server
+    routes/                # API routes (control, dashboard, dues, export, logs, runs, whatsapp)
+    sse/                   # Server-sent events for live logs
   types/                   # TypeScript interfaces
 web/                       # React frontend (Vite + Tailwind)
+  src/pages/               # Dashboard, Controls, WhatsApp, Logs, Settings, RunHistory, Trends
 src-tauri/                 # Tauri desktop wrapper (Rust)
 docs/                      # Architecture, troubleshooting, filter reference
 ```
@@ -199,14 +193,15 @@ docs/                      # Architecture, troubleshooting, filter reference
 | `output/accounts_receivable_raw_*.json` | Raw extracted dues data |
 | `output/accounts_receivable_dues_enriched_*.json` | Filtered dues (students only) |
 | `output/attendance_*.json` | Staff attendance records |
-| `output/payment_ledger_*.json` | Payment installment histories |
-| `output/waivers_*.json` | Fee waivers and concessions |
-| `output/accounts_receivable_report_*.xlsx` | Excel spreadsheet |
+| `output/dues_report_*.xlsx` | Excel spreadsheet with summary rows |
 | `output/dues_dashboard_*.html` | Interactive HTML dashboard |
 | `output/WhatsApp-Links-Dashboard.html` | WhatsApp notification links |
+| `output/wa-data.json` | Cached WhatsApp links with per-column dues |
 | `output/run_manifest_*.json` | Run results and failed combos |
-| `output/run_metrics.json` | Execution timing metrics |
+| `output/run_metrics_*.json` | Execution timing metrics |
 | `user-data/history.db` | SQLite historical database |
+| `user-data/logs/error.log` | Error log (all `log.error()` calls) |
+| `user-data/logs/extraction_*.log` | Extraction run logs |
 
 ## Useful Commands
 
@@ -220,7 +215,7 @@ npm run check:selectors            # Verify portal selectors
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — Data flow and module map
 - [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — Common errors and fixes
-- [docs/FILTERS.md](docs/FILTERS.md) — REPORT_COLUMNS and DUE_STUDENTS_ONLY reference
+- [docs/FILTERS.md](docs/FILTERS.md) — Filter reference
 
 ## License
 

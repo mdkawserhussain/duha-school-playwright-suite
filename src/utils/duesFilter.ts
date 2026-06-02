@@ -45,9 +45,10 @@ export function isJunkRow(row: Record<string, string>): boolean {
  * Extract the "Due" amount from a cell value like "Due : 3,300" or "Paid : 3,300 Due : 1,000".
  * Returns the maximum "Due" value found in the string, or 0 if none.
  */
-function parseDueFromCell(value: string): number {
+function parseDueFromCell(value: any): number {
   // Match patterns like "Due : 3,300" or "Due: 3300"
-  const dueMatches = value.match(/due\s*:\s*([\d,]+)/gi);
+  const s = String(value ?? '');
+  const dueMatches = s.match(/due\s*:\s*([\d,]+)/gi);
   if (!dueMatches) return 0;
   let maxDue = 0;
   for (const m of dueMatches) {

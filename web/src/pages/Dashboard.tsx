@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, useRef, useEffect, Fragment } from 'react';
 import { useQuery } from 'react-query';
 import { api } from '../lib/api';
 import SummaryCards from '../components/SummaryCards';
@@ -61,54 +61,72 @@ function StudentDetail({ student, periodMonths }: { student: Student; periodMont
   );
 
   return (
-    <div className="mt-3 p-4 bg-gray-50 rounded-lg border text-sm">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="p-5 bg-gray-50 rounded-xl border text-sm">
+      {/* Student header */}
+      <div className="flex items-center gap-4 mb-4 pb-3 border-b">
+        <div className="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-sm">
+          {(student['Std Name'] || '?')[0]}
+        </div>
+        <div>
+          <h3 className="font-semibold text-gray-900">{student['Std Name']}</h3>
+          <div className="text-xs text-gray-500">ID: {student['User ID']} · {student['_class']} · {student['_shift']}</div>
+        </div>
+        <div className="ml-auto text-right">
+          <div className="text-xs text-gray-400">Total Due</div>
+          <div className="text-lg font-bold text-red-600">৳{parseTotalDue(student['Total Due']).toLocaleString()}</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Monthly Breakdown */}
         <div>
-          <h4 className="font-semibold text-gray-700 mb-2">Monthly Dues</h4>
-          <div className="grid grid-cols-3 gap-1">
+          <h4 className="font-semibold text-gray-700 mb-2 text-xs uppercase tracking-wide">Monthly Dues</h4>
+          <div className="grid grid-cols-4 gap-1.5">
             {MONTHS.map(m => {
               const val = student[m] || '';
               const paid = parsePaidFromCell(val);
               const due = parseDueFromCell(val);
               const inPeriod = periodMonths.includes(m);
+              const hasValue = paid > 0 || due > 0;
               return (
-                <div key={m} className={`px-2 py-1 rounded text-xs ${!inPeriod ? 'bg-gray-100 text-gray-400' : due > 0 ? 'bg-red-50 text-red-700' : paid > 0 ? 'bg-green-50 text-green-700' : 'bg-white text-gray-400'}`}>
-                  <div className="font-medium">{m.slice(0, 3)}</div>
-                  <div>{due > 0 ? `৳${due.toLocaleString()}` : paid > 0 ? `৳${paid.toLocaleString()}` : '—'}</div>
-                  <div className="text-[10px]">{due > 0 ? 'Due' : paid > 0 ? 'Paid' : ''}</div>
+                <div key={m} className={`px-2 py-1.5 rounded-lg text-xs text-center ${
+                  !inPeriod ? 'bg-gray-100 text-gray-300' :
+                  due > 0 ? 'bg-red-50 border border-red-200 text-red-700' :
+                  paid > 0 ? 'bg-green-50 border border-green-200 text-green-700' :
+                  'bg-white border border-gray-100 text-gray-300'
+                }`}>
+                  <div className="font-medium text-[10px]">{m.slice(0, 3)}</div>
+                  <div className="font-semibold">
+                    {hasValue ? `৳${(due > 0 ? due : paid).toLocaleString()}` : '—'}
+                  </div>
+                  <div className="text-[9px] opacity-70">{due > 0 ? 'Due' : paid > 0 ? 'Paid' : ''}</div>
                 </div>
               );
             })}
+          </div>
+          <div className="mt-2 text-right text-xs font-semibold text-red-600">
+            Due (period): ৳{periodMonths.reduce((sum, m) => sum + parseDueFromCell(student[m]), 0).toLocaleString()}
           </div>
         </div>
 
         {/* Fee Breakdown */}
         <div>
-          <h4 className="font-semibold text-gray-700 mb-2">Fee Dues</h4>
+          <h4 className="font-semibold text-gray-700 mb-2 text-xs uppercase tracking-wide">Fee Dues</h4>
           <div className="space-y-1">
-            {feeColumns.slice(0, 10).map(f => {
+            {feeColumns.slice(0, 12).map(f => {
               const val = student[f] || '';
               const paid = parsePaidFromCell(val);
               const due = parseDueFromCell(val);
               return (
-                <div key={f} className={`flex justify-between px-2 py-1 rounded text-xs ${due > 0 ? 'bg-red-50' : 'bg-white'}`}>
+                <div key={f} className={`flex justify-between items-center px-2.5 py-1.5 rounded-lg text-xs ${due > 0 ? 'bg-red-50 border border-red-100' : 'bg-white border border-gray-100'}`}>
                   <span className="text-gray-600 truncate">{f}</span>
-                  <span className={`font-medium ${due > 0 ? 'text-red-600' : 'text-gray-500'}`}>
+                  <span className={`font-medium shrink-0 ml-2 ${due > 0 ? 'text-red-600' : 'text-gray-400'}`}>
                     {due > 0 ? `৳${due.toLocaleString()}` : paid > 0 ? `৳${paid.toLocaleString()}` : '—'}
-                    {due > 0 && <span className="text-red-400 ml-1">Due</span>}
+                    {due > 0 && <span className="text-[9px] ml-1 opacity-60">DUE</span>}
                   </span>
                 </div>
               );
             })}
-          </div>
-
-          {/* Period-filtered Due Total */}
-          <div className="mt-3 pt-2 border-t flex justify-between text-sm font-semibold">
-            <span>Total Due (period)</span>
-            <span className="text-red-600">
-              ৳{periodMonths.reduce((sum, m) => sum + parseDueFromCell(student[m]), 0).toLocaleString()}
-            </span>
           </div>
         </div>
       </div>
@@ -118,11 +136,14 @@ function StudentDetail({ student, periodMonths }: { student: Student; periodMont
 
 export default function Dashboard() {
   const [search, setSearch] = useState('');
-  const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [selectedMonths, setSelectedMonths] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem('dashboard-period') || '[]'); } catch { return []; }
   });
 
+  const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const { data, isLoading } = useQuery('dashboard', () => api<DashboardData>('/dashboard'));
   const { data: students } = useQuery<Student[]>('students', async () => {
     const today = new Date().toISOString().slice(0, 10);
@@ -141,17 +162,33 @@ export default function Dashboard() {
     });
   };
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   if (isLoading) return <div className="text-center py-12 text-gray-500">Loading...</div>;
 
-  const filteredStudents = (students || []).filter((s) => {
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return (
-      (s['Std Name'] || '').toLowerCase().includes(q) ||
-      (s['User ID'] || '').toLowerCase().includes(q) ||
-      (s['_class'] || '').toLowerCase().includes(q)
-    );
-  });
+  const searchResults = search.trim()
+    ? (students || []).filter(s => {
+        const q = search.toLowerCase();
+        return (
+          (s['Std Name'] || '').toLowerCase().includes(q) ||
+          (s['User ID'] || '').toLowerCase().includes(q) ||
+          (s['_class'] || '').toLowerCase().includes(q)
+        );
+      }).slice(0, 10)
+    : [];
+
+  const selectedStudent = selectedStudentId
+    ? (students || []).find(s => s['User ID'] === selectedStudentId) || null
+    : null;
 
   return (
     <div className="space-y-6">
@@ -162,100 +199,118 @@ export default function Dashboard() {
       />
       <DuesByClass data={data?.byClass || []} />
 
-      {/* Student Search with Period Filter */}
+      {/* Student Search */}
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Students with Dues</h2>
-          <div className="flex items-center gap-3">
-            {/* Period Selector */}
-            <div className="flex items-center gap-1">
-              <span className="text-xs text-gray-500 mr-1">Period:</span>
-              {MONTHS.map(m => (
+          {/* Period Selector */}
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-gray-500 mr-1">Period:</span>
+            {MONTHS.map(m => (
+              <button
+                key={m}
+                onClick={() => toggleMonth(m)}
+                className={`px-1.5 py-0.5 text-[10px] rounded border transition ${
+                  selectedMonths.includes(m)
+                    ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
+                    : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                {m.slice(0, 3)}
+              </button>
+            ))}
+            {selectedMonths.length > 0 && (
+              <button
+                onClick={() => { setSelectedMonths([]); localStorage.removeItem('dashboard-period'); }}
+                className="ml-1 text-[10px] text-gray-400 hover:text-gray-600"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Search Input with Dropdown */}
+        <div ref={searchRef} className="relative mb-4">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                ref={inputRef}
+                value={search}
+                onChange={e => { setSearch(e.target.value); setShowDropdown(true); setSelectedStudentId(null); }}
+                onFocus={() => setShowDropdown(true)}
+                placeholder="Search by name, ID, or class..."
+                className="w-full border rounded-lg pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              {search && (
                 <button
-                  key={m}
-                  onClick={() => toggleMonth(m)}
-                  className={`px-1.5 py-0.5 text-[10px] rounded border transition ${
-                    selectedMonths.includes(m)
-                      ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
-                      : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
-                  }`}
+                  onClick={() => { setSearch(''); setSelectedStudentId(null); setShowDropdown(false); inputRef.current?.focus(); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {m.slice(0, 3)}
-                </button>
-              ))}
-              {selectedMonths.length > 0 && (
-                <button
-                  onClick={() => { setSelectedMonths([]); localStorage.removeItem('dashboard-period'); }}
-                  className="ml-1 text-[10px] text-gray-400 hover:text-gray-600"
-                >
-                  Clear
+                  ×
                 </button>
               )}
             </div>
+          </div>
 
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search by name, ID, or class..."
-              className="border rounded-lg px-4 py-2 text-sm w-72 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
+          {/* Dropdown */}
+          {showDropdown && searchResults.length > 0 && (
+            <div className="absolute z-20 mt-1 w-full bg-white border rounded-xl shadow-lg max-h-80 overflow-y-auto">
+              {searchResults.map((s) => {
+                const periodDue = periodMonths.reduce((sum, m) => sum + parseDueFromCell(s[m]), 0);
+                const totalDue = parseTotalDue(s['Total Due']);
+                return (
+                  <button
+                    key={s['User ID']}
+                    onClick={() => {
+                      setSelectedStudentId(s['User ID']);
+                      setShowDropdown(false);
+                      setSearch(s['Std Name']);
+                    }}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-indigo-50 text-left transition border-b last:border-0"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs shrink-0">
+                        {(s['Std Name'] || '?')[0]}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{s['Std Name']}</div>
+                        <div className="text-xs text-gray-400">ID: {s['User ID']} · {s['_class']} · {s['_shift']}</div>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0 ml-2">
+                      {selectedMonths.length > 0 && (
+                        <div className="text-xs text-gray-400">
+                          Period: <span className="font-medium text-red-500">৳{periodDue.toLocaleString()}</span>
+                        </div>
+                      )}
+                      <div className="text-sm font-semibold text-red-600">৳{totalDue.toLocaleString()}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {showDropdown && search.trim() && searchResults.length === 0 && (
+            <div className="absolute z-20 mt-1 w-full bg-white border rounded-xl shadow-lg p-4 text-center text-gray-400 text-sm">
+              No students match "{search}"
+            </div>
+          )}
         </div>
-        {filteredStudents.length > 0 ? (
-          <div className="overflow-x-auto max-h-[32rem] overflow-y-auto">
-            <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-white">
-                  <tr className="text-left text-gray-500 border-b">
-                    <th className="pb-2">ID</th>
-                    <th className="pb-2">Name</th>
-                    <th className="pb-2">Class</th>
-                    <th className="pb-2">Shift</th>
-                    <th className="pb-2 text-right">Due (period)</th>
-                    <th className="pb-2 text-right">Total Due</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredStudents.slice(0, 100).map((s, i) => {
-                    const periodDue = periodMonths.reduce((sum, m) => sum + parseDueFromCell(s[m]), 0);
-                    const isExpanded = selectedStudent === s['User ID'];
-                    return (
-                      <Fragment key={i}>
-                        <tr
-                          className={`border-b last:border-0 hover:bg-gray-50 cursor-pointer ${isExpanded ? 'bg-indigo-50' : ''}`}
-                          onClick={() => setSelectedStudent(isExpanded ? null : s['User ID'])}
-                        >
-                          <td className="py-2 text-gray-500">{s['User ID']}</td>
-                          <td className="py-2 font-medium">{s['Std Name']}</td>
-                          <td className="py-2">{s['_class']}</td>
-                          <td className="py-2">{s['_shift']}</td>
-                          <td className="py-2 text-right font-medium text-red-600">
-                            {selectedMonths.length > 0 ? `৳${periodDue.toLocaleString()}` : '—'}
-                          </td>
-                          <td className="py-2 text-right font-medium text-red-600">
-                            ৳{parseTotalDue(s['Total Due']).toLocaleString()}
-                          </td>
-                        </tr>
-                        {isExpanded && (
-                          <tr>
-                            <td colSpan={6}>
-                              <StudentDetail student={s} periodMonths={periodMonths} />
-                            </td>
-                          </tr>
-                        )}
-                      </Fragment>
-                    );
-                  })}
-              </tbody>
-            </table>
-            {filteredStudents.length > 100 && (
-              <div className="text-center py-2 text-gray-400 text-sm">
-                Showing 100 of {filteredStudents.length} students
-              </div>
-            )}
-          </div>
-        ) : (
+
+        {/* Selected Student Detail */}
+        {selectedStudent && (
+          <StudentDetail student={selectedStudent} periodMonths={periodMonths} />
+        )}
+
+        {/* Empty state */}
+        {!selectedStudent && !search && (
           <div className="text-center py-8 text-gray-400">
-            {search ? 'No students match your search' : 'No student data available. Run an extraction first.'}
+            Type a student name, ID, or class to search
           </div>
         )}
       </div>

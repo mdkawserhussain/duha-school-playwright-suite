@@ -6,6 +6,16 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 const IDENTITY = ['_year', '_shift', '_class', 'SL', 'Std Name', 'User ID', 'Roll', 'Contact No'];
 const TOTALS = ['Total Paid', 'Total Due'];
 
+function getPeriodMonths(selectedMonths: string[]): string[] {
+  if (!selectedMonths || selectedMonths.length === 0) return MONTHS;
+  let latestIdx = 0;
+  for (const m of selectedMonths) {
+    const idx = MONTHS.findIndex(mm => mm.toLowerCase() === m.toLowerCase());
+    if (idx > latestIdx) latestIdx = idx;
+  }
+  return MONTHS.slice(0, latestIdx + 1);
+}
+
 function parseDueFromCell(value: any): number {
   if (typeof value === 'number') return value;
   const s = String(value ?? '');
@@ -105,6 +115,8 @@ export default function Controls() {
   const [selectedMonths, setSelectedMonths] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem('export-period') || '[]'); } catch { return []; }
   });
+  const [whatsappGenerating, setWhatsappGenerating] = useState(false);
+  const [whatsappResult, setWhatsappResult] = useState<{ count: number; periodLabel: string } | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const [successModal, setSuccessModal] = useState<{
     show: boolean;
@@ -272,6 +284,33 @@ export default function Controls() {
       a.download = `dues_report_${today}.xlsx`;
       a.click();
     } catch { alert('Failed to download Excel report'); }
+  };
+
+  const generateWhatsApp = async () => {
+    setWhatsappGenerating(true);
+    setWhatsappResult(null);
+    try {
+      const res = await fetch('/api/whatsapp/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          periodMonths: selectedMonths,
+          selectedColumns: [...selectedColumns],
+        }),
+      });
+      const data = await res.json();
+      if (data.parentLinks) {
+        const pm = getPeriodMonths(selectedMonths);
+        const periodLabel = selectedMonths.length > 0
+          ? `${pm[0].slice(0, 3)} - ${pm[pm.length - 1].slice(0, 3)}`
+          : 'All Months';
+        setWhatsappResult({ count: data.parentLinks.length, periodLabel });
+      }
+    } catch (err) {
+      console.error('Failed to generate WhatsApp links:', err);
+    } finally {
+      setWhatsappGenerating(false);
+    }
   };
 
   // Count active filters for the badge
@@ -445,7 +484,28 @@ export default function Controls() {
             className="px-3 py-1.5 bg-purple-600 text-white rounded text-xs font-medium hover:bg-purple-700 transition">
             Attendance
           </button>
+
+          <span className="text-gray-300 mx-1">|</span>
+
+          <button onClick={generateWhatsApp} disabled={whatsappGenerating}
+            className={`px-3 py-1.5 rounded text-xs font-medium text-white transition ${
+              whatsappGenerating
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700'
+            }`}>
+            {whatsappGenerating ? 'Generating...' : '📱 Generate WhatsApp'}
+          </button>
         </div>
+
+        {/* WhatsApp generation result */}
+        {whatsappResult && (
+          <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between text-sm">
+            <span className="text-green-700">
+              ✅ Generated <strong>{whatsappResult.count}</strong> parent messages for period: <strong>{whatsappResult.periodLabel}</strong>
+            </span>
+            <a href="/whatsapp" className="text-green-600 underline hover:text-green-800">View in WhatsApp tab →</a>
+          </div>
+        )}
       </div>
 
       {/* Live Logs */}

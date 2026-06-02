@@ -11,7 +11,7 @@
     "start:headed": "HEADED=true tsx src/cli.ts",
     "start:scheduler": "tsx src/scheduler.ts",
     "check:selectors": "tsx src/selectorHealthCheck.ts",
-    "web": "concurrently \"npx tsx src/server/index.ts\" \"npx vite --config web/vite.config.ts\"",
+    "web": "node scripts/start-web.mjs",
     "web:build": "npx vite build --config web/vite.config.ts",
     "web:server": "npx tsx src/server/index.ts",
     "tauri": "tauri dev",

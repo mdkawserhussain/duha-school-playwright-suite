@@ -110,11 +110,11 @@ export function appendDuesHistory(runId: number, records: Array<Record<string, a
       for (const row of rows) {
         stmt.run(
           runId,
-          String(row['Student ID'] || row.student_id || ''),
-          row['Name'] || row.student_name || '',
-          row['Class'] || row.class_name || '',
-          row['Shift'] || row.shift || '',
-          Number(row['Total Due'] || row.total_due || 0),
+          String(row['User ID'] || row['Student ID'] || row.student_id || ''),
+          row['Std Name'] || row['Name'] || row.student_name || '',
+          row._class || row['Class'] || row.class_name || '',
+          row._shift || row['Shift'] || row.shift || '',
+          Number(String(row['Total Due'] || row.total_due || 0).replace(/,/g, '')),
         );
       }
     });

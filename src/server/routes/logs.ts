@@ -8,6 +8,7 @@ export const logsRouter = Router();
 const LOGS_DIR = path.join(process.cwd(), 'user-data', 'logs');
 const ERRORS_DIR = path.join(process.cwd(), 'errors');
 const OUTPUT_DIR = path.join(process.cwd(), 'output');
+const ERROR_LOG = path.join(LOGS_DIR, 'error.log');
 
 // Get system info for debugging
 function getSystemInfo() {
@@ -103,7 +104,27 @@ logsRouter.get('/', (_req, res) => {
     paths: getFilePaths(),
     errors: getErrorScreenshots(),
     logs: getExtractionLogs(),
+    errorLog: getErrorLog(),
   });
+});
+
+// GET /api/logs/error-log — Return error.log content
+function getErrorLog() {
+  try {
+    if (!fs.existsSync(ERROR_LOG)) return { content: '', lines: 0, sizeKB: 0 };
+    const content = fs.readFileSync(ERROR_LOG, 'utf-8');
+    const lines = content.split('\n').filter(l => l.trim()).length;
+    const sizeKB = Math.round(fs.statSync(ERROR_LOG).size / 1024);
+    // Return last 200 lines
+    const tail = content.split('\n').slice(-200).join('\n');
+    return { content: tail, lines, sizeKB };
+  } catch {
+    return { content: '', lines: 0, sizeKB: 0 };
+  }
+}
+
+logsRouter.get('/error-log', (_req, res) => {
+  res.json(getErrorLog());
 });
 
 // GET /api/logs/content/:filename — Read specific log file

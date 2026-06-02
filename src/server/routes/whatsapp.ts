@@ -1,12 +1,20 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { CONFIG } from '../config';
-import { log } from '../utils/logger';
+import { Router } from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
+
+export const whatsappRouter = Router();
+
+const outputDir = path.resolve(process.cwd(), 'output');
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
 
 const IDENTITY_KEYS = ['Std Name', 'User ID', '_class', '_shift', '_year', 'SL', 'Roll', 'Contact No', 'Total Paid', 'Total Due'];
+
+interface DuesColumn {
+  name: string;
+  amount: number;
+}
 
 interface StaffLink {
   name: string;
@@ -22,8 +30,8 @@ interface ParentLink {
   parentPhone: string;
   totalDue: number;
   periodDue: number;
-  monthlyDues: { name: string; amount: number }[];
-  feeDues: { name: string; amount: number }[];
+  monthlyDues: DuesColumn[];
+  feeDues: DuesColumn[];
   message: string;
   link: string;
 }
@@ -51,21 +59,30 @@ function isFeeColumn(col: string): boolean {
   return !MONTHS.includes(col) && !IDENTITY_KEYS.includes(col);
 }
 
-function computeStudentDues(record: Record<string, any>, periodMonths: string[], selectedColumns?: string[]) {
+function computeStudentDues(
+  record: Record<string, any>,
+  periodMonths: string[],
+  selectedColumns: string[] | null
+): {
+  totalDue: number;
+  periodDue: number;
+  monthlyDues: DuesColumn[];
+  feeDues: DuesColumn[];
+} {
   const totalDue = parseDueFromCell(record['Total Due']);
 
   // Monthly dues within period — only if month columns are in selectedColumns
-  const monthlyDues: { name: string; amount: number }[] = [];
+  const monthlyDues: DuesColumn[] = [];
   for (const m of periodMonths) {
-    if (selectedColumns && selectedColumns.length > 0 && !selectedColumns.includes(m)) continue;
+    if (selectedColumns && !selectedColumns.includes(m)) continue;
     const due = parseDueFromCell(record[m]);
     if (due > 0) monthlyDues.push({ name: m.slice(0, 3), amount: due });
   }
   const periodDue = monthlyDues.reduce((sum, d) => sum + d.amount, 0);
 
   // Fee dues — only columns in selectedColumns that are fee columns
-  const feeDues: { name: string; amount: number }[] = [];
-  const feeCols = selectedColumns && selectedColumns.length > 0
+  const feeDues: DuesColumn[] = [];
+  const feeCols = selectedColumns
     ? selectedColumns.filter(c => isFeeColumn(c))
     : Object.keys(record).filter(c => isFeeColumn(c));
   for (const key of feeCols) {
@@ -80,7 +97,6 @@ function composeStaffMessage(name: string, present: number, absent: number, late
   const genId = Math.random().toString(36).substring(2, 8).toUpperCase();
   const monthName = new Date().toLocaleString('en-US', { month: 'long' });
   const year = new Date().getFullYear();
-
   return `*DUHA INTERNATIONAL SCHOOL*\n*OFFICIAL SALARY SLIP*\n\n==============================\n*REF:* #DIS-${genId}-${monthName.substring(0, 3).toUpperCase()}\n*NAME:* ${name}\n*PERIOD:* ${monthName} ${year}\n==============================\n\n*ATTENDANCE DETAILS*\n✅ Present    : ${present} Days\n❌ Absent     : ${absent} Days\n⏳ Lateness   : ${late} Entries\n\n==============================\n_This is an automated HR notification._`;
 }
 
@@ -89,8 +105,8 @@ function composeParentMessage(
   studentId: string,
   className: string,
   periodDue: number,
-  monthlyDues: { name: string; amount: number }[],
-  feeDues: { name: string; amount: number }[],
+  monthlyDues: DuesColumn[],
+  feeDues: DuesColumn[],
   periodLabel: string
 ): string {
   let body = `*DUHA INTERNATIONAL SCHOOL*\n*OUTSTANDING DUES NOTICE*\n\nDear Parent,\nThis is to notify you that child *${studentName}* (ID: ${studentId}, Class: ${className})\nhas outstanding balances:\n`;
@@ -119,128 +135,91 @@ function buildWhatsAppLink(phone: string, message: string): string {
   return `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
 }
 
-function passesRowFilters(row: Record<string, any>): boolean {
-  const { dueStudentsOnly, minDue, classFilter, columnFilter } = CONFIG.filters;
-
-  if (dueStudentsOnly) {
-    const totalDue = parseDueFromCell(row['Total Due'] || row.totalDue || 0);
-    if (totalDue <= 0) return false;
+function findLatestFile(prefix: string): string | null {
+  try {
+    const files = fs.readdirSync(outputDir).filter(f => f.startsWith(prefix) && f.endsWith('.json'));
+    if (files.length === 0) return null;
+    return path.join(outputDir, files.sort().pop()!);
+  } catch {
+    return null;
   }
-
-  if (minDue > 0) {
-    const totalDue = parseDueFromCell(row['Total Due'] || row.totalDue || 0);
-    if (totalDue < minDue) return false;
-  }
-
-  if (classFilter) {
-    const rowClass = String(row._class || row.Class || '').toLowerCase();
-    if (!rowClass.includes(classFilter.toLowerCase())) return false;
-  }
-
-  if (columnFilter.length > 0) {
-    const hasDueInCol = columnFilter.some(c => parseDueFromCell(row[c]) > 0);
-    if (!hasDueInCol) return false;
-  }
-
-  return true;
 }
 
-export function generateWhatsAppDashboard(
-  attendanceData: Record<string, any>[],
-  duesData: Record<string, any>[]
-): void {
-  const periodMonths = CONFIG.filters.periodMonths.length > 0
-    ? getPeriodMonths(CONFIG.filters.periodMonths)
-    : MONTHS;
-  const periodLabel = CONFIG.filters.periodMonths.length > 0
-    ? `${periodMonths[0].slice(0, 3)} - ${periodMonths[periodMonths.length - 1].slice(0, 3)}`
+function generateLinksInternal(periodMonths?: string[], selectedColumns?: string[] | null): { staffLinks: StaffLink[]; parentLinks: ParentLink[] } {
+  const pm = periodMonths && periodMonths.length > 0 ? getPeriodMonths(periodMonths) : MONTHS;
+  const periodLabel = periodMonths && periodMonths.length > 0
+    ? `${pm[0].slice(0, 3)} - ${pm[pm.length - 1].slice(0, 3)}`
     : 'All Months';
 
-  // Aggregate attendance by employee
-  const employeeMap = new Map<string, { present: number; absent: number; late: number; phone: string }>();
-  for (const record of attendanceData) {
-    const id = record['Employee ID'] || record.employee_id || '';
-    const phone = record.Contact || record.contact_number || '';
-    if (!id) continue;
-    const key = String(id);
-    if (!employeeMap.has(key)) {
-      employeeMap.set(key, { present: 0, absent: 0, late: 0, phone });
-    }
-    const emp = employeeMap.get(key)!;
-    const status = record.Status || '';
-    if (status === 'Present') emp.present++;
-    else if (status === 'Absent') emp.absent++;
-    if (record.Late) emp.late++;
-  }
-
-  // Build staff links
   const staffLinks: StaffLink[] = [];
-  for (const [id, emp] of employeeMap) {
-    const name = attendanceData.find(r => String(r['Employee ID'] || r.employee_id) === id)?.Name || id;
-    const msg = composeStaffMessage(name, emp.present, emp.absent, emp.late);
-    staffLinks.push({
-      name,
-      phone: emp.phone,
-      message: msg,
-      link: buildWhatsAppLink(emp.phone, msg),
-    });
-  }
-
-  // Build parent links with per-column dues breakdown
-  const selectedColumns = CONFIG.report.columns.length > 0 ? CONFIG.report.columns : undefined;
   const parentLinks: ParentLink[] = [];
-  for (const record of duesData) {
-    if (!passesRowFilters(record)) continue;
 
-    const { totalDue, periodDue, monthlyDues, feeDues } = computeStudentDues(record, periodMonths, selectedColumns);
-
-    // Only include if there are dues in the filtered columns
-    if (periodDue <= 0 && feeDues.length === 0) continue;
-
-    const studentName = record['Std Name'] || record.name || '';
-    const studentId = record['User ID'] || record.studentId || '';
-    const className = record._class || record.Class || '';
-    const parentPhone = record['Contact No'] || record.contact_number || '';
-    if (!parentPhone) continue;
-
-    const filteredTotal = periodDue + feeDues.reduce((s, d) => s + d.amount, 0);
-    const msg = composeParentMessage(studentName, studentId, className, filteredTotal, monthlyDues, feeDues, periodLabel);
-    parentLinks.push({
-      studentName,
-      studentId,
-      className,
-      parentPhone,
-      totalDue,
-      periodDue: filteredTotal,
-      monthlyDues,
-      feeDues,
-      message: msg,
-      link: buildWhatsAppLink(parentPhone, msg),
-    });
+  // Staff links from attendance data
+  const attendanceFile = findLatestFile('attendance');
+  if (attendanceFile) {
+    try {
+      const attendanceData = JSON.parse(fs.readFileSync(attendanceFile, 'utf-8'));
+      const employeeMap = new Map<string, { present: number; absent: number; late: number; phone: string }>();
+      for (const record of attendanceData) {
+        const id = record['Employee ID'] || record.employee_id || '';
+        const phone = record.Contact || record.contact_number || '';
+        if (!id) continue;
+        const key = String(id);
+        if (!employeeMap.has(key)) {
+          employeeMap.set(key, { present: 0, absent: 0, late: 0, phone });
+        }
+        const emp = employeeMap.get(key)!;
+        const status = record.Status || '';
+        if (status === 'Present') emp.present++;
+        else if (status === 'Absent') emp.absent++;
+        if (record.Late) emp.late++;
+      }
+      for (const [id, emp] of employeeMap) {
+        const name = attendanceData.find((r: any) => String(r['Employee ID'] || r.employee_id) === id)?.Name || id;
+        const msg = composeStaffMessage(name, emp.present, emp.absent, emp.late);
+        staffLinks.push({ name, phone: emp.phone, message: msg, link: buildWhatsAppLink(emp.phone, msg) });
+      }
+    } catch { /* ignore */ }
   }
 
-  // Write data file
-  if (!fs.existsSync(CONFIG.directories.output)) {
-    fs.mkdirSync(CONFIG.directories.output, { recursive: true });
+  // Parent links from dues data with per-column breakdown
+  const duesFile = findLatestFile('accounts_receivable_dues_enriched');
+  if (duesFile) {
+    try {
+      const duesData = JSON.parse(fs.readFileSync(duesFile, 'utf-8'));
+      for (const record of duesData) {
+        const { totalDue, periodDue, monthlyDues, feeDues } = computeStudentDues(record, pm, selectedColumns ?? null);
+
+        // Only include if there are dues in the filtered columns
+        if (periodDue <= 0 && feeDues.length === 0) continue;
+
+        const studentName = record['Std Name'] || record.name || '';
+        const studentId = record['User ID'] || record.studentId || '';
+        const className = record._class || record.Class || '';
+        const parentPhone = record['Contact No'] || record.contact_number || '';
+        if (!parentPhone) continue;
+
+        // Total due for message = sum of filtered monthly + fee dues
+        const filteredTotal = periodDue + feeDues.reduce((sum, d) => sum + d.amount, 0);
+
+        const msg = composeParentMessage(studentName, studentId, className, filteredTotal, monthlyDues, feeDues, periodLabel);
+        parentLinks.push({
+          studentName,
+          studentId,
+          className,
+          parentPhone,
+          totalDue,
+          periodDue: filteredTotal,
+          monthlyDues,
+          feeDues,
+          message: msg,
+          link: buildWhatsAppLink(parentPhone, msg),
+        });
+      }
+    } catch { /* ignore */ }
   }
 
-  const dataFile = path.join(CONFIG.directories.output, 'wa-data.json');
-  const dataContent = JSON.stringify({
-    staffLinks,
-    parentLinks,
-    generatedAt: new Date().toISOString(),
-    periodMonths: periodMonths,
-  }, null, 2);
-  fs.writeFileSync(dataFile, dataContent, 'utf-8');
-  log.info(`WhatsApp data written: ${dataFile}`);
-
-  // Build HTML dashboard
-  const html = buildDashboardHtml(staffLinks, parentLinks);
-  const htmlFile = path.join(CONFIG.directories.output, 'WhatsApp-Links-Dashboard.html');
-  fs.writeFileSync(htmlFile, html, 'utf-8');
-  log.info(`WhatsApp dashboard written: ${htmlFile}`);
-
-  log.info(`Generated ${staffLinks.length} staff links and ${parentLinks.length} parent links (period: ${periodLabel})`);
+  return { staffLinks, parentLinks };
 }
 
 function buildDashboardHtml(staffLinks: StaffLink[], parentLinks: ParentLink[]): string {
@@ -295,7 +274,7 @@ function buildDashboardHtml(staffLinks: StaffLink[], parentLinks: ParentLink[]):
     </div>
 
     <div id="panel-staff" class="space-y-3">
-      ${staffRows}
+      ${staffRows || '<div class="text-center py-8 text-gray-400">No staff links</div>'}
     </div>
 
     <div id="panel-parent" class="hidden">
@@ -311,7 +290,7 @@ function buildDashboardHtml(staffLinks: StaffLink[], parentLinks: ParentLink[]):
           </tr>
         </thead>
         <tbody>
-          ${parentRows}
+          ${parentRows || '<tr><td colspan="6" class="p-4 text-center text-gray-400">No parent links</td></tr>'}
         </tbody>
       </table>
     </div>
@@ -334,3 +313,49 @@ function buildDashboardHtml(staffLinks: StaffLink[], parentLinks: ParentLink[]):
 </body>
 </html>`;
 }
+
+// GET /api/whatsapp/links — return last generated links
+whatsappRouter.get('/links', (_req, res) => {
+  try {
+    const cacheFile = path.join(outputDir, 'wa-data.json');
+    if (fs.existsSync(cacheFile)) {
+      const cached = JSON.parse(fs.readFileSync(cacheFile, 'utf-8'));
+      return res.json(cached);
+    }
+    const { staffLinks, parentLinks } = generateLinksInternal();
+    res.json({ staffLinks, parentLinks });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/whatsapp/generate — generate links with period + selected columns filter
+whatsappRouter.post('/generate', (req, res) => {
+  try {
+    const { periodMonths, selectedColumns } = req.body || {};
+    // null = no column filter (show all), [] = no columns selected (show nothing), [...]= filter
+    const cols = selectedColumns !== undefined ? (Array.isArray(selectedColumns) && selectedColumns.length > 0 ? selectedColumns : null) : null;
+    const { staffLinks, parentLinks } = generateLinksInternal(periodMonths, cols);
+
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    const cacheFile = path.join(outputDir, 'wa-data.json');
+    fs.writeFileSync(cacheFile, JSON.stringify({
+      staffLinks,
+      parentLinks,
+      generatedAt: new Date().toISOString(),
+      periodMonths,
+      selectedColumns: cols,
+    }, null, 2));
+
+    // Also generate the HTML dashboard
+    const html = buildDashboardHtml(staffLinks, parentLinks);
+    const htmlFile = path.join(outputDir, 'WhatsApp-Links-Dashboard.html');
+    fs.writeFileSync(htmlFile, html, 'utf-8');
+
+    res.json({ staffLinks, parentLinks, generatedAt: new Date().toISOString() });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});

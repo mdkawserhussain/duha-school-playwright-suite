@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "npm run web:server",
     "beforeBuildCommand": "npm run web:build",
-    "devUrl": "http://localhost:3000",
+    "devUrl": "http://localhost:5173",
     "frontendDist": "../web/dist"
   },
   "app": {
@@ -35,6 +35,7 @@
       "../src/server/": "_up_/src/server/",
       "../src/utils/historyDb.ts": "_up_/src/utils/historyDb.ts",
       "../src/utils/logger.ts": "_up_/src/utils/logger.ts",
+      "../src/utils/monthlyTotals.ts": "_up_/src/utils/monthlyTotals.ts",
       "../src/config.ts": "_up_/src/config.ts",
       "server-package.json": "package.json"
     },

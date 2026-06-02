@@ -31,6 +31,56 @@ configRouter.get('/', (_req, res) => {
   }
 });
 
+// GET /api/config/test — test portal connectivity
+configRouter.get('/test', async (_req, res) => {
+  try {
+    const content = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf-8') : '';
+    const vars: Record<string, string> = {};
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eqIdx = trimmed.indexOf('=');
+      if (eqIdx > 0) {
+        const key = trimmed.slice(0, eqIdx);
+        const val = trimmed.slice(eqIdx + 1).replace(/^["']|["']$/g, '');
+        vars[key] = val;
+      }
+    }
+
+    const url = vars.PORTAL_BASE_URL;
+    if (!url) {
+      res.json({ ok: false, message: 'PORTAL_BASE_URL is not set' });
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const response = await fetch(url, {
+        method: 'HEAD',
+        signal: controller.signal,
+        redirect: 'follow',
+      });
+      clearTimeout(timeout);
+      if (response.ok) {
+        res.json({ ok: true, message: `Portal reachable (${response.status})` });
+      } else {
+        res.json({ ok: false, message: `Portal returned ${response.status} ${response.statusText}` });
+      }
+    } catch (err: any) {
+      clearTimeout(timeout);
+      if (err.name === 'AbortError') {
+        res.json({ ok: false, message: 'Connection timed out (10s)' });
+      } else {
+        res.json({ ok: false, message: `Cannot reach portal: ${err.message}` });
+      }
+    }
+  } catch (err: any) {
+    res.status(500).json({ ok: false, message: err.message });
+  }
+});
+
 configRouter.put('/', (req, res) => {
   try {
     const updates = req.body as Record<string, string>;
