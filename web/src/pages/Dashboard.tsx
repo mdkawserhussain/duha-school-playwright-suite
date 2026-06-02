@@ -4,6 +4,15 @@ import { api } from '../lib/api';
 import SummaryCards from '../components/SummaryCards';
 import DuesByClass from '../components/DuesByClass';
 
+function parseDueFromCell(value: any): number {
+  if (typeof value === 'number') return value;
+  const s = String(value ?? '');
+  const match = s.match(/due\s*:\s*([\d,]+)/i);
+  if (match) return parseFloat(match[1].replace(/,/g, '')) || 0;
+  const num = parseFloat(s.replace(/,/g, ''));
+  return isNaN(num) ? 0 : num;
+}
+
 interface DashboardData {
   latestRun: any;
   totalRuns: number;
@@ -13,11 +22,11 @@ interface DashboardData {
 }
 
 interface Student {
-  'Student ID': string;
-  'Name': string;
-  'Class': string;
-  'Shift': string;
-  'Total Due': number;
+  'User ID': string;
+  'Std Name': string;
+  '_class': string;
+  '_shift': string;
+  'Total Due': number | string;
 }
 
 export default function Dashboard() {
@@ -36,9 +45,9 @@ export default function Dashboard() {
     if (!search) return true;
     const q = search.toLowerCase();
     return (
-      (s['Name'] || '').toLowerCase().includes(q) ||
-      (s['Student ID'] || '').toLowerCase().includes(q) ||
-      (s['Class'] || '').toLowerCase().includes(q)
+      (s['Std Name'] || '').toLowerCase().includes(q) ||
+      (s['User ID'] || '').toLowerCase().includes(q) ||
+      (s['_class'] || '').toLowerCase().includes(q)
     );
   });
 
@@ -66,26 +75,26 @@ export default function Dashboard() {
           <div className="overflow-x-auto max-h-96 overflow-y-auto">
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-white">
-                <tr className="text-left text-gray-500 border-b">
-                  <th className="pb-2">ID</th>
-                  <th className="pb-2">Name</th>
-                  <th className="pb-2">Class</th>
-                  <th className="pb-2">Shift</th>
-                  <th className="pb-2 text-right">Total Due</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredStudents.slice(0, 100).map((s, i) => (
-                  <tr key={i} className="border-b last:border-0 hover:bg-gray-50">
-                    <td className="py-2 text-gray-500">{s['Student ID']}</td>
-                    <td className="py-2 font-medium">{s['Name']}</td>
-                    <td className="py-2">{s['Class']}</td>
-                    <td className="py-2">{s['Shift']}</td>
-                    <td className="py-2 text-right font-medium text-red-600">
-                      ৳{(s['Total Due'] || 0).toLocaleString()}
-                    </td>
+                  <tr className="text-left text-gray-500 border-b">
+                    <th className="pb-2">ID</th>
+                    <th className="pb-2">Name</th>
+                    <th className="pb-2">Class</th>
+                    <th className="pb-2">Shift</th>
+                    <th className="pb-2 text-right">Total Due</th>
                   </tr>
-                ))}
+                </thead>
+                <tbody>
+                  {filteredStudents.slice(0, 100).map((s, i) => (
+                    <tr key={i} className="border-b last:border-0 hover:bg-gray-50">
+                      <td className="py-2 text-gray-500">{s['User ID']}</td>
+                      <td className="py-2 font-medium">{s['Std Name']}</td>
+                      <td className="py-2">{s['_class']}</td>
+                      <td className="py-2">{s['_shift']}</td>
+                      <td className="py-2 text-right font-medium text-red-600">
+                        ৳{(parseDueFromCell(s['Total Due']) || 0).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
             {filteredStudents.length > 100 && (
