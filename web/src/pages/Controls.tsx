@@ -103,6 +103,14 @@ export default function Controls() {
   const [minAmount, setMinAmount] = useState(0);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
+  const [successModal, setSuccessModal] = useState<{
+    show: boolean;
+    rawCount: number;
+    dueCount: number;
+    combos: number;
+    failedCombos: number;
+    duration: string;
+  } | null>(null);
 
   const columnGroups = groupColumns(serverColumns);
 
@@ -192,6 +200,28 @@ export default function Controls() {
       evtSource.onmessage = (event) => {
         const { message } = JSON.parse(event.data);
         setLogs(prev => [...prev, message]);
+        // Detect successful completion
+        if (message.includes('Process exited with code 0')) {
+          evtSource.close();
+          // Fetch latest run stats
+          fetch('/api/runs?limit=1')
+            .then(r => r.json())
+            .then(({ runs }) => {
+              if (runs && runs.length > 0) {
+                const run = runs[0];
+                const secs = Math.round(run.duration_ms / 1000);
+                setSuccessModal({
+                  show: true,
+                  rawCount: run.raw_count,
+                  dueCount: run.due_count,
+                  combos: 21,
+                  failedCombos: run.failed_combos,
+                  duration: secs >= 60 ? `${Math.floor(secs / 60)}m ${secs % 60}s` : `${secs}s`,
+                });
+              }
+            })
+            .catch(() => {});
+        }
       };
       evtSource.onerror = () => { setRunning(false); evtSource.close(); };
     } catch {
@@ -394,6 +424,61 @@ export default function Controls() {
           )}
         </div>
       </div>
+
+      {/* Success Modal */}
+      {successModal?.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setSuccessModal(null)}>
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Extraction Complete</h3>
+                <p className="text-xs text-gray-500">All data extracted successfully</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-indigo-600">{successModal.rawCount}</div>
+                <div className="text-xs text-gray-500">Students Extracted</div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-emerald-600">{successModal.dueCount}</div>
+                <div className="text-xs text-gray-500">With Dues</div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-blue-600">{successModal.combos}</div>
+                <div className="text-xs text-gray-500">Combos Processed</div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-2xl font-bold text-amber-600">{successModal.duration}</div>
+                <div className="text-xs text-gray-500">Duration</div>
+              </div>
+            </div>
+
+            {successModal.failedCombos > 0 && (
+              <div className="bg-red-50 text-red-700 text-xs rounded-lg px-3 py-2 mb-4">
+                {successModal.failedCombos} combo(s) failed — check logs for details
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <button onClick={() => setSuccessModal(null)}
+                className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+                OK
+              </button>
+              <button onClick={() => { setSuccessModal(null); downloadXlsx(); }}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition">
+                Download Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
