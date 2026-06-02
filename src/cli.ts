@@ -19,6 +19,7 @@ program
   .option('--headed', 'Run browser in headed (visible) mode', false)
   .option('--no-cache', 'Skip dropdown cache and force fresh discovery', false)
   .option('--min-due <amount>', 'Minimum due amount to include in dues-only filter', parseFloat)
+  .option('--period <months>', 'Comma-separated month names for period filter (e.g. January,February,March)')
   .option('--setup', 'Run first-time setup wizard to create .env file', false)
   .parse(process.argv);
 
@@ -60,6 +61,9 @@ if (opts.preview) {
 }
 if (opts.minDue !== undefined) {
   process.env.MIN_DUE_AMOUNT = String(opts.minDue);
+}
+if (opts.period) {
+  process.env.PORTAL_PERIOD_MONTHS = opts.period;
 }
 
 // First-run setup wizard: check for .env and run wizard if missing

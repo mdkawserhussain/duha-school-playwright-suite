@@ -102,6 +102,9 @@ export default function Controls() {
   const [dueOnly, setDueOnly] = useState(false);
   const [minAmount, setMinAmount] = useState(0);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const [selectedMonths, setSelectedMonths] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem('export-period') || '[]'); } catch { return []; }
+  });
   const logRef = useRef<HTMLDivElement>(null);
   const [successModal, setSuccessModal] = useState<{
     show: boolean;
@@ -185,8 +188,9 @@ export default function Controls() {
     if (year) args.push('--year', year);
     if (shift) args.push('--shift', shift);
     if (cls) args.push('--class', cls);
+    if (selectedMonths.length > 0) args.push('--period', selectedMonths.join(','));
 
-    const filters = { dueOnly, minDue: minAmount };
+    const filters = { dueOnly, minDue: minAmount, periodMonths: selectedMonths };
 
     try {
       const res = await fetch('/api/run', {
@@ -258,6 +262,7 @@ export default function Controls() {
         body: JSON.stringify({
           columns: [...selectedColumns],
           rowFilters: { dueOnly, minAmount, classFilter: cls, shiftFilter: shift, yearFilter: year },
+          periodMonths: selectedMonths,
         }),
       });
       if (!res.ok) { alert('Failed to generate Excel report'); return; }
@@ -270,7 +275,7 @@ export default function Controls() {
   };
 
   // Count active filters for the badge
-  const activeFilters = [dueOnly, minAmount > 0, !!cls, !!shift, !!year].filter(Boolean).length;
+  const activeFilters = [dueOnly, minAmount > 0, !!cls, !!shift, !!year, selectedMonths.length > 0].filter(Boolean).length;
 
   return (
     <div className="space-y-6">
@@ -320,6 +325,40 @@ export default function Controls() {
             <label className="text-xs text-gray-400">Year</label>
             <input value={year} onChange={e => setYear(e.target.value)}
               className="w-20 border rounded-lg px-2.5 py-2 text-xs" placeholder="2026" />
+          </div>
+
+          {/* Period (Month Range) */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-xs text-gray-400">Period</label>
+            <div className="flex gap-0.5">
+              {MONTHS.map(m => (
+                <button
+                  key={m}
+                  onClick={() => {
+                    setSelectedMonths(prev => {
+                      const next = prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m];
+                      localStorage.setItem('export-period', JSON.stringify(next));
+                      return next;
+                    });
+                  }}
+                  className={`px-1 py-1 text-[9px] rounded border transition ${
+                    selectedMonths.includes(m)
+                      ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
+                      : 'bg-white text-gray-400 border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  {m.slice(0, 3)}
+                </button>
+              ))}
+              {selectedMonths.length > 0 && (
+                <button
+                  onClick={() => { setSelectedMonths([]); localStorage.removeItem('export-period'); }}
+                  className="px-1 text-[9px] text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

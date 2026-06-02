@@ -35,7 +35,14 @@ export const CONFIG = {
     years:   parseList(process.env.PORTAL_YEAR,  '2026'),
     shifts:  parseList(process.env.PORTAL_SHIFT, ''),
     classes: parseList(process.env.PORTAL_CLASS, ''),
-    dueStudentsOnly: process.env.PORTAL_DUE_STUDENTS_ONLY !== 'false',
+    dueStudentsOnly: (process.env.PORTAL_DUE_STUDENTS_ONLY || process.env.PORTAL_DUE_ONLY) !== 'false',
+    minDue: parseFloat(process.env.MIN_DUE_AMOUNT || process.env.PORTAL_MIN_DUE || '0'),
+    classFilter: (process.env.PORTAL_CLASS_FILTER || '').trim(),
+    columnFilter: (process.env.PORTAL_COLUMN_FILTER || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
+    periodMonths: parseList(process.env.PORTAL_PERIOD_MONTHS, ''),
   },
   attendance: {
     startDate: process.env.ATTENDANCE_START_DATE || '',
@@ -48,10 +55,11 @@ export const CONFIG = {
     accountsReceivable: process.env.EXTRACT_ACCOUNTS_RECEIVABLE !== 'false',
   },
   report: {
-    // Comma-separated list of column name substrings to include in the spreadsheet.
-    // Matching is case-insensitive and partial (e.g. "session,january" matches "Session Fee", "January Due", etc.)
+    // Comma-separated column names for export filtering.
+    // PORTAL_COLUMNS is the single source of truth (web UI + CLI).
+    // Falls back to REPORT_COLUMNS for backward compatibility.
     // Leave empty to include ALL columns from the portal table.
-    columns: (process.env.REPORT_COLUMNS || '')
+    columns: (process.env.PORTAL_COLUMNS || process.env.REPORT_COLUMNS || '')
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean),

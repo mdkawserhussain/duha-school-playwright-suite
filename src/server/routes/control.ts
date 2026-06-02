@@ -18,6 +18,7 @@ function saveFiltersToEnv(filters: {
   dueOnly?: boolean;
   minDue?: number;
   classFilter?: string;
+  periodMonths?: string[];
 }): void {
   let content = '';
   try {
@@ -30,6 +31,7 @@ function saveFiltersToEnv(filters: {
   if (filters.dueOnly !== undefined) updates.PORTAL_DUE_ONLY = String(filters.dueOnly);
   if (filters.minDue !== undefined) updates.PORTAL_MIN_DUE = String(filters.minDue);
   if (filters.classFilter !== undefined) updates.PORTAL_CLASS_FILTER = filters.classFilter;
+  if (filters.periodMonths !== undefined) updates.PORTAL_PERIOD_MONTHS = filters.periodMonths.join(',');
 
   for (const [key, val] of Object.entries(updates)) {
     const regex = new RegExp(`^${key}=.*$`, 'm');
