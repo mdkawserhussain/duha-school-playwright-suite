@@ -19,7 +19,7 @@ import { exportRouter } from './routes/export';
 import { logsRouter } from './routes/logs';
 
 const app = express();
-const PORT = parseInt(process.env.WEB_PORT || '3001', 10);
+const PORT = parseInt(process.env.WEB_PORT || process.env.PORT || '3001', 10);
 const outputDir = path.resolve(process.cwd(), 'output');
 
 app.use(cors({ origin: /localhost/ }));
