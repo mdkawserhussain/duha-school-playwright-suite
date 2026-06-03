@@ -43,38 +43,33 @@ fn bootstrap_server(res_dir: &PathBuf, data_dir: &PathBuf) -> Result<PathBuf, St
         fs::create_dir_all(&server_dir).map_err(|e| format!("create dir: {e}"))?;
 
         // Tauri maps "../src/" to "_up_/src/" in the resource dir
+        // Copy the entire src/ directory (server + CLI + utils + extractors + etc.)
         let src = res_dir.join("_up_").join("src");
         if src.exists() {
             copy_dir_all(&src, &server_dir.join("src"))
                 .map_err(|e| format!("copy src: {e}"))?;
         } else {
-            // Fallback: try direct path (some platforms may not use _up_ prefix)
             let src_direct = res_dir.join("src");
             if src_direct.exists() {
                 copy_dir_all(&src_direct, &server_dir.join("src"))
                     .map_err(|e| format!("copy src: {e}"))?;
             } else {
                 return Err(format!(
-                    "Server source files not found in resource dir. Looked for {:?} and {:?}",
+                    "Server source files not found. Looked for {:?} and {:?}",
                     src, src_direct
                 ));
             }
         }
 
-        // Copy config.ts and utils
-        for (rel, name) in [
-            ("_up_/src/config.ts", "config.ts"),
-            ("_up_/src/utils/historyDb.ts", "utils/historyDb.ts"),
-            ("_up_/src/utils/logger.ts", "utils/logger.ts"),
-            ("_up_/src/utils/monthlyTotals.ts", "utils/monthlyTotals.ts"),
-        ] {
-            let src_path = res_dir.join(rel);
-            if src_path.exists() {
-                let dst_path = server_dir.join(name);
-                fs::create_dir_all(dst_path.parent().unwrap()).ok();
-                fs::copy(&src_path, &dst_path)
-                    .map_err(|e| format!("copy {rel}: {e}"))?;
-            }
+        // Copy web/dist/ for the built frontend
+        let web_dist = res_dir.join("_up_").join("web").join("dist");
+        if web_dist.exists() {
+            let dst_web = server_dir.join("web").join("dist");
+            copy_dir_all(&web_dist, &dst_web)
+                .map_err(|e| format!("copy web/dist: {e}"))?;
+            eprintln!("[tauri] Copied web/dist frontend");
+        } else {
+            eprintln!("[tauri] WARNING: web/dist not found in resources — frontend may not load");
         }
 
         // Copy package.json (mapped from server-package.json)
@@ -82,6 +77,11 @@ fn bootstrap_server(res_dir: &PathBuf, data_dir: &PathBuf) -> Result<PathBuf, St
         if pkg.exists() {
             fs::copy(&pkg, server_dir.join("package.json"))
                 .map_err(|e| format!("copy package.json: {e}"))?;
+        }
+
+        // Create runtime directories
+        for dir in &["user-data/logs", "output", "errors"] {
+            fs::create_dir_all(server_dir.join(dir)).ok();
         }
     }
 
