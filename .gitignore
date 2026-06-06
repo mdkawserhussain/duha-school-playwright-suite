@@ -29,3 +29,6 @@ web/dist/
 
 # Cloned skill repos
 .skills/
+
+# Sibling projects (not part of this repo)
+js-agv8/

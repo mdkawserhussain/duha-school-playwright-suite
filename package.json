@@ -16,6 +16,7 @@
     "web:server": "npx tsx src/server/index.ts",
     "tauri": "tauri dev",
     "tauri:build": "tauri build",
+    "payroll": "npx tsx scripts/payroll.ts",
     "test": "vitest run"
   },
   "keywords": [
