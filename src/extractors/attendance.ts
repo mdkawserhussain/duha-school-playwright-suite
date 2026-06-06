@@ -5,6 +5,7 @@ import { log } from '../utils/logger';
 import { writeJsonOutput } from '../utils/fileWriter';
 import { withRetry } from '../utils/retry';
 import { flattenAttendanceResponse } from '../utils/attendanceFlattener';
+import { writeAttendanceXlsx } from '../utils/spreadsheetWriter';
 
 /**
  * Navigates to the attendance module (establishes session), then makes
@@ -103,7 +104,15 @@ export async function extractAttendance(page: Page): Promise<void> {
 
     // ── 6. Write output ────────────────────────────────────────────────
     writeJsonOutput('attendance', flatRecords);
-    log.info('Attendance data saved');
+    log.info('Attendance JSON saved');
+
+    // ── 7. Write XLSX report ───────────────────────────────────────────
+    try {
+      const xlsxPath = await writeAttendanceXlsx(flatRecords);
+      log.info(`Attendance XLSX saved to ${xlsxPath}`);
+    } catch (xlsxErr) {
+      log.error('Failed to generate attendance XLSX:', xlsxErr);
+    }
   } catch (err) {
     throw new Error(`extractAttendance failed: ${(err as Error).message}`, { cause: err as Error });
   }

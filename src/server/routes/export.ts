@@ -283,3 +283,127 @@ exportRouter.post('/xlsx', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// GET /api/export/attendance-xlsx — download attendance report
+exportRouter.get('/attendance-xlsx', async (_req, res) => {
+  try {
+    const attFile = findLatestFile('attendance');
+    if (!attFile) {
+      res.status(404).json({ error: 'No attendance data found' });
+      return;
+    }
+
+    const data: Record<string, any>[] = JSON.parse(fs.readFileSync(attFile, 'utf-8'));
+    if (data.length === 0) {
+      res.status(404).json({ error: 'Attendance data is empty' });
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Attendance');
+
+    const columns = [
+      { header: 'Employee ID', key: 'Employee ID', width: 14 },
+      { header: 'Name', key: 'Name', width: 22 },
+      { header: 'Designation', key: 'Designation', width: 18 },
+      { header: 'Contact', key: 'Contact', width: 16 },
+      { header: 'Date', key: 'Date', width: 14 },
+      { header: 'Status', key: 'Status', width: 12 },
+      { header: 'In Time', key: 'In Time', width: 12 },
+      { header: 'Out Time', key: 'Out Time', width: 12 },
+      { header: 'Hours', key: 'Hours', width: 10 },
+      { header: 'Late', key: 'Late', width: 8 },
+    ];
+    sheet.columns = columns;
+
+    // Group by employee
+    const empGroups = new Map<string, Record<string, any>[]>();
+    for (const row of data) {
+      const id = String(row['Employee ID'] ?? '');
+      if (!empGroups.has(id)) empGroups.set(id, []);
+      empGroups.get(id)!.push(row);
+    }
+
+    const sorted = Array.from(empGroups.entries()).sort((a, b) => {
+      return (a[1][0]?.['Name'] ?? '').localeCompare(b[1][0]?.['Name'] ?? '');
+    });
+
+    let grandPresent = 0, grandAbsent = 0, grandLate = 0, grandLeave = 0, grandHours = 0;
+
+    for (const [, records] of sorted) {
+      records.sort((a, b) => String(a['Date']).localeCompare(String(b['Date'])));
+
+      for (const row of records) {
+        sheet.addRow({
+          'Employee ID': row['Employee ID'] ?? '',
+          'Name': row['Name'] ?? '',
+          'Designation': row['Designation'] ?? '',
+          'Contact': row['Contact'] ?? '',
+          'Date': row['Date'] ?? '',
+          'Status': row['Status'] ?? '',
+          'In Time': row['In Time'] ?? '',
+          'Out Time': row['Out Time'] ?? '',
+          'Hours': row['Hours'] ?? 0,
+          'Late': row['Late'] ? 'Yes' : 'No',
+        });
+      }
+
+      let present = 0, absent = 0, late = 0, leave = 0, hours = 0;
+      for (const r of records) {
+        const status = String(r['Status'] ?? '');
+        if (status === 'Present') present++;
+        else if (status === 'Absent') absent++;
+        else if (status === 'Leave') leave++;
+        hours += Number(r['Hours'] ?? 0);
+        if (r['Late']) late++;
+      }
+
+      const empName = records[0]?.['Name'] ?? '';
+      const summaryRow = sheet.addRow({
+        'Employee ID': `${empName} Summary`,
+        'Name': `${present}P ${absent}A ${late}L ${leave}Lv`,
+        'Designation': records[0]?.['Designation'] ?? '',
+        'Hours': hours,
+        'Late': late,
+      });
+      summaryRow.font = { bold: true, color: { argb: 'FF1B5E20' } };
+      summaryRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC8E6C9' } };
+
+      sheet.addRow({});
+      grandPresent += present;
+      grandAbsent += absent;
+      grandLate += late;
+      grandLeave += leave;
+      grandHours += hours;
+    }
+
+    const totalRow = sheet.addRow({
+      'Employee ID': 'GRAND TOTAL',
+      'Name': `${grandPresent}P ${grandAbsent}A ${grandLate}L ${grandLeave}Lv`,
+      'Hours': grandHours,
+      'Late': grandLate,
+    });
+    totalRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    totalRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F497D' } };
+
+    styleHeaderRow(sheet.getRow(1));
+    addGridlines(sheet);
+
+    // Color-code status
+    sheet.getColumn('Status').eachCell((cell, rowNumber) => {
+      if (rowNumber <= 1) return;
+      const val = String(cell.value ?? '');
+      if (val === 'Present') cell.font = { color: { argb: 'FF1B5E20' } };
+      else if (val === 'Absent') cell.font = { color: { argb: 'FFB71C1C' } };
+      else if (val === 'Leave') cell.font = { color: { argb: 'FFE65100' } };
+      else if (val === 'Holiday') cell.font = { color: { argb: 'FF1565C0' } };
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=attendance_report.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
