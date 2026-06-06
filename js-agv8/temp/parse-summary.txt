@@ -1,0 +1,7 @@
+Parse Summary — April 2026
+Total parsed: 50
+Working days (auto): 23
+Holidays: 14, 4, 11 (Fridays auto-added: 3, 10, 17, 24)
+Saturdays: 4, 11, 18, 25
+Unmatched in config: 0
+Missing from att: 3 — Nusrat Jahan Era, Ashiq, Md Helal

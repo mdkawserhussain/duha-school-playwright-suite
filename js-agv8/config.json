@@ -1,0 +1,1322 @@
+{
+  "schoolName": "DUHA INTERNATIONAL SCHOOL",
+  "year": 2026,
+  "month": 4,
+  "policies": {
+    "standardThreshold": "07:49 AM",
+    "tiffinRate": 25,
+    "over20Fine": 300,
+    "latePenalties": [
+      {
+        "min": 11,
+        "fine": 200
+      },
+      {
+        "min": 6,
+        "fine": 150
+      },
+      {
+        "min": 1,
+        "fine": 100
+      }
+    ]
+  },
+  "holidays": [
+    14,
+    4,
+    11
+  ],
+  "tiffinExclusionDays": [
+    18,
+    25
+  ],
+  "daySpecificThresholds": {
+    "30": "07:50 AM"
+  },
+  "staff": [
+    {
+      "name": "Hasan Mahmud",
+      "basic": 100000,
+      "allowance": 0,
+      "bank": {
+        "acct": "0951120046843",
+        "mob": "01827879271"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Hasina Mohammed",
+      "basic": 32000,
+      "allowance": 13000,
+      "bank": {
+        "acct": "0951120057441",
+        "mob": "01784654831"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Nusrat Jahan Era",
+      "basic": 25000,
+      "allowance": 0,
+      "bank": {
+        "acct": "0951120068375",
+        "mob": "01843474485"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Sadia Sultana Rima",
+      "basic": 18000,
+      "allowance": 7000,
+      "bank": {
+        "acct": "0951120067543",
+        "mob": "01866648027"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Fatema Akter Mili",
+      "basic": 19000,
+      "allowance": 6500,
+      "bank": {
+        "acct": "0951120057507",
+        "mob": "01839688967"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Farida Yesmin Tamanna",
+      "basic": 16000,
+      "allowance": 4000,
+      "bank": {
+        "acct": "0951120067407",
+        "mob": "01798597262"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Shalina Akter Eity",
+      "basic": 15000,
+      "allowance": 3000,
+      "bank": {
+        "acct": "0951120067396",
+        "mob": "01516176812"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Rabia Sultana Prity",
+      "basic": 11000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067576",
+        "mob": "01852071221"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Afrin Jahan Uzma",
+      "basic": 14000,
+      "allowance": 3000,
+      "bank": {
+        "acct": "0951120067565",
+        "mob": "01537402908"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Ariful Islam Maruf",
+      "basic": 27000,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": "01889534420"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Jinat Farhana Chy",
+      "basic": 15000,
+      "allowance": 3000,
+      "bank": {
+        "acct": "0951120067532",
+        "mob": "01670300790"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Tabassuma Barat Chowdhury",
+      "basic": 19000,
+      "allowance": 6000,
+      "bank": {
+        "acct": "0951120067611",
+        "mob": "01710403139"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Sumaya Rahman",
+      "basic": 15000,
+      "allowance": 4000,
+      "bank": {
+        "acct": "0951120067622",
+        "mob": "01724643975"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Warda Siraj",
+      "basic": 22000,
+      "allowance": 6000,
+      "bank": {
+        "acct": "0951120067453",
+        "mob": "01311819351"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Irfan Hossain",
+      "basic": 12000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120071083",
+        "mob": "01878853181"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Mohoshina Shifa",
+      "basic": 9000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067554",
+        "mob": "01842948431"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Sadia Akter Lubna",
+      "basic": 9000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067633",
+        "mob": "01857536371"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Taslima Akter",
+      "basic": 12000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067644",
+        "mob": "01632267676"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Samiya Hashem",
+      "basic": 9000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120070895",
+        "mob": "01858519388"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Humaira Tasnim",
+      "basic": 13000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067431",
+        "mob": "01887926654"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Aziza Sultana",
+      "basic": 9000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067587",
+        "mob": "01533767902"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Farhana Yesmin",
+      "basic": 13000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067374",
+        "mob": "0186936742"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Kamrun Nahar",
+      "basic": 10000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067363",
+        "mob": "01866234615"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Tashmem Al Faed",
+      "basic": 10000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "",
+        "mob": "01818461286"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Md Murad Hoshen",
+      "basic": 18000,
+      "allowance": 4000,
+      "bank": {
+        "acct": "0951120067598",
+        "mob": "01521795832"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Najmul Haque Masum",
+      "basic": 14000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120070952",
+        "mob": "01795732429"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Rahnuman Nesa Chowdhury",
+      "basic": 13000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0181120283749",
+        "mob": "01755078699"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Othora Nausin Jafrin",
+      "basic": 5000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "",
+        "mob": "01575571874"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Md Rahat Chy",
+      "basic": 15000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120068094",
+        "mob": "01811857112"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Sania Rahman",
+      "basic": 11000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120070978",
+        "mob": "01795517841"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Jaharin Subah",
+      "basic": 10000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067464",
+        "mob": "01876694622"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Afroza Akter",
+      "basic": 11000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067385",
+        "mob": "01815881403"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Ummay Hani Juthi",
+      "basic": 15000,
+      "allowance": 3000,
+      "bank": {
+        "acct": "0951120070366",
+        "mob": "01937189195"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Tanzina Haque",
+      "basic": 10000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "",
+        "mob": "01890433414"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Tahsina Tarannum",
+      "basic": 6000,
+      "allowance": 1000,
+      "bank": {
+        "acct": "0951120070424",
+        "mob": "01988511260"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Mohammad Arafat Ul Alam",
+      "basic": 12000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "",
+        "mob": "01875985408"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Md Kawser Hussain Rasel",
+      "basic": 20000,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": "01892048154"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Md. Mainuddin",
+      "basic": 13000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120070812",
+        "mob": "01727921784"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Sumaiya Nusrat Pushpo",
+      "basic": 6000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120070911",
+        "mob": "01600338519"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Ismat Tasnia",
+      "basic": 6000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120070903",
+        "mob": "01864666837"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Ayesha Siddika Ruba",
+      "basic": 8000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "",
+        "mob": "01814771524"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Jannatur Rahman Eshita",
+      "basic": 8000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120071042",
+        "mob": "01640700002"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Sultana Yasmin Geeti",
+      "basic": 8000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "",
+        "mob": "01831606412"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Shaila Parvin",
+      "basic": 8000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "",
+        "mob": "01623402197"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Ashiq",
+      "basic": 15000,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": "01932851737"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Md Helal",
+      "basic": 15000,
+      "allowance": 5000,
+      "bank": {
+        "acct": "",
+        "mob": "01891690006"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Boro Nanny",
+      "basic": 5000,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": ""
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Rabia Rima Nanny",
+      "basic": 6000,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": ""
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Moyna Nanny",
+      "basic": 5500,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": ""
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Rojina Nanny",
+      "basic": 5000,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": ""
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Sharmin Nanny",
+      "basic": 5500,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": ""
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Nargis Akter Nanny",
+      "basic": 5000,
+      "allowance": 0,
+      "bank": {
+        "acct": "",
+        "mob": ""
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    },
+    {
+      "name": "Sanjida Islam",
+      "basic": 13000,
+      "allowance": 2000,
+      "bank": {
+        "acct": "0951120067666",
+        "mob": "01891614086"
+      },
+      "email": "",
+      "role": "Teacher",
+      "threshold": null,
+      "exceptions": {
+        "ot": 0,
+        "increment": 0,
+        "bonus": 0,
+        "pfDeduction": 0,
+        "pfReturn": 0,
+        "note": "",
+        "skipLateCheck": false,
+        "skipAbsentDeduction": false,
+        "overridePdays": null,
+        "overrideAbsent": null
+      }
+    }
+  ],
+  "notifications": {
+    "email": {
+      "host": "mail.duhais.com",
+      "port": 465,
+      "user": "info@duhais.com",
+      "pass": "pZ[5530aaW]lQL"
+    },
+    "whatsapp": {
+      "enabled": true
+    }
+  },
+  "locked": false
+}

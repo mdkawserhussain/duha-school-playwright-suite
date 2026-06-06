@@ -1,0 +1,6887 @@
+[
+  {
+    "name": "Hasan Mahmud",
+    "role": "Teacher",
+    "dailyLogs": [],
+    "baseline": {
+      "pdays": 0,
+      "leave": 0,
+      "absent": 23,
+      "absentDates": [
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120046843",
+    "mob": "01827879271",
+    "basic": 100000,
+    "genAllow": 0,
+    "tiffin": 0,
+    "gross": 100000,
+    "perDay": 4000,
+    "absDed": 92000,
+    "lateDed": 0,
+    "totalDed": 92000,
+    "net": 8000,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 0,
+    "absent": 23,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12,
+      13,
+      15,
+      16,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:1,2,5,6,7,8,9,12,13,15,16,18,19,20,21,22,23,25,26,27,28,29,30",
+    "calculationNote": "Hasan Mahmud -> Basic:100000 + Allow:0 + Tiffin:0 - AbsDed:92000 - LateDed:0 = Net:8000",
+    "excNote": ""
+  },
+  {
+    "name": "Hasina Mohammed",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:56 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:47 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:50 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 0,
+      "absent": 1,
+      "absentDates": [
+        21
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120057441",
+    "mob": "01784654831",
+    "basic": 32000,
+    "genAllow": 13000,
+    "tiffin": 500,
+    "gross": 45000,
+    "perDay": 1280,
+    "absDed": 1280,
+    "lateDed": 0,
+    "totalDed": 1280,
+    "net": 44220,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 1,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      21
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:21",
+    "calculationNote": "Hasina Mohammed -> Basic:32000 + Allow:13000 + Tiffin:500 - AbsDed:1280 - LateDed:0 = Net:44220",
+    "excNote": ""
+  },
+  {
+    "name": "Nusrat Jahan Era",
+    "role": "Teacher",
+    "basic": 25000,
+    "genAllow": 0,
+    "tiffin": 0,
+    "gross": 25000,
+    "perDay": 1000,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 25000,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 0,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "No attendance data found.",
+    "calculationNote": "Nusrat Jahan Era -> No attendance data found. Basic salary applied.",
+    "acct": "0951120068375",
+    "mob": "01843474485",
+    "excNote": ""
+  },
+  {
+    "name": "Sadia Sultana Rima",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:56 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 25,
+        "time": "09:19 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:35 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 21,
+      "leave": 2,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [
+        19,
+        23
+      ],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067543",
+    "mob": "01866648027",
+    "basic": 18000,
+    "genAllow": 7000,
+    "tiffin": 475,
+    "gross": 25000,
+    "perDay": 720,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 25475,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 21,
+    "absent": 0,
+    "leave": 2,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [
+      19,
+      23
+    ],
+    "lateInfo": [],
+    "markings": "Lv:19,23",
+    "calculationNote": "Sadia Sultana Rima -> Basic:18000 + Allow:7000 + Tiffin:475 - AbsDed:0 - LateDed:0 = Net:25475",
+    "excNote": ""
+  },
+  {
+    "name": "Fatema Akter Mili",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:53 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 25,
+        "time": "12:05 PM"
+      },
+      {
+        "day": 26,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:42 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120057507",
+    "mob": "01839688967",
+    "basic": 19000,
+    "genAllow": 6500,
+    "tiffin": 525,
+    "gross": 25500,
+    "perDay": 760,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 26025,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Fatema Akter Mili -> Basic:19000 + Allow:6500 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:26025",
+    "excNote": ""
+  },
+  {
+    "name": "Farida Yesmin Tamanna",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 25,
+        "time": "10:44 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:34 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067407",
+    "mob": "01798597262",
+    "basic": 16000,
+    "genAllow": 4000,
+    "tiffin": 525,
+    "gross": 20000,
+    "perDay": 640,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 20525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Farida Yesmin Tamanna -> Basic:16000 + Allow:4000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:20525",
+    "excNote": ""
+  },
+  {
+    "name": "Shalina Akter Eity",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:49 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 25,
+        "time": "11:58 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:34 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067396",
+    "mob": "01516176812",
+    "basic": 15000,
+    "genAllow": 3000,
+    "tiffin": 525,
+    "gross": 18000,
+    "perDay": 600,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 18525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Shalina Akter Eity -> Basic:15000 + Allow:3000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:18525",
+    "excNote": ""
+  },
+  {
+    "name": "Rabia Sultana Prity",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 21,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:45 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:45 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 9,
+      "leave": 0,
+      "absent": 14,
+      "absentDates": [
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067576",
+    "mob": "01852071221",
+    "basic": 11000,
+    "genAllow": 2000,
+    "tiffin": 200,
+    "gross": 13000,
+    "perDay": 440,
+    "absDed": 6160,
+    "lateDed": 0,
+    "totalDed": 6160,
+    "net": 7040,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 9,
+    "absent": 14,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12,
+      13,
+      15,
+      16,
+      18,
+      19,
+      20
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:1,2,5,6,7,8,9,12,13,15,16,18,19,20",
+    "calculationNote": "Rabia Sultana Prity -> Basic:11000 + Allow:2000 + Tiffin:200 - AbsDed:6160 - LateDed:0 = Net:7040",
+    "excNote": ""
+  },
+  {
+    "name": "Afrin Jahan Uzma",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:54 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:58 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:53 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 25,
+        "time": "09:54 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:44 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 1,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [
+        16
+      ],
+      "late": 2,
+      "over20": 0,
+      "lateMins": [
+        5,
+        4
+      ],
+      "lateDetails": "2(5m), 19(4m)"
+    },
+    "acct": "0951120067565",
+    "mob": "01537402908",
+    "basic": 14000,
+    "genAllow": 3000,
+    "tiffin": 500,
+    "gross": 17000,
+    "perDay": 560,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 17500,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 0,
+    "leave": 1,
+    "late": 2,
+    "over20": 0,
+    "lateMins": [
+      5,
+      4
+    ],
+    "absentDates": [],
+    "leaveDates": [
+      16
+    ],
+    "lateInfo": [
+      "2(5m)",
+      "19(4m)"
+    ],
+    "markings": "Lt:2(5m),19(4m) Lv:16",
+    "calculationNote": "Afrin Jahan Uzma -> Basic:14000 + Allow:3000 + Tiffin:500 - AbsDed:0 - LateDed:0 = Net:17500",
+    "excNote": ""
+  },
+  {
+    "name": "Ariful Islam Maruf",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 5,
+        "time": "07:15 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:18 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:07 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:18 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 16,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:58 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:17 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:14 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 25,
+        "time": "07:59 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:19 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:20 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 21,
+      "leave": 0,
+      "absent": 2,
+      "absentDates": [
+        1,
+        2
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "",
+    "mob": "01889534420",
+    "basic": 27000,
+    "genAllow": 0,
+    "tiffin": 475,
+    "gross": 27000,
+    "perDay": 1080,
+    "absDed": 2160,
+    "lateDed": 0,
+    "totalDed": 2160,
+    "net": 25315,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 21,
+    "absent": 2,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      1,
+      2
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:1,2",
+    "calculationNote": "Ariful Islam Maruf -> Basic:27000 + Allow:0 + Tiffin:475 - AbsDed:2160 - LateDed:0 = Net:25315",
+    "excNote": ""
+  },
+  {
+    "name": "Jinat Farhana Chy",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 18,
+        "time": "08:02 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:45 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 21,
+      "leave": 3,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [
+        23,
+        24,
+        25
+      ],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067532",
+    "mob": "01670300790",
+    "basic": 15000,
+    "genAllow": 3000,
+    "tiffin": 500,
+    "gross": 18000,
+    "perDay": 600,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 18500,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 21,
+    "absent": 0,
+    "leave": 3,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [
+      23,
+      24,
+      25
+    ],
+    "lateInfo": [],
+    "markings": "Lv:23,24,25",
+    "calculationNote": "Jinat Farhana Chy -> Basic:15000 + Allow:3000 + Tiffin:500 - AbsDed:0 - LateDed:0 = Net:18500",
+    "excNote": ""
+  },
+  {
+    "name": "Tabassuma Barat Chowdhury",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:50 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 18,
+        "time": "08:06 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 25,
+        "time": "12:05 PM"
+      },
+      {
+        "day": 26,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:45 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 0,
+      "lateMins": [
+        1
+      ],
+      "lateDetails": "7(1m)"
+    },
+    "acct": "0951120067611",
+    "mob": "01710403139",
+    "basic": 19000,
+    "genAllow": 6000,
+    "tiffin": 525,
+    "gross": 25000,
+    "perDay": 760,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 25525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 1,
+    "over20": 0,
+    "lateMins": [
+      1
+    ],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [
+      "7(1m)"
+    ],
+    "markings": "Lt:7(1m)",
+    "calculationNote": "Tabassuma Barat Chowdhury -> Basic:19000 + Allow:6000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:25525",
+    "excNote": ""
+  },
+  {
+    "name": "Sumaya Rahman",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:56 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 21,
+        "time": "08:51 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 25,
+        "time": "12:03 PM"
+      },
+      {
+        "day": 26,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:45 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 1,
+      "lateMins": [
+        62
+      ],
+      "lateDetails": "21(62m)"
+    },
+    "acct": "0951120067622",
+    "mob": "01724643975",
+    "basic": 15000,
+    "genAllow": 4000,
+    "tiffin": 525,
+    "gross": 19000,
+    "perDay": 600,
+    "absDed": 0,
+    "lateDed": 300,
+    "totalDed": 300,
+    "net": 19225,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 1,
+    "over20": 1,
+    "lateMins": [
+      62
+    ],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [
+      "21(62m)"
+    ],
+    "markings": "Lt:21(62m)",
+    "calculationNote": "Sumaya Rahman -> Basic:15000 + Allow:4000 + Tiffin:525 - AbsDed:0 - LateDed:300 = Net:19225",
+    "excNote": ""
+  },
+  {
+    "name": "Warda Siraj",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 2,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:49 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:51 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:53 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:59 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:58 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:39 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 20,
+      "leave": 1,
+      "absent": 2,
+      "absentDates": [
+        1,
+        9
+      ],
+      "leaveDates": [
+        25
+      ],
+      "late": 3,
+      "over20": 0,
+      "lateMins": [
+        2,
+        10,
+        9
+      ],
+      "lateDetails": "16(2m), 19(10m), 26(9m)"
+    },
+    "acct": "0951120067453",
+    "mob": "01311819351",
+    "basic": 22000,
+    "genAllow": 6000,
+    "tiffin": 475,
+    "gross": 28000,
+    "perDay": 880,
+    "absDed": 1760,
+    "lateDed": 880,
+    "totalDed": 2640,
+    "net": 25835,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 20,
+    "absent": 2,
+    "leave": 1,
+    "late": 3,
+    "over20": 0,
+    "lateMins": [
+      2,
+      10,
+      9
+    ],
+    "absentDates": [
+      1,
+      9
+    ],
+    "leaveDates": [
+      25
+    ],
+    "lateInfo": [
+      "16(2m)",
+      "19(10m)",
+      "26(9m)"
+    ],
+    "markings": "Ab:1,9 Lt:16(2m),19(10m),26(9m) Lv:25",
+    "calculationNote": "Warda Siraj -> Basic:22000 + Allow:6000 + Tiffin:475 - AbsDed:1760 - LateDed:880 = Net:25835",
+    "excNote": ""
+  },
+  {
+    "name": "Irfan Hossain",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 18,
+        "time": "08:50 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 25,
+        "time": "11:59 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:42 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 0,
+      "absent": 1,
+      "absentDates": [
+        30
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120071083",
+    "mob": "01878853181",
+    "basic": 12000,
+    "genAllow": 2000,
+    "tiffin": 500,
+    "gross": 14000,
+    "perDay": 480,
+    "absDed": 480,
+    "lateDed": 0,
+    "totalDed": 480,
+    "net": 14020,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 1,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      30
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:30",
+    "calculationNote": "Irfan Hossain -> Basic:12000 + Allow:2000 + Tiffin:500 - AbsDed:480 - LateDed:0 = Net:14020",
+    "excNote": ""
+  },
+  {
+    "name": "Mohoshina Shifa",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:58 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 25,
+        "time": "09:37 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:38 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067554",
+    "mob": "01842948431",
+    "basic": 9000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 11000,
+    "perDay": 360,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 11525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Mohoshina Shifa -> Basic:9000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:11525",
+    "excNote": ""
+  },
+  {
+    "name": "Sadia Akter Lubna",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:17 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:17 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:55 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:39 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:44 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 1,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [
+        28
+      ],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067633",
+    "mob": "01857536371",
+    "basic": 9000,
+    "genAllow": 2000,
+    "tiffin": 500,
+    "gross": 11000,
+    "perDay": 360,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 11500,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 0,
+    "leave": 1,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [
+      28
+    ],
+    "lateInfo": [],
+    "markings": "Lv:28",
+    "calculationNote": "Sadia Akter Lubna -> Basic:9000 + Allow:2000 + Tiffin:500 - AbsDed:0 - LateDed:0 = Net:11500",
+    "excNote": ""
+  },
+  {
+    "name": "Taslima Akter",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:52 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:42 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:39 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 17,
+      "leave": 5,
+      "absent": 1,
+      "absentDates": [
+        7
+      ],
+      "leaveDates": [
+        18,
+        19,
+        21,
+        22,
+        23
+      ],
+      "late": 1,
+      "over20": 0,
+      "lateMins": [
+        3
+      ],
+      "lateDetails": "5(3m)"
+    },
+    "acct": "0951120067644",
+    "mob": "01632267676",
+    "basic": 12000,
+    "genAllow": 2000,
+    "tiffin": 400,
+    "gross": 14000,
+    "perDay": 480,
+    "absDed": 480,
+    "lateDed": 0,
+    "totalDed": 480,
+    "net": 13920,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 17,
+    "absent": 1,
+    "leave": 5,
+    "late": 1,
+    "over20": 0,
+    "lateMins": [
+      3
+    ],
+    "absentDates": [
+      7
+    ],
+    "leaveDates": [
+      18,
+      19,
+      21,
+      22,
+      23
+    ],
+    "lateInfo": [
+      "5(3m)"
+    ],
+    "markings": "Ab:7 Lt:5(3m) Lv:18,19,21,22,23",
+    "calculationNote": "Taslima Akter -> Basic:12000 + Allow:2000 + Tiffin:400 - AbsDed:480 - LateDed:0 = Net:13920",
+    "excNote": ""
+  },
+  {
+    "name": "Samiya Hashem",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:56 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:44 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 30,
+        "time": "08:06 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 0,
+      "lateMins": [
+        16
+      ],
+      "lateDetails": "30(16m)"
+    },
+    "acct": "0951120070895",
+    "mob": "01858519388",
+    "basic": 9000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 11000,
+    "perDay": 360,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 11525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 1,
+    "over20": 0,
+    "lateMins": [
+      16
+    ],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [
+      "30(16m)"
+    ],
+    "markings": "Lt:30(16m)",
+    "calculationNote": "Samiya Hashem -> Basic:9000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:11525",
+    "excNote": ""
+  },
+  {
+    "name": "Humaira Tasnim",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:52 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 25,
+        "time": "09:45 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:44 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067431",
+    "mob": "01887926654",
+    "basic": 13000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 15000,
+    "perDay": 520,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 15525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Humaira Tasnim -> Basic:13000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:15525",
+    "excNote": ""
+  },
+  {
+    "name": "Aziza Sultana",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:58 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 25,
+        "time": "09:21 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:34 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 0,
+      "absent": 1,
+      "absentDates": [
+        15
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067587",
+    "mob": "01533767902",
+    "basic": 9000,
+    "genAllow": 2000,
+    "tiffin": 500,
+    "gross": 11000,
+    "perDay": 360,
+    "absDed": 360,
+    "lateDed": 0,
+    "totalDed": 360,
+    "net": 11140,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 1,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      15
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:15",
+    "calculationNote": "Aziza Sultana -> Basic:9000 + Allow:2000 + Tiffin:500 - AbsDed:360 - LateDed:0 = Net:11140",
+    "excNote": ""
+  },
+  {
+    "name": "Farhana Yesmin",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:44 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:46 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 0,
+      "absent": 1,
+      "absentDates": [
+        30
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067374",
+    "mob": "0186936742",
+    "basic": 13000,
+    "genAllow": 2000,
+    "tiffin": 500,
+    "gross": 15000,
+    "perDay": 520,
+    "absDed": 520,
+    "lateDed": 0,
+    "totalDed": 520,
+    "net": 14980,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 1,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      30
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:30",
+    "calculationNote": "Farhana Yesmin -> Basic:13000 + Allow:2000 + Tiffin:500 - AbsDed:520 - LateDed:0 = Net:14980",
+    "excNote": ""
+  },
+  {
+    "name": "Kamrun Nahar",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:59 AM"
+      },
+      {
+        "day": 19,
+        "time": "10:52 AM"
+      },
+      {
+        "day": 20,
+        "time": "08:04 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:54 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 21,
+      "leave": 1,
+      "absent": 1,
+      "absentDates": [
+        25
+      ],
+      "leaveDates": [
+        27
+      ],
+      "late": 3,
+      "over20": 1,
+      "lateMins": [
+        183,
+        15,
+        4
+      ],
+      "lateDetails": "19(183m), 20(15m), 30(4m)"
+    },
+    "acct": "0951120067363",
+    "mob": "01866234615",
+    "basic": 10000,
+    "genAllow": 2000,
+    "tiffin": 500,
+    "gross": 12000,
+    "perDay": 400,
+    "absDed": 400,
+    "lateDed": 700,
+    "totalDed": 1100,
+    "net": 11400,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 21,
+    "absent": 1,
+    "leave": 1,
+    "late": 3,
+    "over20": 1,
+    "lateMins": [
+      183,
+      15,
+      4
+    ],
+    "absentDates": [
+      25
+    ],
+    "leaveDates": [
+      27
+    ],
+    "lateInfo": [
+      "19(183m)",
+      "20(15m)",
+      "30(4m)"
+    ],
+    "markings": "Ab:25 Lt:19(183m),20(15m),30(4m) Lv:27",
+    "calculationNote": "Kamrun Nahar -> Basic:10000 + Allow:2000 + Tiffin:500 - AbsDed:400 - LateDed:700 = Net:11400",
+    "excNote": ""
+  },
+  {
+    "name": "Tashmem Al Faed",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "08:34 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:50 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 18,
+        "time": "08:00 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 25,
+        "time": "11:11 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:44 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 2,
+      "over20": 1,
+      "lateMins": [
+        45,
+        1
+      ],
+      "lateDetails": "1(45m), 12(1m)"
+    },
+    "acct": "",
+    "mob": "01818461286",
+    "basic": 10000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 12000,
+    "perDay": 400,
+    "absDed": 0,
+    "lateDed": 300,
+    "totalDed": 300,
+    "net": 12225,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 2,
+    "over20": 1,
+    "lateMins": [
+      45,
+      1
+    ],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [
+      "1(45m)",
+      "12(1m)"
+    ],
+    "markings": "Lt:1(45m),12(1m)",
+    "calculationNote": "Tashmem Al Faed -> Basic:10000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:300 = Net:12225",
+    "excNote": ""
+  },
+  {
+    "name": "Md Murad Hoshen",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 5,
+        "time": "09:02 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:56 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 25,
+        "time": "10:27 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:37 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 21,
+      "leave": 1,
+      "absent": 1,
+      "absentDates": [
+        8
+      ],
+      "leaveDates": [
+        9
+      ],
+      "late": 1,
+      "over20": 1,
+      "lateMins": [
+        73
+      ],
+      "lateDetails": "5(73m)"
+    },
+    "acct": "0951120067598",
+    "mob": "01521795832",
+    "basic": 18000,
+    "genAllow": 4000,
+    "tiffin": 475,
+    "gross": 22000,
+    "perDay": 720,
+    "absDed": 720,
+    "lateDed": 300,
+    "totalDed": 1020,
+    "net": 21455,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 21,
+    "absent": 1,
+    "leave": 1,
+    "late": 1,
+    "over20": 1,
+    "lateMins": [
+      73
+    ],
+    "absentDates": [
+      8
+    ],
+    "leaveDates": [
+      9
+    ],
+    "lateInfo": [
+      "5(73m)"
+    ],
+    "markings": "Ab:8 Lt:5(73m) Lv:9",
+    "calculationNote": "Md Murad Hoshen -> Basic:18000 + Allow:4000 + Tiffin:475 - AbsDed:720 - LateDed:300 = Net:21455",
+    "excNote": ""
+  },
+  {
+    "name": "Najmul Haque Masum",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "06:54 AM"
+      },
+      {
+        "day": 2,
+        "time": "06:56 AM"
+      },
+      {
+        "day": 5,
+        "time": "06:53 AM"
+      },
+      {
+        "day": 6,
+        "time": "06:56 AM"
+      },
+      {
+        "day": 7,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 8,
+        "time": "06:57 AM"
+      },
+      {
+        "day": 9,
+        "time": "06:59 AM"
+      },
+      {
+        "day": 12,
+        "time": "06:56 AM"
+      },
+      {
+        "day": 13,
+        "time": "06:55 AM"
+      },
+      {
+        "day": 15,
+        "time": "06:59 AM"
+      },
+      {
+        "day": 16,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:52 AM"
+      },
+      {
+        "day": 19,
+        "time": "06:53 AM"
+      },
+      {
+        "day": 20,
+        "time": "06:54 AM"
+      },
+      {
+        "day": 21,
+        "time": "06:57 AM"
+      },
+      {
+        "day": 22,
+        "time": "06:55 AM"
+      },
+      {
+        "day": 23,
+        "time": "06:56 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:50 AM"
+      },
+      {
+        "day": 26,
+        "time": "06:54 AM"
+      },
+      {
+        "day": 27,
+        "time": "06:55 AM"
+      },
+      {
+        "day": 28,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 29,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 30,
+        "time": "06:59 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120070952",
+    "mob": "01795732429",
+    "basic": 14000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 16000,
+    "perDay": 560,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 16525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Najmul Haque Masum -> Basic:14000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:16525",
+    "excNote": ""
+  },
+  {
+    "name": "Rahnuman Nesa Chowdhury",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:57 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:32 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:44 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0181120283749",
+    "mob": "01755078699",
+    "basic": 13000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 15000,
+    "perDay": 520,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 15525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Rahnuman Nesa Chowdhury -> Basic:13000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:15525",
+    "excNote": ""
+  },
+  {
+    "name": "Othora Nausin Jafrin",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:52 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 28,
+        "time": "02:42 PM"
+      },
+      {
+        "day": 29,
+        "time": "07:56 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:36 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 21,
+      "leave": 2,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [
+        25,
+        26
+      ],
+      "late": 2,
+      "over20": 1,
+      "lateMins": [
+        413,
+        7
+      ],
+      "lateDetails": "28(413m), 29(7m)"
+    },
+    "acct": "",
+    "mob": "01575571874",
+    "basic": 5000,
+    "genAllow": 2000,
+    "tiffin": 500,
+    "gross": 7000,
+    "perDay": 200,
+    "absDed": 0,
+    "lateDed": 300,
+    "totalDed": 300,
+    "net": 7200,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 21,
+    "absent": 0,
+    "leave": 2,
+    "late": 2,
+    "over20": 1,
+    "lateMins": [
+      413,
+      7
+    ],
+    "absentDates": [],
+    "leaveDates": [
+      25,
+      26
+    ],
+    "lateInfo": [
+      "28(413m)",
+      "29(7m)"
+    ],
+    "markings": "Lt:28(413m),29(7m) Lv:25,26",
+    "calculationNote": "Othora Nausin Jafrin -> Basic:5000 + Allow:2000 + Tiffin:500 - AbsDed:0 - LateDed:300 = Net:7200",
+    "excNote": ""
+  },
+  {
+    "name": "Md Rahat Chy",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:57 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:52 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 21,
+        "time": "10:43 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 25,
+        "time": "11:58 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 18,
+      "leave": 0,
+      "absent": 5,
+      "absentDates": [
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "leaveDates": [],
+      "late": 2,
+      "over20": 1,
+      "lateMins": [
+        8,
+        174
+      ],
+      "lateDetails": "1(8m), 21(174m)"
+    },
+    "acct": "0951120068094",
+    "mob": "01811857112",
+    "basic": 15000,
+    "genAllow": 2000,
+    "tiffin": 400,
+    "gross": 17000,
+    "perDay": 600,
+    "absDed": 3000,
+    "lateDed": 300,
+    "totalDed": 3300,
+    "net": 14100,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 18,
+    "absent": 5,
+    "leave": 0,
+    "late": 2,
+    "over20": 1,
+    "lateMins": [
+      8,
+      174
+    ],
+    "absentDates": [
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "leaveDates": [],
+    "lateInfo": [
+      "1(8m)",
+      "21(174m)"
+    ],
+    "markings": "Ab:26,27,28,29,30 Lt:1(8m),21(174m)",
+    "calculationNote": "Md Rahat Chy -> Basic:15000 + Allow:2000 + Tiffin:400 - AbsDed:3000 - LateDed:300 = Net:14100",
+    "excNote": ""
+  },
+  {
+    "name": "Sania Rahman",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 18,
+        "time": "08:03 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 25,
+        "time": "11:11 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:43 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120070978",
+    "mob": "01795517841",
+    "basic": 11000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 13000,
+    "perDay": 440,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 13525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Sania Rahman -> Basic:11000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:13525",
+    "excNote": ""
+  },
+  {
+    "name": "Jaharin Subah",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "08:02 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:52 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:50 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 18,
+        "time": "08:16 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:49 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:49 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:55 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:52 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 1,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [
+        25
+      ],
+      "late": 5,
+      "over20": 0,
+      "lateMins": [
+        13,
+        3,
+        1,
+        6,
+        2
+      ],
+      "lateDetails": "1(13m), 2(3m), 12(1m), 28(6m), 30(2m)"
+    },
+    "acct": "0951120067464",
+    "mob": "01876694622",
+    "basic": 10000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 12000,
+    "perDay": 400,
+    "absDed": 0,
+    "lateDed": 600,
+    "totalDed": 600,
+    "net": 11925,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 0,
+    "leave": 1,
+    "late": 5,
+    "over20": 0,
+    "lateMins": [
+      13,
+      3,
+      1,
+      6,
+      2
+    ],
+    "absentDates": [],
+    "leaveDates": [
+      25
+    ],
+    "lateInfo": [
+      "1(13m)",
+      "2(3m)",
+      "12(1m)",
+      "28(6m)",
+      "30(2m)"
+    ],
+    "markings": "Lt:1(13m),2(3m),12(1m),28(6m),30(2m) Lv:25",
+    "calculationNote": "Jaharin Subah -> Basic:10000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:600 = Net:11925",
+    "excNote": ""
+  },
+  {
+    "name": "Afroza Akter",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:57 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 25,
+        "time": "12:06 PM"
+      },
+      {
+        "day": 26,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:45 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067385",
+    "mob": "01815881403",
+    "basic": 11000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 13000,
+    "perDay": 440,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 13525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Afroza Akter -> Basic:11000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:13525",
+    "excNote": ""
+  },
+  {
+    "name": "Ummay Hani Juthi",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 7,
+        "time": "02:20 PM"
+      },
+      {
+        "day": 8,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:59 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:55 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:30 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:43 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 19,
+      "leave": 0,
+      "absent": 4,
+      "absentDates": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "leaveDates": [],
+      "late": 2,
+      "over20": 1,
+      "lateMins": [
+        391,
+        6
+      ],
+      "lateDetails": "7(391m), 22(6m)"
+    },
+    "acct": "0951120070366",
+    "mob": "01937189195",
+    "basic": 15000,
+    "genAllow": 3000,
+    "tiffin": 425,
+    "gross": 18000,
+    "perDay": 600,
+    "absDed": 2400,
+    "lateDed": 300,
+    "totalDed": 2700,
+    "net": 15725,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 19,
+    "absent": 4,
+    "leave": 0,
+    "late": 2,
+    "over20": 1,
+    "lateMins": [
+      391,
+      6
+    ],
+    "absentDates": [
+      1,
+      2,
+      5,
+      6
+    ],
+    "leaveDates": [],
+    "lateInfo": [
+      "7(391m)",
+      "22(6m)"
+    ],
+    "markings": "Ab:1,2,5,6 Lt:7(391m),22(6m)",
+    "calculationNote": "Ummay Hani Juthi -> Basic:15000 + Allow:3000 + Tiffin:425 - AbsDed:2400 - LateDed:300 = Net:15725",
+    "excNote": ""
+  },
+  {
+    "name": "Tanzina Haque",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:58 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 25,
+        "time": "11:02 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:55 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 0,
+      "lateMins": [
+        5
+      ],
+      "lateDetails": "30(5m)"
+    },
+    "acct": "",
+    "mob": "01890433414",
+    "basic": 10000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 12000,
+    "perDay": 400,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 12525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 1,
+    "over20": 0,
+    "lateMins": [
+      5
+    ],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [
+      "30(5m)"
+    ],
+    "markings": "Lt:30(5m)",
+    "calculationNote": "Tanzina Haque -> Basic:10000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:12525",
+    "excNote": ""
+  },
+  {
+    "name": "Tahsina Tarannum",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:55 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:44 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:44 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120070424",
+    "mob": "01988511260",
+    "basic": 6000,
+    "genAllow": 1000,
+    "tiffin": 525,
+    "gross": 7000,
+    "perDay": 240,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 7525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Tahsina Tarannum -> Basic:6000 + Allow:1000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:7525",
+    "excNote": ""
+  },
+  {
+    "name": "Mohammad Arafat Ul Alam",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:07 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:13 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:15 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:14 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:22 AM"
+      },
+      {
+        "day": 25,
+        "time": "09:41 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:25 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 0,
+      "absent": 1,
+      "absentDates": [
+        18
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "",
+    "mob": "01875985408",
+    "basic": 12000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 14000,
+    "perDay": 480,
+    "absDed": 480,
+    "lateDed": 0,
+    "totalDed": 480,
+    "net": 14045,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 1,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      18
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:18",
+    "calculationNote": "Mohammad Arafat Ul Alam -> Basic:12000 + Allow:2000 + Tiffin:525 - AbsDed:480 - LateDed:0 = Net:14045",
+    "excNote": ""
+  },
+  {
+    "name": "Md Kawser Hussain Rasel",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:02 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:33 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "",
+    "mob": "01892048154",
+    "basic": 20000,
+    "genAllow": 0,
+    "tiffin": 525,
+    "gross": 20000,
+    "perDay": 800,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 20525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Md Kawser Hussain Rasel -> Basic:20000 + Allow:0 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:20525",
+    "excNote": ""
+  },
+  {
+    "name": "Md. Mainuddin",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:51 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 25,
+        "time": "10:36 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:29 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 0,
+      "lateMins": [
+        2
+      ],
+      "lateDetails": "5(2m)"
+    },
+    "acct": "0951120070812",
+    "mob": "01727921784",
+    "basic": 13000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 15000,
+    "perDay": 520,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 15525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 1,
+    "over20": 0,
+    "lateMins": [
+      2
+    ],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [
+      "5(2m)"
+    ],
+    "markings": "Lt:5(2m)",
+    "calculationNote": "Md. Mainuddin -> Basic:13000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:15525",
+    "excNote": ""
+  },
+  {
+    "name": "Sumaiya Nusrat Pushpo",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:59 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:37 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:40 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120070911",
+    "mob": "01600338519",
+    "basic": 6000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 8000,
+    "perDay": 240,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 8525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Sumaiya Nusrat Pushpo -> Basic:6000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:8525",
+    "excNote": ""
+  },
+  {
+    "name": "Ismat Tasnia",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:57 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:32 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:44 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120070903",
+    "mob": "01864666837",
+    "basic": 6000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 8000,
+    "perDay": 240,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 8525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Ismat Tasnia -> Basic:6000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:8525",
+    "excNote": ""
+  },
+  {
+    "name": "Ayesha Siddika Ruba",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:48 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 8,
+        "time": "08:10 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:10 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 18,
+        "time": "08:00 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:50 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 25,
+        "time": "09:26 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:47 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:31 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 21,
+      "leave": 2,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [
+        15,
+        27
+      ],
+      "late": 2,
+      "over20": 1,
+      "lateMins": [
+        21,
+        1
+      ],
+      "lateDetails": "8(21m), 19(1m)"
+    },
+    "acct": "",
+    "mob": "01814771524",
+    "basic": 8000,
+    "genAllow": 2000,
+    "tiffin": 475,
+    "gross": 10000,
+    "perDay": 320,
+    "absDed": 0,
+    "lateDed": 300,
+    "totalDed": 300,
+    "net": 10175,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 21,
+    "absent": 0,
+    "leave": 2,
+    "late": 2,
+    "over20": 1,
+    "lateMins": [
+      21,
+      1
+    ],
+    "absentDates": [],
+    "leaveDates": [
+      15,
+      27
+    ],
+    "lateInfo": [
+      "8(21m)",
+      "19(1m)"
+    ],
+    "markings": "Lt:8(21m),19(1m) Lv:15,27",
+    "calculationNote": "Ayesha Siddika Ruba -> Basic:8000 + Allow:2000 + Tiffin:475 - AbsDed:0 - LateDed:300 = Net:10175",
+    "excNote": ""
+  },
+  {
+    "name": "Jannatur Rahman Eshita",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 29,
+        "time": "08:31 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:39 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 2,
+      "leave": 0,
+      "absent": 21,
+      "absentDates": [
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        25,
+        26,
+        27,
+        28
+      ],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 1,
+      "lateMins": [
+        42
+      ],
+      "lateDetails": "29(42m)"
+    },
+    "acct": "0951120071042",
+    "mob": "01640700002",
+    "basic": 8000,
+    "genAllow": 2000,
+    "tiffin": 50,
+    "gross": 10000,
+    "perDay": 320,
+    "absDed": 6720,
+    "lateDed": 300,
+    "totalDed": 7020,
+    "net": 3030,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 2,
+    "absent": 21,
+    "leave": 0,
+    "late": 1,
+    "over20": 1,
+    "lateMins": [
+      42
+    ],
+    "absentDates": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12,
+      13,
+      15,
+      16,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      25,
+      26,
+      27,
+      28
+    ],
+    "leaveDates": [],
+    "lateInfo": [
+      "29(42m)"
+    ],
+    "markings": "Ab:1,2,5,6,7,8,9,12,13,15,16,18,19,20,21,22,23,25,26,27,28 Lt:29(42m)",
+    "calculationNote": "Jannatur Rahman Eshita -> Basic:8000 + Allow:2000 + Tiffin:50 - AbsDed:6720 - LateDed:300 = Net:3030",
+    "excNote": ""
+  },
+  {
+    "name": "Sultana Yasmin Geeti",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 29,
+        "time": "08:28 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:36 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 2,
+      "leave": 0,
+      "absent": 21,
+      "absentDates": [
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        25,
+        26,
+        27,
+        28
+      ],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 1,
+      "lateMins": [
+        39
+      ],
+      "lateDetails": "29(39m)"
+    },
+    "acct": "",
+    "mob": "01831606412",
+    "basic": 8000,
+    "genAllow": 2000,
+    "tiffin": 50,
+    "gross": 10000,
+    "perDay": 320,
+    "absDed": 6720,
+    "lateDed": 300,
+    "totalDed": 7020,
+    "net": 3030,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 2,
+    "absent": 21,
+    "leave": 0,
+    "late": 1,
+    "over20": 1,
+    "lateMins": [
+      39
+    ],
+    "absentDates": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12,
+      13,
+      15,
+      16,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      25,
+      26,
+      27,
+      28
+    ],
+    "leaveDates": [],
+    "lateInfo": [
+      "29(39m)"
+    ],
+    "markings": "Ab:1,2,5,6,7,8,9,12,13,15,16,18,19,20,21,22,23,25,26,27,28 Lt:29(39m)",
+    "calculationNote": "Sultana Yasmin Geeti -> Basic:8000 + Allow:2000 + Tiffin:50 - AbsDed:6720 - LateDed:300 = Net:3030",
+    "excNote": ""
+  },
+  {
+    "name": "Shaila Parvin",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 29,
+        "time": "08:02 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 1,
+      "leave": 0,
+      "absent": 22,
+      "absentDates": [
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        25,
+        26,
+        27,
+        28,
+        30
+      ],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 0,
+      "lateMins": [
+        13
+      ],
+      "lateDetails": "29(13m)"
+    },
+    "acct": "",
+    "mob": "01623402197",
+    "basic": 8000,
+    "genAllow": 2000,
+    "tiffin": 25,
+    "gross": 10000,
+    "perDay": 320,
+    "absDed": 7040,
+    "lateDed": 0,
+    "totalDed": 7040,
+    "net": 2985,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 1,
+    "absent": 22,
+    "leave": 0,
+    "late": 1,
+    "over20": 0,
+    "lateMins": [
+      13
+    ],
+    "absentDates": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12,
+      13,
+      15,
+      16,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      25,
+      26,
+      27,
+      28,
+      30
+    ],
+    "leaveDates": [],
+    "lateInfo": [
+      "29(13m)"
+    ],
+    "markings": "Ab:1,2,5,6,7,8,9,12,13,15,16,18,19,20,21,22,23,25,26,27,28,30 Lt:29(13m)",
+    "calculationNote": "Shaila Parvin -> Basic:8000 + Allow:2000 + Tiffin:25 - AbsDed:7040 - LateDed:0 = Net:2985",
+    "excNote": ""
+  },
+  {
+    "name": "Ashiq",
+    "role": "Teacher",
+    "basic": 15000,
+    "genAllow": 0,
+    "tiffin": 0,
+    "gross": 15000,
+    "perDay": 600,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 15000,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 0,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "No attendance data found.",
+    "calculationNote": "Ashiq -> No attendance data found. Basic salary applied.",
+    "acct": "",
+    "mob": "01932851737",
+    "excNote": ""
+  },
+  {
+    "name": "Md Helal",
+    "role": "Teacher",
+    "basic": 15000,
+    "genAllow": 5000,
+    "tiffin": 0,
+    "gross": 20000,
+    "perDay": 600,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 20000,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 0,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "No attendance data found.",
+    "calculationNote": "Md Helal -> No attendance data found. Basic salary applied.",
+    "acct": "",
+    "mob": "01891690006",
+    "excNote": ""
+  },
+  {
+    "name": "Boro Nanny",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "06:57 AM"
+      },
+      {
+        "day": 2,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 4,
+        "time": "10:19 AM"
+      },
+      {
+        "day": 5,
+        "time": "06:54 AM"
+      },
+      {
+        "day": 6,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 7,
+        "time": "06:56 AM"
+      },
+      {
+        "day": 8,
+        "time": "06:59 AM"
+      },
+      {
+        "day": 9,
+        "time": "06:59 AM"
+      },
+      {
+        "day": 12,
+        "time": "06:59 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:02 AM"
+      },
+      {
+        "day": 15,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 16,
+        "time": "06:57 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:12 AM"
+      },
+      {
+        "day": 19,
+        "time": "06:56 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:00 AM"
+      },
+      {
+        "day": 21,
+        "time": "06:38 AM"
+      },
+      {
+        "day": 22,
+        "time": "06:58 AM"
+      },
+      {
+        "day": 23,
+        "time": "11:29 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:00 AM"
+      },
+      {
+        "day": 27,
+        "time": "06:57 AM"
+      },
+      {
+        "day": 28,
+        "time": "06:59 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:01 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:00 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 1,
+      "absentDates": [
+        25
+      ],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 1,
+      "lateMins": [
+        220
+      ],
+      "lateDetails": "23(220m)"
+    },
+    "acct": "",
+    "mob": "",
+    "basic": 5000,
+    "genAllow": 0,
+    "tiffin": 550,
+    "gross": 5000,
+    "perDay": 200,
+    "absDed": 200,
+    "lateDed": 300,
+    "totalDed": 500,
+    "net": 5050,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 1,
+    "leave": 0,
+    "late": 1,
+    "over20": 1,
+    "lateMins": [
+      220
+    ],
+    "absentDates": [
+      25
+    ],
+    "leaveDates": [],
+    "lateInfo": [
+      "23(220m)"
+    ],
+    "markings": "Ab:25 Lt:23(220m)",
+    "calculationNote": "Boro Nanny -> Basic:5000 + Allow:0 + Tiffin:550 - AbsDed:200 - LateDed:300 = Net:5050",
+    "excNote": ""
+  },
+  {
+    "name": "Rabia Rima Nanny",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:19 AM"
+      },
+      {
+        "day": 4,
+        "time": "08:37 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:22 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:19 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 25,
+        "time": "07:58 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:22 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:14 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 21,
+      "leave": 0,
+      "absent": 3,
+      "absentDates": [
+        19,
+        28,
+        29
+      ],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "",
+    "mob": "",
+    "basic": 6000,
+    "genAllow": 0,
+    "tiffin": 475,
+    "gross": 6000,
+    "perDay": 240,
+    "absDed": 720,
+    "lateDed": 0,
+    "totalDed": 720,
+    "net": 5755,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 21,
+    "absent": 3,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [
+      19,
+      28,
+      29
+    ],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "Ab:19,28,29",
+    "calculationNote": "Rabia Rima Nanny -> Basic:6000 + Allow:0 + Tiffin:475 - AbsDed:720 - LateDed:0 = Net:5755",
+    "excNote": ""
+  },
+  {
+    "name": "Moyna Nanny",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 2,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 4,
+        "time": "08:37 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 7,
+        "time": "03:10 PM"
+      },
+      {
+        "day": 8,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:45 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:42 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 25,
+        "time": "08:27 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:41 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 22,
+      "leave": 0,
+      "absent": 2,
+      "absentDates": [
+        1,
+        15
+      ],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 1,
+      "lateMins": [
+        441
+      ],
+      "lateDetails": "7(441m)"
+    },
+    "acct": "",
+    "mob": "",
+    "basic": 5500,
+    "genAllow": 0,
+    "tiffin": 500,
+    "gross": 5500,
+    "perDay": 220,
+    "absDed": 440,
+    "lateDed": 300,
+    "totalDed": 740,
+    "net": 5260,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 22,
+    "absent": 2,
+    "leave": 0,
+    "late": 1,
+    "over20": 1,
+    "lateMins": [
+      441
+    ],
+    "absentDates": [
+      1,
+      15
+    ],
+    "leaveDates": [],
+    "lateInfo": [
+      "7(441m)"
+    ],
+    "markings": "Ab:1,15 Lt:7(441m)",
+    "calculationNote": "Moyna Nanny -> Basic:5500 + Allow:0 + Tiffin:500 - AbsDed:440 - LateDed:300 = Net:5260",
+    "excNote": ""
+  },
+  {
+    "name": "Rojina Nanny",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 4,
+        "time": "08:30 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:22 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:36 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 18,
+        "time": "02:43 PM"
+      },
+      {
+        "day": 19,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 23,
+        "time": "08:09 AM"
+      },
+      {
+        "day": 25,
+        "time": "07:58 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:22 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:21 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:17 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:24 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 24,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 0,
+      "lateMins": [
+        20
+      ],
+      "lateDetails": "23(20m)"
+    },
+    "acct": "",
+    "mob": "",
+    "basic": 5000,
+    "genAllow": 0,
+    "tiffin": 550,
+    "gross": 5000,
+    "perDay": 200,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 5550,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 24,
+    "absent": 0,
+    "leave": 0,
+    "late": 1,
+    "over20": 0,
+    "lateMins": [
+      20
+    ],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [
+      "23(20m)"
+    ],
+    "markings": "Lt:23(20m)",
+    "calculationNote": "Rojina Nanny -> Basic:5000 + Allow:0 + Tiffin:550 - AbsDed:0 - LateDed:0 = Net:5550",
+    "excNote": ""
+  },
+  {
+    "name": "Sharmin Nanny",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:30 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:24 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:23 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:26 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:19 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:19 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:28 AM"
+      },
+      {
+        "day": 18,
+        "time": "07:29 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:25 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:22 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:20 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 25,
+        "time": "07:57 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:31 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:27 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:33 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "",
+    "mob": "",
+    "basic": 5500,
+    "genAllow": 0,
+    "tiffin": 525,
+    "gross": 5500,
+    "perDay": 220,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 6025,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Sharmin Nanny -> Basic:5500 + Allow:0 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:6025",
+    "excNote": ""
+  },
+  {
+    "name": "Nargis Akter Nanny",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 21,
+        "time": "11:48 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:17 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:12 AM"
+      },
+      {
+        "day": 25,
+        "time": "07:59 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:11 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:11 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:09 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:15 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:14 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 9,
+      "leave": 0,
+      "absent": 14,
+      "absentDates": [
+        1,
+        2,
+        5,
+        6,
+        7,
+        8,
+        9,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20
+      ],
+      "leaveDates": [],
+      "late": 1,
+      "over20": 1,
+      "lateMins": [
+        239
+      ],
+      "lateDetails": "21(239m)"
+    },
+    "acct": "",
+    "mob": "",
+    "basic": 5000,
+    "genAllow": 0,
+    "tiffin": 200,
+    "gross": 5000,
+    "perDay": 200,
+    "absDed": 2800,
+    "lateDed": 300,
+    "totalDed": 3100,
+    "net": 2100,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 9,
+    "absent": 14,
+    "leave": 0,
+    "late": 1,
+    "over20": 1,
+    "lateMins": [
+      239
+    ],
+    "absentDates": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12,
+      13,
+      15,
+      16,
+      18,
+      19,
+      20
+    ],
+    "leaveDates": [],
+    "lateInfo": [
+      "21(239m)"
+    ],
+    "markings": "Ab:1,2,5,6,7,8,9,12,13,15,16,18,19,20 Lt:21(239m)",
+    "calculationNote": "Nargis Akter Nanny -> Basic:5000 + Allow:0 + Tiffin:200 - AbsDed:2800 - LateDed:300 = Net:2100",
+    "excNote": ""
+  },
+  {
+    "name": "Sanjida Islam",
+    "role": "Teacher",
+    "dailyLogs": [
+      {
+        "day": 1,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 2,
+        "time": "07:34 AM"
+      },
+      {
+        "day": 5,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 6,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 7,
+        "time": "07:49 AM"
+      },
+      {
+        "day": 8,
+        "time": "07:32 AM"
+      },
+      {
+        "day": 9,
+        "time": "07:38 AM"
+      },
+      {
+        "day": 12,
+        "time": "07:33 AM"
+      },
+      {
+        "day": 13,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 15,
+        "time": "07:35 AM"
+      },
+      {
+        "day": 16,
+        "time": "07:39 AM"
+      },
+      {
+        "day": 18,
+        "time": "08:08 AM"
+      },
+      {
+        "day": 19,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 20,
+        "time": "07:46 AM"
+      },
+      {
+        "day": 21,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 22,
+        "time": "07:37 AM"
+      },
+      {
+        "day": 23,
+        "time": "07:43 AM"
+      },
+      {
+        "day": 25,
+        "time": "09:45 AM"
+      },
+      {
+        "day": 26,
+        "time": "07:44 AM"
+      },
+      {
+        "day": 27,
+        "time": "07:41 AM"
+      },
+      {
+        "day": 28,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 29,
+        "time": "07:40 AM"
+      },
+      {
+        "day": 30,
+        "time": "07:43 AM"
+      }
+    ],
+    "baseline": {
+      "pdays": 23,
+      "leave": 0,
+      "absent": 0,
+      "absentDates": [],
+      "leaveDates": [],
+      "late": 0,
+      "over20": 0,
+      "lateMins": [],
+      "lateDetails": ""
+    },
+    "acct": "0951120067666",
+    "mob": "01891614086",
+    "basic": 13000,
+    "genAllow": 2000,
+    "tiffin": 525,
+    "gross": 15000,
+    "perDay": 520,
+    "absDed": 0,
+    "lateDed": 0,
+    "totalDed": 0,
+    "net": 15525,
+    "ot": 0,
+    "increment": 0,
+    "bonus": 0,
+    "pfDeduction": 0,
+    "pfReturn": 0,
+    "pdays": 23,
+    "absent": 0,
+    "leave": 0,
+    "late": 0,
+    "over20": 0,
+    "lateMins": [],
+    "absentDates": [],
+    "leaveDates": [],
+    "lateInfo": [],
+    "markings": "",
+    "calculationNote": "Sanjida Islam -> Basic:13000 + Allow:2000 + Tiffin:525 - AbsDed:0 - LateDed:0 = Net:15525",
+    "excNote": ""
+  }
+]
