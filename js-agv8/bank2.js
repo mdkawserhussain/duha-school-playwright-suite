@@ -108,8 +108,9 @@ function buildBankLetter(payroll) {
 
 // ─── MAIN ──────────────────────────────────────────────────────────────────
 async function main() {
-  const inputFile = 'input/monthly2.docx';
-  const outputFile = 'output/bank2.docx';
+  const monthName = new Date(config.year, config.month - 1).toLocaleString('en-US', { month: 'long' });
+  const inputFile = `output/Monthly-All-${monthName}-${config.year}-formatted.docx`;
+  const outputFile = `output/Bank-Transfer-${monthName}-${config.year}.docx`;
   const isDryRun = process.argv.includes('--dry-run');
 
   if (!fs.existsSync(inputFile)) {
@@ -164,10 +165,9 @@ async function main() {
     console.log(`✓ Successfully generated ${outputFile}`);
 
     // CSV export
-    const monthName = new Date(config.year, config.month - 1).toLocaleString('en-US', { month: 'long' });
     const csvLines = ["SL,Name,Branch,Account,Mobile,Salary"];
     bankStaff.forEach((e, i) => csvLines.push(`${i+1},"${e.name}","Halishahar","${e.acct}","${e.mob}",${e.net}`));
-    const csvPath = `output/Bank-Transfer-monthly2-${monthName}-${config.year}.csv`;
+    const csvPath = `output/Bank-Transfer-${monthName}-${config.year}.csv`;
     fs.writeFileSync(csvPath, csvLines.join('\n'));
     console.log(`✓ CSV exported: ${csvPath}`);
     

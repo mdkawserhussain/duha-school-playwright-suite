@@ -1,0 +1,75 @@
+# Implementation Plan: Update Staff Names in config.json from att.docx
+
+We need to update the staff names in `config.json` using the biometric attendance document `input/att.docx` as the main source of truth. This ensures that the auto-calculation script `parse.js` maps employee names exactly without relying on fuzzy matching or throwing warnings.
+
+---
+
+## User Review Required
+
+Please review and confirm the proposed name mapping and how to handle formatting below:
+
+### 1. Spacing Style Options
+Biometric system exports often contain multiple spaces between words (e.g., `"Hasan   Mahmud"` instead of `"Hasan Mahmud"`). We can update names in `config.json` in one of two ways:
+* **Option A (Exact Copy):** Update names exactly as written in `att.docx` including multiple spaces (e.g. `"Hasan   Mahmud"`, `"Sadia   Sultana  Rima"`). This guarantees exact 1-to-1 matching.
+* **Option B (Clean Spacing):** Keep standard single-spacing but match spelling and full names (e.g. `"Hasan Mahmud"`, `"Nusrat Jahan Ira"`, `"Mohoshina Shifa Buble"`). The parser's `normalize()` helper strips all spacing anyway, so this will still match perfectly.
+
+> [!TIP]
+> **Recommendation:** We recommend **Option B** (Clean Spacing) because it keeps the final payroll spreadsheets (`Monthly-All`, bank statement, and WhatsApp slips) looking neat and professional while still achieving perfect name matching.
+
+---
+
+## Proposed Name Mappings
+
+Based on the biometric attendance data inside `input/att.docx`, here are the 11 mismatches identified and how they will be updated:
+
+| Current name in `config.json` | Name parsed in `att.docx` | Proposed name in `config.json` (Option B / Cleaned) | Notes / Matching Justification |
+| :--- | :--- | :--- | :--- |
+| `"Nusrat Jahan Era"` | `"Nusrat   Jahan   Ira"` | `"Nusrat Jahan Ira"` | Spelling change (Era -> Ira) |
+| `"Mohoshina Shifa"` | `"MOHOSHINA  SHIFA   BUBLE"` | `"Mohoshina Shifa Buble"` | Added last name "Buble" and casing |
+| `"Jannatur Rahman Eshita"` | `"Jannatur Rahman"` | `"Jannatur Rahman"` | Dropped "Eshita" from biometric name |
+| `"Ashiq"` | `"Ashik   Bhuiyan"` | `"Ashik Bhuiyan"` | Spelling change (Ashiq -> Ashik) and added "Bhuiyan" |
+| `"Md Helal"` | `"Md   Helal   Uddin"` | `"Md Helal Uddin"` | Added "Uddin" |
+| `"Boro Nanny"` | `"Shahida"` | `"Shahida"` | Real name of Boro Nanny |
+| `"Rabia Rima Nanny"` | `"Rabeya   Rima"` | `"Rabeya Rima"` | Real name, adjusted spelling |
+| `"Moyna Nanny"` | `"Moyna"` | `"Moyna"` | Real name |
+| `"Rojina Nanny"` | `"Rohima"` | `"Rohima"` | Real name, adjusted spelling |
+| `"Sharmin Nanny"` | `"Sharmin"` | `"Sharmin"` | Real name |
+| `"Nargis Akter Nanny"` | `"Nargis   Akter"` | `"Nargis Akter"` | Real name |
+
+### Unchanged / Not in `att.docx`
+The following two staff members are in `config.json` but have **no record** in `input/att.docx`:
+1. `"Shaila Parvin"`
+2. `"Md Rahat Chy"`
+
+**Proposed Action:** Keep these two staff members as-is in `config.json` (spelled exactly as they are currently) to preserve their configuration and any manual overrides/payouts they might have, since they may simply be absent from the attendance logs this cycle.
+
+---
+
+## Open Questions
+
+> [!IMPORTANT]
+> 1. Do you prefer **Option A** (exact spacing copy from the biometric database) or **Option B** (standardized single spacing but matching names/spelling)?
+> 2. Are there any other name changes or staff members that were omitted/added recently that we should account for?
+
+---
+
+## Proposed Changes
+
+### Configuration
+
+#### [MODIFY] [config.json](file:///d:/Rasel/dis-docs/hr/js-agv8/config.json)
+- Update the 11 staff names as listed above to match the biometric names.
+
+---
+
+## Verification Plan
+
+### Automated Verification
+1. Run Phase 1 parser:
+   ```bash
+   node parse.js
+   ```
+2. Verify in the console output and `temp/parse-summary.txt` that:
+   * The warnings `"⚠️ In config but NOT in att.docx"` do **not** appear for the 11 updated names.
+   * Only `"Shaila Parvin"` and `"Md Rahat Chy"` are reported as missing from `att.docx`.
+   * Total parsed staff matches `51` (out of 53 config entries).

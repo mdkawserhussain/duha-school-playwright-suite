@@ -35,9 +35,26 @@ function parseAttendance(filePath) {
   const rows = xml.split('</w:tr>');
   const employees = [];
   
+  const getCellText = (cell) => (cell.match(/<w:t[^>]*>([^<]*)<\/w:t>/g) || []).map(m => m.replace(/<w:t[^>]*>|<\/w:t>/g, '')).join('');
+
+  // Find dailyColsCount dynamically from the row containing dates
+  let dailyColsCount = 31; // fallback
+  for (let i = 0; i < Math.min(rows.length, 10); i++) {
+    const cells = rows[i].split('</w:tc>');
+    if (cells.length > 5) {
+      const texts = cells.map(getCellText);
+      const dayCells = texts.slice(2).filter(t => /^\d{2}[A-Za-z]{3}\s*\d{2}$/.test(t.replace(/\s+/g, '')));
+      if (dayCells.length > 0) {
+        dailyColsCount = dayCells.length;
+        console.log(`Detected daily columns count: ${dailyColsCount}`);
+        break;
+      }
+    }
+  }
+
   rows.forEach(row => {
     const cells = row.split('</w:tc>');
-    if (cells.length < 35) return;
+    if (cells.length < 2 + dailyColsCount + 5) return;
 
     // Get Name
     const nameMatch = cells[1].match(/<w:t>([^<]+)<\/w:t>/g);
@@ -48,12 +65,10 @@ function parseAttendance(filePath) {
     const cleanedName = rawName.replace(/\(.*\)/, '').trim();
     const staffCfg = findStaffConfig(cleanedName);
 
-    // Get Summaries
-    const getCellText = (cell) => (cell.match(/<w:t[^>]*>([^<]*)<\/w:t>/g) || []).map(m => m.replace(/<w:t[^>]*>|<\/w:t>/g, '')).join('');
-    
-    const rawAbsent = parseInt(getCellText(cells[cells.length - 3]) || 0);
-    const leave  = parseInt(getCellText(cells[cells.length - 4]) || 0);
-    const pdays  = parseInt(getCellText(cells[cells.length - 5]) || 0);
+    // Get Summaries using dynamic column offsets
+    const rawAbsent = parseInt(getCellText(cells[2 + dailyColsCount + 3]) || 0);
+    const leave  = parseInt(getCellText(cells[2 + dailyColsCount + 2]) || 0);
+    const pdays  = parseInt(getCellText(cells[2 + dailyColsCount + 1]) || 0);
 
     // Extract daily timestamps and identify absent/late details
     const dailyLogs = [];
@@ -70,7 +85,7 @@ function parseAttendance(filePath) {
       if (new Date(config.year, config.month - 1, d).getDay() === 6) calculatedSaturdays.push(d);
     }
 
-    for (let i = 2; i <= 31; i++) {
+    for (let i = 2; i < 2 + dailyColsCount; i++) {
       const day = i - 1;
       if (day > daysInMonth) break;
 
@@ -95,15 +110,15 @@ function parseAttendance(filePath) {
           if (ALL_HOLIDAYS.includes(day)) continue;
 
           // Determine Threshold
-          let thresholdStr = config.policies.standardThreshold;
+          let thresholdStr = config.policies.standardTiming;
           const isSaturday = calculatedSaturdays.includes(day);
 
-          if (config.daySpecificThresholds[day]) {
-            thresholdStr = config.daySpecificThresholds[day];
+          if (config.daySpecificTimings[day]) {
+            thresholdStr = config.daySpecificTimings[day];
           } else if (isSaturday) {
             thresholdStr = null; 
-          } else if (staffCfg.threshold) {
-            thresholdStr = staffCfg.threshold;
+          } else if (staffCfg.customTiming) {
+            thresholdStr = staffCfg.customTiming;
           }
 
           if (thresholdStr) {
@@ -122,12 +137,15 @@ function parseAttendance(filePath) {
       }
     }
 
+    // Filter out holidays and Saturdays from dailyLogs (not counted)
+    const filteredLogs = dailyLogs.filter(log => !ALL_HOLIDAYS.includes(log.day) && !calculatedSaturdays.includes(log.day));
+
     const absentDates = [];
     const leaveDates = [];
-    for (let d = 1; d <= daysInMonth; d++) {
+    for (let d = 1; d <= dailyColsCount; d++) {
       if (leaveDays.has(d)) {
         leaveDates.push(d);
-      } else if (!presentDays.has(d) && !ALL_HOLIDAYS.includes(d)) {
+      } else if (!presentDays.has(d) && !ALL_HOLIDAYS.includes(d) && !(config.noAbsentDays || []).includes(d)) {
         absentDates.push(d);
       }
     }
@@ -148,7 +166,8 @@ function parseAttendance(filePath) {
     employees.push({
       name: staffCfg.name || cleanedName,
       role: staffCfg.role || "Teacher",
-      dailyLogs,
+      dailyLogs: filteredLogs,
+      dailyColsCount,
       baseline: {
         pdays: finalPdays,
         leave: leaveDates.length,
@@ -264,5 +283,5 @@ async function main() {
   }
 }
 
-module.exports = { main };
+module.exports = { main, saveToDocx };
 if (require.main === module) main();

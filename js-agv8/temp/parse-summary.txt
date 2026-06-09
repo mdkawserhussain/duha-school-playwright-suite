@@ -1,7 +1,7 @@
-Parse Summary — April 2026
-Total parsed: 50
-Working days (auto): 23
-Holidays: 14, 4, 11 (Fridays auto-added: 3, 10, 17, 24)
-Saturdays: 4, 11, 18, 25
+Parse Summary — May 2026
+Total parsed: 51
+Working days (auto): 24
+Holidays: 2, 16 (Fridays auto-added: 1, 8, 15, 22, 29)
+Saturdays: 2, 9, 16, 23, 30
 Unmatched in config: 0
-Missing from att: 3 — Nusrat Jahan Era, Ashiq, Md Helal
+Missing from att: 2 — Md Rahat Chy, Shaila Parvin

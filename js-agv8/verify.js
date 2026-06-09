@@ -41,8 +41,8 @@ function parseDocx(filePath, colConfig) {
   return data;
 }
 
-async function verify() {
-  const isFinal = process.argv.includes('--final');
+async function verify(isFinalOverride) {
+  const isFinal = isFinalOverride ?? process.argv.includes('--final');
   let output = "";
   const log = (msg) => {
     console.log(msg);
@@ -58,9 +58,9 @@ async function verify() {
 
   const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
   const monthName = getMonthName(config);
-  const monthlyFile = `output/Monthly-All-${monthName}-${config.year}.docx`;
+  const monthlyFile = `output/Monthly-All-${monthName}-${config.year}-formatted.docx`;
   const bankFile = `output/Bank-Transfer-${monthName}-${config.year}.docx`;
-  const input2File = "input/monthly2.docx";
+  const input2File = `output/Monthly-All-${monthName}-${config.year}-formatted.docx`;
 
   // 1. Parsing all sources — now with OT/Increment/Bonus/PF columns
   const monthlyData = parseDocx(monthlyFile, {

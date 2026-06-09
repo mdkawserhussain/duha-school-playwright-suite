@@ -2,8 +2,69 @@
 
 This guide explains how to use the DUHA Payroll System by running each modular script individually. This approach gives you granular control over every step of the process, allowing you to stop, inspect, and modify data between phases.
 
+### Detailed Checklist
+
+1. Update leave records.
+2. Review and update configuration settings.
+    
+    *In config.json, add* - 
+    exceptions:
+
+    [x] 1. add  no tiffin  day (default no tiffin- saturday)
+    [x] 2. add no lateness day/customtiming for people/dayspecific timing for day  (default no late- saturday)
+    [x] 3. add off saturdays to holiday (default  saturdays are working days if not added to holiday- without tiffin and late )
+    [x] 4. set customTiming for warda,subah(+skiplatecheck),rasel,maruf,arafat,irfan,masum,,mili,
+    [x] 5. set dayspecificTiming
+
+3. Run `node parse.js` and verify the output.
+4. Review and update `parsed.docx`.
+5. Run `node all.js` and verify the output.
+6. Review and update `monthly-all-formatted.docx`.
+7. Update the grand total.
+8. Run `verify.js` and review the results.
+9. Run `bank2.js` and verify the output.
+10. Run `verify.js --final` and confirm final validation.
+11. Review and update TA records.
+12. Run `wa.js` / `wa2.js` and verify results.
+13. Update individual files.
+14. Update leave records again if required.
+15. Copy final outputs into the Financial Document.
+
 ---
 
+
+# Note 
+---
+new time nanny
+boro 6:55
+other - 7:10
+---
+config-
+nanny timing
+cutom teachers timing(arafat,irfan)
+---
+
+######## 
+Exceptions
+######## 
+- warda mam timing
+- subah mam timing and late
+- arafat, masum, irfan timing
+- mili, maruf, rasel timing,
+- warda TA 250 per present day
+- arafat, subah, sadia TA 100 per present day
+
+####### 
+leave balance zero
+######
+keya
+prity
+taslima
+irfan
+-----------------
+
+
+---
 ### **Salary Processing Phase List**
 *   **Phase 00:** Answer Pre-Flight Checklist & cover read-first.md and guide-modular.md  
 *   **Phase 0:** Update `config.json` (log exceptions, apply increments, adjust parameters).
@@ -18,7 +79,7 @@ This guide explains how to use the DUHA Payroll System by running each modular s
 
 
 ## Prerequisites
-
+---
 
 
 Before starting any payroll cycle, ensure you have updated the **`config.json`** file and reviewed the following checklist:

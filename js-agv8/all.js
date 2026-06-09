@@ -3,7 +3,7 @@ const AdmZip = require('adm-zip');
 const { 
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, 
   AlignmentType, PageOrientation, BorderStyle, WidthType, ShadingType, 
-  VerticalAlign, PageBreak 
+  VerticalAlign, PageBreak, HeightRule 
 } = require('docx');
 const { normalize, timeToMins, numberToWords, findStaffConfig: findStaffCfg, validateConfig } = require('./utils');
 
@@ -21,6 +21,65 @@ function para(children, align = AlignmentType.LEFT, spaceBefore = 0, spaceAfter 
   });
 }
 
+function buildBreakdownTable() {
+  const bBorder = { style: BorderStyle.SINGLE, size: 1, color: "999999" };
+  const bBorders = { top: bBorder, bottom: bBorder, left: bBorder, right: bBorder };
+  const bColW = [400, 2400, 5600, 3600];
+  const bTotalW = bColW.reduce((a, b) => a + b, 0);
+  const bMargins = { top: 40, bottom: 40, left: 80, right: 80 };
+
+  const bHdrRow = new TableRow({
+    children: ["SL", "Name", "Salary Breakdown", "Attendance Details"].map((h, i) => new TableCell({
+      borders: bBorders, width: { size: bColW[i], type: WidthType.DXA },
+      shading: { fill: "2C3E50" }, margins: bMargins,
+      verticalAlign: VerticalAlign.CENTER,
+      children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 0, after: 0 },
+        children: [new TextRun({ text: h, bold: true, color: "FFFFFF", size: 18, font: "Arial" })] })]
+    }))
+  });
+
+  const bDataRows = payroll.map((p, idx) => {
+    const shade = idx % 2 === 0 ? "F7F9FC" : undefined;
+    const calcParts = (p.calculationNote || "").split(" -> ");
+    const calcText = calcParts.length > 1 ? calcParts[1] : calcParts[0];
+
+    const attendanceParts = [];
+    if (p.absentDates && p.absentDates.length) attendanceParts.push(`Ab: ${p.absentDates.join(", ")}`);
+    if (p.lateInfo && p.lateInfo.length) attendanceParts.push(`Lt: ${p.lateInfo.join(", ")}`);
+    if (p.leaveDates && p.leaveDates.length) attendanceParts.push(`Lv: ${p.leaveDates.join(", ")}`);
+    const attendanceText = attendanceParts.join("  |  ") || "—";
+
+    return new TableRow({
+      children: [
+        new TableCell({ borders: bBorders, width: { size: bColW[0], type: WidthType.DXA }, shading: shade ? { fill: shade } : undefined, margins: bMargins, verticalAlign: VerticalAlign.CENTER,
+          children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 0, after: 0 }, children: [new TextRun({ text: String(idx + 1), size: 16, font: "Arial" })] })] }),
+        new TableCell({ borders: bBorders, width: { size: bColW[1], type: WidthType.DXA }, shading: shade ? { fill: shade } : undefined, margins: bMargins, verticalAlign: VerticalAlign.CENTER,
+          children: [new Paragraph({ alignment: AlignmentType.LEFT, spacing: { before: 0, after: 0 }, children: [new TextRun({ text: p.name, bold: true, size: 16, font: "Arial" })] })] }),
+        new TableCell({ borders: bBorders, width: { size: bColW[2], type: WidthType.DXA }, shading: shade ? { fill: shade } : undefined, margins: bMargins, verticalAlign: VerticalAlign.CENTER,
+          children: [new Paragraph({ alignment: AlignmentType.LEFT, spacing: { before: 0, after: 0 }, children: [new TextRun({ text: calcText, size: 15, font: "Arial" })] })] }),
+        new TableCell({ borders: bBorders, width: { size: bColW[3], type: WidthType.DXA }, shading: shade ? { fill: shade } : undefined, margins: bMargins, verticalAlign: VerticalAlign.CENTER,
+          children: [new Paragraph({ alignment: AlignmentType.LEFT, spacing: { before: 0, after: 0 },
+            children: attendanceParts.length > 0
+              ? [
+                  ...(p.absentDates && p.absentDates.length ? [new TextRun({ text: `Ab: ${p.absentDates.join(", ")}`, color: "C0392B", size: 15, font: "Arial" })] : []),
+                  ...(p.absentDates && p.absentDates.length && (p.lateInfo && p.lateInfo.length || p.leaveDates && p.leaveDates.length) ? [new TextRun({ text: "  |  ", size: 15, font: "Arial" })] : []),
+                  ...(p.lateInfo && p.lateInfo.length ? [new TextRun({ text: `Lt: ${p.lateInfo.join(", ")}`, color: "E67E22", size: 15, font: "Arial" })] : []),
+                  ...(p.lateInfo && p.lateInfo.length && p.leaveDates && p.leaveDates.length ? [new TextRun({ text: "  |  ", size: 15, font: "Arial" })] : []),
+                  ...(p.leaveDates && p.leaveDates.length ? [new TextRun({ text: `Lv: ${p.leaveDates.join(", ")}`, color: "2980B9", size: 15, font: "Arial" })] : [])
+                ]
+              : [new TextRun({ text: "—", color: "999999", size: 15, font: "Arial" })]
+          })] })
+      ]
+    });
+  });
+
+  return [
+    para([new PageBreak()]),
+    para([bold("Detailed Calculation Breakdowns", 24)], AlignmentType.CENTER, 200, 200),
+    new Table({ width: { size: bTotalW, type: WidthType.DXA }, rows: [bHdrRow, ...bDataRows] })
+  ];
+}
+
 // ─── CONFIG & UTILS ────────────────────────────────────────────────────────
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 validateConfig(config);
@@ -33,10 +92,12 @@ for (let d = 1; d <= daysInMonth; d++) {
   if (dayOfWeek === 6) calculatedSaturdays.push(d);
 }
 const ALL_HOLIDAYS = [...new Set([...config.holidays, ...AUTO_HOLIDAYS])];
-const WORKING_DAYS = daysInMonth - ALL_HOLIDAYS.length;
 
 // ─── DATA LOADING ──────────────────────────────────────────────────────────
-const attendanceData = JSON.parse(fs.readFileSync('temp/parsed.json', 'utf8'));
+const parsedRaw = JSON.parse(fs.readFileSync('temp/parsed.json', 'utf8'));
+const attendanceData = Array.isArray(parsedRaw) ? parsedRaw : parsedRaw.employees;
+const ATT_COLS = (attendanceData[0] && attendanceData[0].dailyColsCount) || daysInMonth;
+const WORKING_DAYS = ATT_COLS - ALL_HOLIDAYS.filter(h => h <= ATT_COLS).length;
 
 // Map manual edits for lookup
 function loadEditedAttendance() {
@@ -93,15 +154,15 @@ function computePayroll(emp, manual) {
   (emp.dailyLogs || []).forEach(log => {
     if (config.holidays.includes(log.day)) return;
 
-    let thresholdStr = config.policies.standardThreshold;
+    let thresholdStr = config.policies.standardTiming;
     const isSaturday = calculatedSaturdays.includes(log.day);
 
-    if (config.daySpecificThresholds[log.day]) {
-      thresholdStr = config.daySpecificThresholds[log.day];
+    if (config.daySpecificTimings[log.day]) {
+      thresholdStr = config.daySpecificTimings[log.day];
     } else if (isSaturday) {
       thresholdStr = null; // No lateness check for Saturdays
-    } else if (staffCfg.threshold) {
-      thresholdStr = staffCfg.threshold;
+    } else if (staffCfg.customTiming) {
+      thresholdStr = staffCfg.customTiming;
     }
 
     if (thresholdStr) {
@@ -165,8 +226,10 @@ function computePayroll(emp, manual) {
   // Track specific dates for notifications
   const absentDates = [];
   const leaveDates = emp.baseline ? (emp.baseline.leaveDates || []) : [];
-  for (let d = 1; d <= daysInMonth; d++) {
+  const noAbsentDays = config.noAbsentDays || [];
+  for (let d = 1; d <= ATT_COLS; d++) {
     if (ALL_HOLIDAYS.includes(d)) continue;
+    if (noAbsentDays.includes(d)) continue;
     if (leaveDates.includes(d)) continue;
     if (!(emp.dailyLogs || []).some(log => log.day === d)) {
       absentDates.push(d);
@@ -176,10 +239,10 @@ function computePayroll(emp, manual) {
   // Format detailed lateness string: "Day(Mins)"
   const lateInfo = (emp.dailyLogs || []).map(log => {
     if (ALL_HOLIDAYS.includes(log.day)) return null;
-    let thresholdStr = config.policies.standardThreshold;
-    if (config.daySpecificThresholds[log.day]) thresholdStr = config.daySpecificThresholds[log.day];
+    let thresholdStr = config.policies.standardTiming;
+    if (config.daySpecificTimings[log.day]) thresholdStr = config.daySpecificTimings[log.day];
     else if (calculatedSaturdays.includes(log.day)) return null;
-    else if (staffCfg.threshold) thresholdStr = staffCfg.threshold;
+    else if (staffCfg.customTiming) thresholdStr = staffCfg.customTiming;
 
     if (!thresholdStr) return null;
     const diff = timeToMins(log.time) - timeToMins(thresholdStr);
@@ -281,13 +344,129 @@ function buildMonthlyAll() {
       para([bold(`Monthly Report — ${monthName} ${config.year}`,24)],AlignmentType.CENTER,0,80),
       new Table({width:{size:totalW,type:WidthType.DXA},rows:[hdrRow,...dataRows]}),
       para([bold("Grand Net Payable: ",20),bold("BDT "+totNet.toLocaleString(),22)],AlignmentType.RIGHT,200,0),
-      para([new PageBreak()]),
-      para([bold("Detailed Calculation Breakdowns", 24)], AlignmentType.CENTER, 200, 200),
-      ...payroll.map(p => 
-        para([run(p.calculationNote, 18)], AlignmentType.LEFT, 40, 40)
-      )
+      ...buildBreakdownTable()
     ]
   }]});
+}
+
+function buildMonthlyAllFormatted() {
+  const colW = [2243, 462, 463, 555, 463, 425, 457, 713, 536, 782, 869, 534, 679, 787, 521, 679, 850, 960, 2419];
+  const totalW = colW.reduce((a, b) => a + b, 0);
+  const headers = [
+    "Teachers' Name", "W. Days", "P. Days", "Casual Leave", "A. Days", "Late", "Over Time", 
+    "Increment", "Bonus", "PF Deductions", "PF Return", "Per Day Salary", "Basic Salary", 
+    "Allowances", "Tiffin Allow.", "Total Salary", "Total Ded.", "Net Payable", "Note"
+  ];
+
+  const formattedBorder = { style: BorderStyle.SINGLE, size: 4, color: "000000" };
+  const formattedBorders = { top: formattedBorder, bottom: formattedBorder, left: formattedBorder, right: formattedBorder };
+  const cellMargins = { top: 0, bottom: 0, left: 108, right: 108 };
+
+  const hdrRow = new TableRow({
+    height: { value: 600, rule: HeightRule.AT_LEAST },
+    children: headers.map((h, i) => new TableCell({
+      borders: formattedBorders, 
+      width: { size: colW[i], type: WidthType.DXA }, 
+      shading: { fill: "1F4E78" }, 
+      margins: cellMargins,
+      verticalAlign: VerticalAlign.CENTER,
+      children: [new Paragraph({
+        alignment: AlignmentType.CENTER, 
+        spacing: { before: 0, after: 0 },
+        children: [new TextRun({ text: h, bold: true, color: "FFFFFF", size: 13, font: "Arial" })]
+      })]
+    }))
+  });
+
+  const fmt = (v) => typeof v === 'number' ? (v === 0 ? "0" : v.toLocaleString('en-US')) : String(v);
+
+  const dataRows = payroll.map((p, idx) => {
+    const empWorkingDays = Math.max(WORKING_DAYS, p.pdays);
+    const rowVals = [
+      p.name,
+      empWorkingDays,
+      p.pdays,
+      p.leave,
+      p.absent,
+      p.late,
+      p.ot,
+      p.increment,
+      p.bonus,
+      p.pfDeduction,
+      p.pfReturn,
+      p.perDay,
+      p.basic,
+      p.genAllow,
+      p.tiffin,
+      p.gross,
+      p.totalDed,
+      p.net,
+      p.excNote || ""
+    ];
+
+    return new TableRow({
+      height: { value: 300, rule: HeightRule.AT_LEAST },
+      children: rowVals.map((v, i) => new TableCell({
+        borders: formattedBorders, 
+        width: { size: colW[i], type: WidthType.DXA }, 
+        margins: cellMargins,
+        verticalAlign: VerticalAlign.CENTER,
+        children: [new Paragraph({
+          alignment: i === 0 ? AlignmentType.LEFT : AlignmentType.CENTER,
+          spacing: { before: 0, after: 0 },
+          children: [new TextRun({ text: fmt(v), size: 13, font: "Arial" })]
+        })]
+      }))
+    });
+  });
+
+  const totNet = payroll.reduce((s, e) => s + e.net, 0);
+  const totalRowCells = [];
+  for (let i = 0; i < 19; i++) {
+    let text = "";
+    let isBold = false;
+    if (i === 16) {
+      text = "Grand Net Payable:";
+      isBold = true;
+    } else if (i === 17) {
+      text = fmt(totNet);
+      isBold = true;
+    }
+    totalRowCells.push(new TableCell({
+      borders: formattedBorders,
+      width: { size: colW[i], type: WidthType.DXA },
+      margins: cellMargins,
+      verticalAlign: VerticalAlign.CENTER,
+      children: [new Paragraph({
+        alignment: i === 16 ? AlignmentType.RIGHT : AlignmentType.CENTER,
+        spacing: { before: 0, after: 0 },
+        children: [new TextRun({ text, bold: isBold, size: 13, font: "Arial" })]
+      })]
+    }));
+  }
+
+  const totalRow = new TableRow({
+    height: { value: 300, rule: HeightRule.AT_LEAST },
+    children: totalRowCells
+  });
+
+  return new Document({
+    sections: [{
+      properties: {
+        page: {
+          size: { width: 16838, height: 11906, orientation: PageOrientation.LANDSCAPE },
+          margin: { top: 720, right: 720, bottom: 720, left: 720 }
+        }
+      },
+      children: [
+        new Table({
+          width: { size: totalW, type: WidthType.DXA },
+          rows: [hdrRow, ...dataRows, totalRow]
+        }),
+        ...buildBreakdownTable()
+      ]
+    }]
+  });
 }
 
 function buildSalaryReport() {
@@ -376,6 +555,7 @@ async function main() {
   const baseFilename = `-${monthName}-${config.year}.docx`;
   console.log("Generating Final Reports...");
   fs.writeFileSync(`output/Monthly-All${baseFilename}`, await Packer.toBuffer(buildMonthlyAll()));
+  fs.writeFileSync(`output/Monthly-All-${monthName}-${config.year}-formatted.docx`, await Packer.toBuffer(buildMonthlyAllFormatted()));
   fs.writeFileSync(`output/Salary-Report${baseFilename}`, await Packer.toBuffer(buildSalaryReport()));
   fs.writeFileSync(`output/Bank-Transfer${baseFilename}`, await Packer.toBuffer(buildBankLetter()));
   console.log(`✓ Reports generated in output/ for ${monthName} ${config.year}`);

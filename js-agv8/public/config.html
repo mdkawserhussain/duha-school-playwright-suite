@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DUHA Payroll System - Config Editor</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js"></script>
+  <script>
+    let fullConfig = {};
+    let isDirty = false;
+    let lastSaved = null;
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        fullConfig = await res.json();
+
+        document.getElementById('cycle-year').value = fullConfig.year || 2026;
+        document.getElementById('cycle-month').value = fullConfig.month || 5;
+        document.getElementById('cycle-holidays').value = (fullConfig.holidays || []).join(', ');
+        document.getElementById('cycle-tiffin-excl').value = (fullConfig.tiffinExclusionDays || []).join(', ');
+        document.getElementById('cycle-no-absent-days').value = (fullConfig.noAbsentDays || []).join(', ');
+        document.getElementById('cycle-standard-timing').value = fullConfig.policies?.standardTiming || '07:49 AM';
+        document.getElementById('cycle-locked').checked = !!fullConfig.locked;
+
+        renderStaffList();
+        isDirty = false;
+        updateDirtyIndicator();
+      } catch (err) {
+        showToast('Failed to load system config.', 'error');
+      }
+    }
+
+    function renderStaffList(filter = '') {
+      const container = document.getElementById('staff-config-list');
+      if (!container) return;
+
+      const filtered = fullConfig.staff.filter(s => s.name.toLowerCase().includes(filter.toLowerCase()));
+
+      container.innerHTML = filtered.map((s, idx) => {
+        const globalIdx = fullConfig.staff.findIndex(staff => staff.name === s.name);
+        const exc = s.exceptions || {};
+
+        return `
+          <div class="card staff-card" style="margin-bottom:0.5rem;border-left:4px solid var(--accent);">
+            <div class="staff-card-header" onclick="toggleStaffCard(${globalIdx})" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:0.75rem 1rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span class="card-toggle" id="toggle-${globalIdx}" style="color:var(--text-secondary);transition:transform 0.2s;">▶</span>
+                <h3 style="color:var(--text-primary);font-size:1rem;margin:0;">${s.name}</h3>
+                <span style="color:var(--text-secondary);font-size:0.75rem;">${s.role || 'Teacher'}</span>
+              </div>
+              <div style="display:flex;gap:0.5rem;align-items:center;" onclick="event.stopPropagation()">
+                <button class="btn btn-danger" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="removeStaff(${globalIdx})">Delete</button>
+              </div>
+            </div>
+            <div class="staff-card-body" id="card-body-${globalIdx}" style="display:none;padding:0 1rem 1rem;border-top:1px solid var(--border);">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding-top:1rem;">
+                <div class="form-group">
+                  <label for="name-${globalIdx}">Name</label>
+                  <input type="text" id="name-${globalIdx}" value="${s.name}"
+                    onchange="updateStaffField(${globalIdx}, 'name', this.value)">
+                </div>
+                <div class="form-group">
+                  <label for="role-${globalIdx}">Role</label>
+                  <input type="text" id="role-${globalIdx}" value="${s.role || 'Teacher'}"
+                    onchange="updateStaffField(${globalIdx}, 'role', this.value)">
+                </div>
+                <div class="form-group">
+                  <label for="basic-${globalIdx}">Basic Salary</label>
+                  <input type="number" id="basic-${globalIdx}" min="0" step="100" value="${s.basic || 0}"
+                    onchange="updateStaffField(${globalIdx}, 'basic', parseInt(this.value) || 0)">
+                </div>
+                <div class="form-group">
+                  <label for="allowance-${globalIdx}">Allowance</label>
+                  <input type="number" id="allowance-${globalIdx}" min="0" step="100" value="${s.allowance || 0}"
+                    onchange="updateStaffField(${globalIdx}, 'allowance', parseInt(this.value) || 0)">
+                </div>
+                <div class="form-group">
+                  <label for="bank-acct-${globalIdx}">Bank Account</label>
+                  <input type="text" id="bank-acct-${globalIdx}" value="${s.bank?.acct || ''}"
+                    onchange="updateStaffBankField(${globalIdx}, 'acct', this.value)">
+                </div>
+                <div class="form-group">
+                  <label for="bank-mob-${globalIdx}">Bank Mobile</label>
+                  <input type="text" id="bank-mob-${globalIdx}" value="${s.bank?.mob || ''}"
+                    onchange="updateStaffBankField(${globalIdx}, 'mob', this.value)">
+                </div>
+              </div>
+
+              <h4 style="margin:1rem 0 0.5rem;font-size:0.875rem;color:var(--text-secondary);text-transform:uppercase;">Month Exceptions</h4>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;background:rgba(255,255,255,0.02);padding:1rem;border-radius:0.375rem;border:1px solid var(--border);">
+                <div class="form-group" style="display:flex;align-items:center;">
+                  <label class="checkbox-label" style="margin-bottom:0;">
+                    <input type="checkbox" ${exc.skipLateCheck ? 'checked' : ''}
+                      onchange="updateStaffExceptionField(${globalIdx}, 'skipLateCheck', this.checked)">
+                    Skip Late Check
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label for="ot-${globalIdx}">Overtime (Hours)</label>
+                  <input type="number" id="ot-${globalIdx}" min="0" step="0.5" value="${exc.ot || 0}"
+                    onchange="updateStaffExceptionField(${globalIdx}, 'ot', parseFloat(this.value) || 0)">
+                </div>
+                <div class="form-group">
+                  <label for="increment-${globalIdx}">Increment</label>
+                  <input type="number" id="increment-${globalIdx}" min="0" step="100" value="${exc.increment || 0}"
+                    onchange="updateStaffExceptionField(${globalIdx}, 'increment', parseInt(this.value) || 0)">
+                </div>
+                <div class="form-group">
+                  <label for="bonus-${globalIdx}">Bonus</label>
+                  <input type="number" id="bonus-${globalIdx}" min="0" step="100" value="${exc.bonus || 0}"
+                    onchange="updateStaffExceptionField(${globalIdx}, 'bonus', parseInt(this.value) || 0)">
+                </div>
+                <div class="form-group">
+                  <label for="pf-ded-${globalIdx}">PF Deduction</label>
+                  <input type="number" id="pf-ded-${globalIdx}" min="0" step="100" value="${exc.pfDeduction || 0}"
+                    onchange="updateStaffExceptionField(${globalIdx}, 'pfDeduction', parseInt(this.value) || 0)">
+                </div>
+                <div class="form-group">
+                  <label for="pf-ret-${globalIdx}">PF Return</label>
+                  <input type="number" id="pf-ret-${globalIdx}" min="0" step="100" value="${exc.pfReturn || 0}"
+                    onchange="updateStaffExceptionField(${globalIdx}, 'pfReturn', parseInt(this.value) || 0)">
+                </div>
+                <div class="form-group" style="grid-column:span 2;">
+                  <label for="note-${globalIdx}">Note / Explanation</label>
+                  <input type="text" id="note-${globalIdx}" value="${exc.note || ''}" placeholder="Explain bonuses, deductions, etc."
+                    onchange="updateStaffExceptionField(${globalIdx}, 'note', this.value)">
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Update count
+      document.getElementById('staff-count').textContent = `${filtered.length} staff`;
+    }
+
+    function toggleStaffCard(globalIdx) {
+      const body = document.getElementById(`card-body-${globalIdx}`);
+      const toggle = document.getElementById(`toggle-${globalIdx}`);
+      if (!body || !toggle) return;
+
+      const isOpen = body.style.display !== 'none';
+      body.style.display = isOpen ? 'none' : 'block';
+      toggle.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+    }
+
+    function updateStaffField(idx, field, value) {
+      if (field === 'name') {
+        // Validate: non-empty, no duplicates
+        const trimmed = value.trim();
+        if (!trimmed) {
+          showToast('Staff name cannot be empty.', 'error');
+          document.getElementById(`name-${idx}`).value = fullConfig.staff[idx].name;
+          return;
+        }
+        const duplicate = fullConfig.staff.some((s, i) => i !== idx && s.name.toLowerCase() === trimmed.toLowerCase());
+        if (duplicate) {
+          showToast('A staff member with this name already exists.', 'error');
+          document.getElementById(`name-${idx}`).value = fullConfig.staff[idx].name;
+          return;
+        }
+        value = trimmed;
+      }
+      if ((field === 'basic' || field === 'allowance') && value < 0) {
+        showToast('Salary values must be non-negative.', 'error');
+        return;
+      }
+      fullConfig.staff[idx][field] = value;
+      markDirty();
+    }
+
+    function updateStaffBankField(idx, field, value) {
+      if (!fullConfig.staff[idx].bank) fullConfig.staff[idx].bank = {};
+      fullConfig.staff[idx].bank[field] = value;
+      markDirty();
+    }
+
+    function updateStaffExceptionField(idx, field, value) {
+      if (!fullConfig.staff[idx].exceptions) fullConfig.staff[idx].exceptions = {};
+      if (typeof value === 'number' && value < 0) {
+        showToast('Exception values must be non-negative.', 'error');
+        return;
+      }
+      fullConfig.staff[idx].exceptions[field] = value;
+      markDirty();
+    }
+
+    function addStaff() {
+      const name = prompt('Enter staff member name:');
+      if (!name || !name.trim()) {
+        if (name !== null) showToast('Name cannot be empty.', 'error');
+        return;
+      }
+      const trimmed = name.trim();
+      const duplicate = fullConfig.staff.some(s => s.name.toLowerCase() === trimmed.toLowerCase());
+      if (duplicate) {
+        showToast('A staff member with this name already exists.', 'error');
+        return;
+      }
+
+      const newStaff = {
+        name: trimmed,
+        role: "Teacher",
+        basic: 10000,
+        allowance: 0,
+        bank: { acct: "", mob: "" },
+        exceptions: { skipLateCheck: false, ot: 0, increment: 0, bonus: 0, pfDeduction: 0, pfReturn: 0, note: "" }
+      };
+      fullConfig.staff.unshift(newStaff);
+      markDirty();
+      renderStaffList();
+      showToast(`Added ${trimmed}. Click Save to persist.`, 'info');
+    }
+
+    function removeStaff(idx) {
+      showConfirmModal(
+        `Delete ${fullConfig.staff[idx].name}?`,
+        'This action cannot be undone. Click Save to persist the deletion.',
+        () => {
+          fullConfig.staff.splice(idx, 1);
+          markDirty();
+          renderStaffList();
+          showToast('Staff card removed. Click Save to persist.', 'info');
+        }
+      );
+    }
+
+    function markDirty() {
+      isDirty = true;
+      updateDirtyIndicator();
+    }
+
+    function updateDirtyIndicator() {
+      const indicators = document.querySelectorAll('#dirty-indicator');
+      indicators.forEach(el => {
+        el.style.display = isDirty ? 'inline-block' : 'none';
+      });
+    }
+
+    async function saveConfig() {
+      // Validate all staff names are non-empty and unique
+      const names = fullConfig.staff.map(s => s.name.trim().toLowerCase());
+      const emptyIdx = names.findIndex(n => !n);
+      if (emptyIdx !== -1) {
+        showToast(`Staff #${emptyIdx + 1} has an empty name. Please fix before saving.`, 'error');
+        return;
+      }
+      const seen = new Set();
+      for (let i = 0; i < names.length; i++) {
+        if (seen.has(names[i])) {
+          showToast(`Duplicate name: "${fullConfig.staff[i].name}". Please fix before saving.`, 'error');
+          return;
+        }
+        seen.add(names[i]);
+      }
+
+      fullConfig.year = parseInt(document.getElementById('cycle-year').value) || 2026;
+      fullConfig.month = parseInt(document.getElementById('cycle-month').value) || 5;
+      fullConfig.locked = document.getElementById('cycle-locked').checked;
+
+      fullConfig.holidays = document.getElementById('cycle-holidays').value
+        .split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
+      fullConfig.tiffinExclusionDays = document.getElementById('cycle-tiffin-excl').value
+        .split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
+      fullConfig.noAbsentDays = document.getElementById('cycle-no-absent-days').value
+        .split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
+
+      const stdTiming = document.getElementById('cycle-standard-timing').value.trim();
+      if (stdTiming) {
+        if (!fullConfig.policies) fullConfig.policies = {};
+        fullConfig.policies.standardTiming = stdTiming;
+      }
+
+      showToast('Saving configuration...', 'info');
+      try {
+        const res = await fetch('/api/config', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(fullConfig)
+        });
+        const data = await res.json();
+        if (data.success) {
+          lastSaved = new Date().toLocaleTimeString();
+          document.getElementById('last-saved').textContent = `Last saved: ${lastSaved}`;
+          isDirty = false;
+          updateDirtyIndicator();
+          showToast('config.json saved successfully!', 'success');
+        } else {
+          showToast(`Failed to save config: ${data.error}`, 'error');
+        }
+      } catch (err) {
+        showToast(`Error saving config: ${err.message}`, 'error');
+      }
+    }
+
+    // Custom confirm modal
+    function showConfirmModal(title, message, onConfirm) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;display:flex;align-items:center;justify-content:center;';
+      overlay.innerHTML = `
+        <div class="card" style="max-width:400px;width:90%;padding:1.5rem;">
+          <h3 style="margin:0 0 0.5rem;color:var(--text-primary);">${title}</h3>
+          <p style="margin:0 0 1.5rem;color:var(--text-secondary);font-size:0.875rem;">${message}</p>
+          <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+            <button class="btn" style="background:var(--bg-secondary);border:1px solid var(--border);" id="modal-cancel">Cancel</button>
+            <button class="btn btn-danger" id="modal-confirm">Delete</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      overlay.querySelector('#modal-cancel').onclick = () => overlay.remove();
+      overlay.querySelector('#modal-confirm').onclick = () => {
+        overlay.remove();
+        onConfirm();
+      };
+      overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    }
+
+    // Warn before leaving with unsaved changes
+    window.addEventListener('beforeunload', (e) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadConfig);
+  </script>
+</head>
+<body>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header>
+    <div>
+      <h1>Config Editor
+        <span id="dirty-indicator" style="display:none;font-size:0.5em;color:var(--warning);vertical-align:middle;">● Unsaved</span>
+      </h1>
+      <div class="school-name">Manage parameters & staff exceptions (Phase 0)</div>
+    </div>
+    <nav>
+      <a href="index.html">Pipeline</a>
+      <a href="review.html">Attendance Review</a>
+      <a href="config.html" class="active">Config Editor</a>
+    </nav>
+  </header>
+
+  <main style="grid-template-columns:1fr 2fr;gap:2rem;">
+    <!-- Left Panel: Global Cycle Controls -->
+    <div class="card" style="height:fit-content;">
+      <h2>Global Cycle Settings</h2>
+      <div style="margin-top:1rem;">
+        <div class="form-group">
+          <label for="cycle-year">Cycle Year</label>
+          <input type="number" id="cycle-year" min="2020" max="2030">
+        </div>
+        <div class="form-group">
+          <label for="cycle-month">Cycle Month</label>
+          <select id="cycle-month">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cycle-holidays">Holidays (Comma separated days)</label>
+          <input type="text" id="cycle-holidays" placeholder="e.g. 1, 15, 21">
+        </div>
+        <div class="form-group">
+          <label for="cycle-tiffin-excl">Tiffin Exclusion Days</label>
+          <input type="text" id="cycle-tiffin-excl" placeholder="e.g. 18, 25">
+        </div>
+        <div class="form-group">
+          <label for="cycle-no-absent-days">No Absent Days (no deduction)</label>
+          <input type="text" id="cycle-no-absent-days" placeholder="e.g. 9">
+        </div>
+        <div class="form-group">
+          <label for="cycle-standard-timing">Standard Timing</label>
+          <input type="text" id="cycle-standard-timing" placeholder="e.g. 07:49 AM">
+        </div>
+        <div class="form-group" style="margin-top:1.5rem;">
+          <label class="checkbox-label">
+            <input type="checkbox" id="cycle-locked">
+            <strong>Lock Configuration</strong> (prevents runs)
+          </label>
+        </div>
+
+        <button class="btn" style="width:100%;justify-content:center;margin-top:1.5rem;" onclick="saveConfig()">Save All Changes</button>
+        <div style="text-align:center;margin-top:0.5rem;font-size:0.75rem;color:var(--text-secondary);">
+          <span id="last-saved"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Staff Settings list -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <input type="text" id="staff-search" placeholder="Search staff by name..." style="width:300px;" oninput="renderStaffList(this.value)">
+          <span id="staff-count" style="color:var(--text-secondary);font-size:0.875rem;"></span>
+        </div>
+        <button class="btn" onclick="addStaff()">+ Add Staff</button>
+      </div>
+
+      <div id="staff-config-list">
+        <!-- Staff edit cards dynamically rendered -->
+      </div>
+    </div>
+  </main>
+</body>
+</html>

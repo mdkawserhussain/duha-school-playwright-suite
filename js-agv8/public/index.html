@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DUHA Payroll System - Control Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js"></script>
+</head>
+<body>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header>
+    <div>
+      <h1 id="school-title">DUHA Payroll System</h1>
+      <div class="school-name">Control & Execution Dashboard</div>
+    </div>
+    <div style="text-align: right; margin-right: 2rem;">
+      <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Active Period</div>
+      <div id="status-month" style="font-size: 1.25rem; font-weight: 700; color: var(--accent);">May 2026</div>
+    </div>
+    <nav>
+      <a href="index.html" class="active">Pipeline</a>
+      <a href="review.html">Attendance Review</a>
+      <a href="config.html">Config Editor</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="card stat-card">
+        <div class="label">Total Staff Configured</div>
+        <div id="stat-staff-count" class="value">—</div>
+      </div>
+      <div class="card stat-card">
+        <div class="label">Total Net Payroll</div>
+        <div id="stat-total-net" class="value">—</div>
+      </div>
+    </div>
+
+    <!-- Main Content Split -->
+    <div class="dashboard-grid">
+      
+      <!-- Stepper and Actions -->
+      <div class="card">
+        <h2>Payroll Pipeline Steps</h2>
+        <div class="stepper" style="margin-top: 1rem;">
+          
+          <!-- Step 1: Upload and Parse -->
+          <div class="step-item active">
+            <div class="step-info">
+              <div class="step-number">1</div>
+              <div>
+                <div class="step-title">Upload & Parse Attendance</div>
+                <div class="step-desc">Ingests biometric raw docx and creates base calculations.</div>
+                <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                  <input type="file" id="att-file" style="display:none;" onchange="uploadFile('att-file', '/api/upload/att', 'att-label')">
+                  <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" onclick="document.getElementById('att-file').click()">Select att.docx</button>
+                  <span id="att-label" style="font-size: 0.75rem; color: var(--text-secondary);">No file uploaded</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn" onclick="runPhase('parse')">Run Parse</button>
+          </div>
+
+          <!-- Step 2: Review -->
+          <div class="step-item">
+            <div class="step-info">
+              <div class="step-number">2</div>
+              <div>
+                <div class="step-title">Review & Edit Calculated Attendance</div>
+                <div class="step-desc">Audit calculations and insert custom corrections.</div>
+              </div>
+            </div>
+            <a href="review.html" class="btn btn-secondary">Open Review Table</a>
+          </div>
+
+          <!-- Step 3: Generate -->
+          <div class="step-item">
+            <div class="step-info">
+              <div class="step-number">3</div>
+              <div>
+                <div class="step-title">Generate Salary Reports</div>
+                <div class="step-desc">Calculates fine totals, allowances, and builds reports.</div>
+              </div>
+            </div>
+            <button class="btn" onclick="runPhase('all')">Generate Reports</button>
+          </div>
+
+          <!-- Step 4: Verify -->
+          <div class="step-item">
+            <div class="step-info">
+              <div class="step-number">4</div>
+              <div>
+                <div class="step-title">Master Verification & Audit</div>
+                <div class="step-desc">Performs mathematical checks and cross-file reconciliation.</div>
+                <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                  <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" onclick="runPhase('verify')">Verify (Intermediate)</button>
+                  <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" onclick="runPhase('verify', '?final=true')">Verify (Final)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: WhatsApp Links -->
+          <div class="step-item">
+            <div class="step-info">
+              <div class="step-number">5</div>
+              <div>
+                <div class="step-title">WhatsApp Payslips Dashboard</div>
+                <div class="step-desc">Constructs WA Web chat dashboards.</div>
+              </div>
+            </div>
+            <button class="btn" onclick="runPhase('whatsapp')">Generate WA Links</button>
+          </div>
+
+        </div>
+
+        <h2 style="margin-top: 2rem;">Execution Logs</h2>
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;align-items:center;">
+          <input type="text" id="log-search" placeholder="Search logs..." style="flex:1;padding:0.4rem 0.75rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:0.375rem;color:var(--text-primary);font-size:0.8rem;" oninput="filterLogs()">
+          <span id="log-count" style="font-size:0.75rem;color:var(--text-secondary);white-space:nowrap;"></span>
+          <button class="btn btn-secondary" style="padding:0.3rem 0.6rem;font-size:0.75rem;" onclick="clearLogs()">Clear</button>
+        </div>
+        <div id="console-logs" class="logs-console">Console logs will stream here during execution...</div>
+      </div>
+
+      <!-- Generated Outputs Side panel -->
+      <div class="card">
+        <h2>Generated Documents & Outputs</h2>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Size</th>
+                <th>Modified</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="outputs-list">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-secondary);">Loading outputs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 style="margin-top: 2rem;">Alternative Options</h2>
+        <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+          <div>
+            <div style="font-weight: 600; font-size: 0.875rem;">Generate Legacy Bank2 Letter</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Use this if you are using manual input/monthly2.docx instead of the automated pipeline.</div>
+            <input type="file" id="monthly2-file" style="display:none;" onchange="uploadFile('monthly2-file', '/api/upload/monthly2', 'm2-label')">
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <button class="btn btn-secondary" style="font-size:0.75rem; padding:0.25rem 0.5rem;" onclick="document.getElementById('monthly2-file').click()">Select monthly2.docx</button>
+              <button class="btn btn-secondary" style="font-size:0.75rem; padding:0.25rem 0.5rem;" onclick="runPhase('bank2')">Run Bank2</button>
+            </div>
+            <div id="m2-label" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">No file uploaded</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Log search + clear functionality
+    let logLines = [];
+    let logSearchTerm = '';
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function filterLogs() {
+      const searchInput = document.getElementById('log-search');
+      const countEl = document.getElementById('log-count');
+      logSearchTerm = (searchInput.value || '').toLowerCase().trim();
+
+      const consoleBox = document.getElementById('console-logs');
+      if (!consoleBox) return;
+
+      if (!logSearchTerm) {
+        consoleBox.innerText = logLines.join('\n');
+        if (countEl) countEl.textContent = '';
+        consoleBox.scrollTop = consoleBox.scrollHeight;
+        return;
+      }
+
+      const matches = logLines.filter(line => line.toLowerCase().includes(logSearchTerm));
+      const highlighted = matches.map(line => {
+        const escaped = escapeHtml(line);
+        const lowerEscaped = escaped.toLowerCase();
+        const idx = lowerEscaped.indexOf(logSearchTerm);
+        if (idx === -1) return escaped;
+        const before = escaped.slice(0, idx);
+        const match = escaped.slice(idx, idx + logSearchTerm.length);
+        const after = escaped.slice(idx + logSearchTerm.length);
+        return before + '<mark style="background:#f59e0b;color:#0f172a;padding:0 2px;border-radius:2px;">' + match + '</mark>' + after;
+      });
+      consoleBox.innerHTML = highlighted.join('\n');
+      if (countEl) countEl.textContent = `${matches.length} / ${logLines.length} lines`;
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    function clearLogs() {
+      logLines = [];
+      const consoleBox = document.getElementById('console-logs');
+      if (consoleBox) consoleBox.innerText = '';
+      const countEl = document.getElementById('log-count');
+      if (countEl) countEl.textContent = '';
+      const searchInput = document.getElementById('log-search');
+      if (searchInput) searchInput.value = '';
+    }
+
+    // Override startLogListening to capture lines
+    window.startLogListening = function() {
+      const consoleBox = document.getElementById('console-logs');
+      if (!consoleBox) return;
+
+      // Close existing connection
+      if (eventSource) {
+        eventSource.close();
+      }
+
+      eventSource = new EventSource('/api/logs');
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          logLines.push(data.message);
+        } catch (e) {
+          logLines.push(event.data);
+        }
+        if (logSearchTerm) {
+          filterLogs();
+        } else {
+          consoleBox.innerText = logLines.join('\n');
+          consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+      };
+      eventSource.onerror = () => {
+        logLines.push('⚠️ Connection to log stream lost. Reconnecting...');
+        if (logSearchTerm) {
+          filterLogs();
+        } else {
+          consoleBox.innerText = logLines.join('\n');
+          consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+      };
+    };
+
+    // Also capture lines from runPhase clear
+    const _originalRunPhase = window.runPhase;
+    window.runPhase = function(phaseName, queryParams) {
+      clearLogs();
+      return _originalRunPhase(phaseName, queryParams);
+    };
+
+    // Keyboard shortcut: Ctrl+F focuses search, Escape clears search
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        const searchInput = document.getElementById('log-search');
+        if (searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+          searchInput.select();
+        }
+      } else if (e.key === 'Escape') {
+        const searchInput = document.getElementById('log-search');
+        if (searchInput && document.activeElement === searchInput) {
+          searchInput.value = '';
+          filterLogs();
+          searchInput.blur();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
