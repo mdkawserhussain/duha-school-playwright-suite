@@ -6,6 +6,7 @@ import Controls from './pages/Controls';
 import WhatsApp from './pages/WhatsApp';
 import Settings from './pages/Settings';
 import Logs from './pages/Logs';
+import Payroll from './pages/Payroll';
 
 const PAGES = [
   { key: 'dashboard', label: 'Dashboard', icon: '📊' },
@@ -14,6 +15,7 @@ const PAGES = [
   { key: 'run', label: 'Controls', icon: '▶️' },
   { key: 'whatsapp', label: 'WhatsApp', icon: '📱' },
   { key: 'logs', label: 'Logs', icon: '📝' },
+  { key: 'payroll', label: 'Payroll', icon: '💰' },
   { key: 'settings', label: 'Settings', icon: '⚙️' },
 ];
 
@@ -77,6 +79,7 @@ export default function App() {
         {page === 'run' && <Controls />}
         {page === 'whatsapp' && <WhatsApp />}
         {page === 'logs' && <Logs />}
+        {page === 'payroll' && <Payroll />}
         {page === 'settings' && <Settings />}
       </main>
     </div>
