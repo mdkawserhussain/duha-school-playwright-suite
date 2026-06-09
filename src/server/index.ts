@@ -18,6 +18,8 @@ import { whatsappRouter } from './routes/whatsapp';
 import { exportRouter } from './routes/export';
 import { logsRouter } from './routes/logs';
 import { payrollRouter } from './routes/payroll';
+import { leaveRouter } from './routes/leave';
+import { initLeaveHistoryTable } from '../utils/leaveHistoryDb';
 
 const app = express();
 const PORT = parseInt(process.env.WEB_PORT || process.env.PORT || '3001', 10);
@@ -51,6 +53,10 @@ app.use('/api/whatsapp', whatsappRouter);
 app.use('/api/export', exportRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api/payroll', payrollRouter);
+app.use('/api/leave', leaveRouter);
+
+// Initialize leave history table on startup
+initLeaveHistoryTable();
 
 // Serve output files (JSON, XLSX) for download
 app.use('/output', express.static(outputDir));

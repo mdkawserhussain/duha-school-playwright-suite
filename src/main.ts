@@ -6,6 +6,7 @@ import { log } from './utils/logger';
 import { handleFatalError } from './utils/errorHandler';
 import { authenticate } from './auth/authenticate';
 import { extractAttendance } from './extractors/attendance';
+import { fetchLeaveApplications } from './extractors/leaveExtractor';
 import { extractAccountsReceivable, printAccountsRunSummary } from './extractors/accountsReceivable';
 import { extractPaymentLedger } from './extractors/paymentLedger';
 import { extractWaivers, enrichWithWaivers } from './extractors/waiverExtractor';
@@ -62,6 +63,14 @@ async function main(): Promise<void> {
       await extractAttendance(page);
     } else {
       log.info('Skipping attendance extraction (disabled in config)');
+    }
+
+    // ── 7.1.2.3a  Leave extraction (optional) ───────────────────────────
+    if (CONFIG.extractors.leave) {
+      log.step('Running leave extraction');
+      await fetchLeaveApplications(page);
+    } else {
+      log.info('Skipping leave extraction (PORTAL_LEAVE_SYNC not enabled)');
     }
 
     // ── 7.1.2.4  Accounts receivable extraction ────────────────::::::::::

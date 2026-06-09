@@ -53,6 +53,7 @@ export const CONFIG = {
   extractors: {
     attendance: process.env.EXTRACT_ATTENDANCE === 'true',
     accountsReceivable: process.env.EXTRACT_ACCOUNTS_RECEIVABLE !== 'false',
+    leave: process.env.PORTAL_LEAVE_SYNC === 'true',
   },
   report: {
     // Comma-separated column names for export filtering.
