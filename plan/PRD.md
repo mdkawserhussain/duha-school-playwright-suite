@@ -28,7 +28,7 @@ format expected by js-agv8's payroll engine, then run payroll as a CLI step.
 
 ## Success Criteria
 
-1. `npm run payroll` runs end-to-end: bridge → compute → verify → reports
+1. `npm run payroll` runs end-to-end: bridge → compute → verify → WhatsApp
 2. Output matches manual pipeline (within rounding tolerance)
 3. No changes required to js-agv8 source files
 4. Bridge handles name matching between portal and config.json staff list
@@ -41,11 +41,11 @@ format expected by js-agv8's payroll engine, then run payroll as a CLI step.
 - Name matching between portal records and config.json staff
 - Holiday/weekend awareness from config.json
 - Late calculation using threshold from config.json
-- JSON output: `temp/parsed.json`
+- JSON output: `js-agv8/temp/parsed.json`
 - All js-agv8 reports (Monthly-All, Salary-Report, Bank-Transfer, WhatsApp)
 
 ### Out of Scope (Phase 2)
-- Web UI Payroll tab
+- Web UI Payroll tab (proxy to js-agv8 server.js)
 - Real-time sync between portal and payroll
 - Config.json auto-generation from portal data
 - Email notifications
@@ -53,6 +53,6 @@ format expected by js-agv8's payroll engine, then run payroll as a CLI step.
 
 ## Dependencies
 
-- js-agv8 project at `../js-agv8/` (sibling directory)
+- js-agv8 project at `js-agv8/` (sibling directory within same repo, tracked in git)
 - Portal attendance extraction must run first
 - `js-agv8/config.json` must have staff entries matching portal employee names
