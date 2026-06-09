@@ -135,7 +135,7 @@ export default function Settings() {
             className="w-full flex items-center justify-between px-5 py-3 bg-surface-2 bg-surface-2 hover:bg-surface-2 transition"
           >
             <span className="text-sm font-semibold text-txt-1">{group}</span>
-            <span className="text-txt-2 text-xs">{expandedGroups.has(group) ? '&#9650;' : '&#9660;'}</span>
+            <span className="text-txt-2 text-xs">{expandedGroups.has(group) ? '▲' : '▼'}</span>
           </button>
 
           {expandedGroups.has(group) && (

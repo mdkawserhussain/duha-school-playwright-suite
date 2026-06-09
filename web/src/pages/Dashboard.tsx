@@ -243,7 +243,7 @@ export default function Dashboard() {
                 onChange={e => { setSearch(e.target.value); setShowDropdown(true); setSelectedStudentId(null); }}
                 onFocus={() => setShowDropdown(true)}
                 placeholder="Search by name, ID, or class..."
-                className="w-full border rounded-lg pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-full bg-surface-2 border-bdr text-txt-1 rounded-lg pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
               />
               {search && (
                 <button
