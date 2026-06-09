@@ -8,11 +8,11 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 export default function Trends() {
   const { data, isLoading } = useQuery('trends', () => api<any[]>('/dues/trends'));
 
-  if (isLoading) return <div className="text-center py-12 text-gray-500">Loading...</div>;
+  if (isLoading) return <div className="text-center py-12 text-txt-2">Loading...</div>;
 
   const trends = (data || []).reverse();
   if (trends.length === 0) {
-    return <div className="text-center py-12 text-gray-400">No trend data yet. Run at least 2 extractions to see trends.</div>;
+    return <div className="text-center py-12 text-txt-2">No trend data yet. Run at least 2 extractions to see trends.</div>;
   }
 
   const chartData = {
@@ -77,19 +77,19 @@ export default function Trends() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-surface-2 rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold mb-4">Dues Over Time</h2>
         <div className="h-80">
           <Line data={chartData} options={options} />
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-surface-2 rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold mb-3">Run Summary</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-gray-500 border-b">
+              <tr className="text-left text-txt-2 border-b">
                 <th className="pb-2">Date</th>
                 <th className="pb-2">Total Dues</th>
                 <th className="pb-2">Students</th>
@@ -97,7 +97,7 @@ export default function Trends() {
             </thead>
             <tbody>
               {trends.map((t: any) => (
-                <tr key={t.runId} className="border-b last:border-0 hover:bg-gray-50">
+                <tr key={t.runId} className="border-b last:border-0 hover:bg-surface-2">
                   <td className="py-2">{new Date(t.timestamp).toLocaleString()}</td>
                   <td className="py-2 font-medium">৳{(t.totalDue || 0).toLocaleString()}</td>
                   <td className="py-2">{t.studentCount}</td>

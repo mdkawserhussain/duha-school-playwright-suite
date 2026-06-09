@@ -125,14 +125,14 @@ export default function Logs() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading logs...</div>
+        <div className="text-txt-2">Loading logs...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
         <h3 className="text-red-800 font-medium">Error</h3>
         <p className="text-red-600 mt-1">{error}</p>
         <button
@@ -151,7 +151,7 @@ export default function Logs() {
         <h1 className="text-2xl font-bold">Logs & Debug Info</h1>
         <button
           onClick={fetchLogs}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+          className="px-4 py-2 bg-surface-2 text-txt-2 rounded hover:bg-surface-2"
         >
           Refresh
         </button>
@@ -197,7 +197,7 @@ export default function Logs() {
         onToggle={() => toggleSection('errors')}
       >
         {data?.errors.length === 0 ? (
-          <p className="text-gray-500 text-sm">No error screenshots found</p>
+          <p className="text-txt-2 text-sm">No error screenshots found</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {data?.errors.map(error => (
@@ -207,9 +207,9 @@ export default function Logs() {
                   alt={error.filename}
                   className="w-full h-40 object-cover"
                 />
-                <div className="p-3 bg-gray-50">
-                  <p className="text-sm font-medium text-gray-800">{error.filename}</p>
-                  <p className="text-xs text-gray-500 mt-1">{error.sizeKB} KB</p>
+                <div className="p-3 bg-surface-2">
+                  <p className="text-sm font-medium text-txt-1">{error.filename}</p>
+                  <p className="text-xs text-txt-2 mt-1">{error.sizeKB} KB</p>
                 </div>
               </div>
             ))}
@@ -224,14 +224,14 @@ export default function Logs() {
         onToggle={() => toggleSection('logs')}
       >
         {data?.logs.length === 0 ? (
-          <p className="text-gray-500 text-sm">No extraction logs found</p>
+          <p className="text-txt-2 text-sm">No extraction logs found</p>
         ) : (
           <div className="space-y-2">
             {data?.logs.map(log => (
               <div
                 key={log.filename}
                 className={`flex items-center justify-between p-3 rounded-lg border ${
-                  selectedLog === log.filename ? 'bg-blue-50 border-blue-200' : 'bg-white'
+                  selectedLog === log.filename ? 'bg-blue-50 border-blue-200' : 'bg-surface-2'
                 }`}
               >
                 <div className="flex-1">
@@ -240,12 +240,12 @@ export default function Logs() {
                     className="text-left"
                   >
                     <p className="font-medium text-blue-600 hover:underline">{log.filename}</p>
-                    <p className="text-sm text-gray-500">{log.lines} lines, {log.sizeKB} KB</p>
+                    <p className="text-sm text-txt-2">{log.lines} lines, {log.sizeKB} KB</p>
                   </button>
                 </div>
                 <button
                   onClick={() => deleteLog(log.filename)}
-                  className="ml-4 px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
+                  className="ml-4 px-3 py-1 text-sm text-red-600 hover:bg-red-900/20 rounded"
                 >
                   Delete
                 </button>
@@ -262,9 +262,9 @@ export default function Logs() {
         onToggle={() => toggleSection('errorLog')}
       >
         {(!data?.errorLog || data.errorLog.lines === 0) ? (
-          <p className="text-gray-500 text-sm">No errors logged yet</p>
+          <p className="text-txt-2 text-sm">No errors logged yet</p>
         ) : (
-          <div className="bg-gray-900 rounded-lg overflow-hidden">
+          <div className="bg-surface-1 rounded-lg overflow-hidden">
             <pre className="p-4 text-sm text-red-400 overflow-auto max-h-96 font-mono leading-relaxed">
               {data.errorLog.content}
             </pre>
@@ -274,17 +274,17 @@ export default function Logs() {
 
       {/* Log Content Viewer */}
       {selectedLog && logContent && (
-        <div className="bg-gray-900 rounded-lg overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
+        <div className="bg-surface-1 rounded-lg overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 bg-surface-2">
             <h3 className="text-white font-medium">{logContent.filename}</h3>
             <div className="flex items-center gap-2">
-              <span className="text-gray-400 text-sm">{logContent.lines} lines</span>
+              <span className="text-txt-2 text-sm">{logContent.lines} lines</span>
               <button
                 onClick={() => {
                   setSelectedLog(null);
                   setLogContent(null);
                 }}
-                className="text-gray-400 hover:text-white"
+                className="text-txt-2 hover:text-white"
               >
                 ×
               </button>
@@ -311,13 +311,13 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border rounded-lg overflow-hidden">
+    <div className="bg-surface-2 border rounded-lg overflow-hidden">
       <button
         onClick={onToggle}
-        className="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100"
+        className="w-full px-4 py-3 flex items-center justify-between bg-surface-2 hover:bg-surface-2"
       >
-        <h2 className="font-semibold text-gray-800">{title}</h2>
-        <span className="text-gray-500">{expanded ? '−' : '+'}</span>
+        <h2 className="font-semibold text-txt-1">{title}</h2>
+        <span className="text-txt-2">{expanded ? '−' : '+'}</span>
       </button>
       {expanded && <div className="p-4">{children}</div>}
     </div>
@@ -327,8 +327,8 @@ function Section({
 function InfoItem({ label, value }: { label: string; value?: string }) {
   return (
     <div>
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="font-medium text-gray-800">{value}</p>
+      <p className="text-sm text-txt-2">{label}</p>
+      <p className="font-medium text-txt-1">{value}</p>
     </div>
   );
 }
@@ -336,8 +336,8 @@ function InfoItem({ label, value }: { label: string; value?: string }) {
 function PathItem({ label, path }: { label: string; path?: string }) {
   return (
     <div className="flex items-start gap-2">
-      <span className="text-gray-500 w-40 shrink-0">{label}:</span>
-      <span className="text-gray-800 break-all">{path}</span>
+      <span className="text-txt-2 w-40 shrink-0">{label}:</span>
+      <span className="text-txt-1 break-all">{path}</span>
     </div>
   );
 }

@@ -120,31 +120,31 @@ export default function Settings() {
   return (
     <div className="space-y-4">
       {needsRestart && (
-        <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg px-4 py-3 flex items-center gap-3">
-          <span className="text-amber-600 dark:text-amber-400 text-lg">&#9888;</span>
-          <span className="text-sm text-amber-800 dark:text-amber-300">
+        <div className="bg-amber-900/30 border border-amber-500/30 rounded-lg px-4 py-3 flex items-center gap-3">
+          <span className="text-amber-400 text-lg">&#9888;</span>
+          <span className="text-sm text-amber-300">
             Settings changed. Restart the server for changes to take effect.
           </span>
         </div>
       )}
 
       {grouped.map(({ group, fields }) => (
-        <div key={group} className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+        <div key={group} className="bg-surface-2 bg-surface-2 rounded-lg shadow overflow-hidden">
           <button
             onClick={() => toggleGroup(group)}
-            className="w-full flex items-center justify-between px-5 py-3 bg-gray-50 dark:bg-gray-750 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+            className="w-full flex items-center justify-between px-5 py-3 bg-surface-2 bg-surface-2 hover:bg-surface-2 transition"
           >
-            <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{group}</span>
-            <span className="text-gray-400 text-xs">{expandedGroups.has(group) ? '&#9650;' : '&#9660;'}</span>
+            <span className="text-sm font-semibold text-txt-1">{group}</span>
+            <span className="text-txt-2 text-xs">{expandedGroups.has(group) ? '&#9650;' : '&#9660;'}</span>
           </button>
 
           {expandedGroups.has(group) && (
-            <div className="divide-y dark:divide-gray-700">
+            <div className="divide-y divide-bdr">
               {fields.map(field => (
                 <div key={field.key} className="px-5 py-3 grid grid-cols-1 md:grid-cols-12 gap-2 items-start">
                   <div className="md:col-span-3">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{field.label}</label>
-                    <p className="text-xs text-gray-400 mt-0.5">{field.desc}</p>
+                    <label className="text-sm font-medium text-txt-2">{field.label}</label>
+                    <p className="text-xs text-txt-2 mt-0.5">{field.desc}</p>
                   </div>
                   <div className="md:col-span-9">
                     {field.type === 'toggle' ? (
@@ -152,12 +152,12 @@ export default function Settings() {
                         onClick={() => toggleBool(field.key)}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                           config[field.key]?.toLowerCase() === 'true' || config[field.key] === '1'
-                            ? 'bg-indigo-600'
-                            : 'bg-gray-300 dark:bg-gray-600'
+                            ? 'bg-accent'
+                            : 'bg-surface-2'
                         }`}
                       >
                         <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          className={`inline-block h-4 w-4 transform rounded-full bg-surface-2 transition-transform ${
                             config[field.key]?.toLowerCase() === 'true' || config[field.key] === '1'
                               ? 'translate-x-6'
                               : 'translate-x-1'
@@ -170,12 +170,12 @@ export default function Settings() {
                           value={config[field.key] || ''}
                           onChange={e => update(field.key, e.target.value)}
                           type={showPassword ? 'text' : 'password'}
-                          className="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded px-3 py-1.5 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          className="w-full border border-bdr-strong bg-surface-2 text-txt-1 rounded px-3 py-1.5 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-accent"
                           placeholder={field.placeholder}
                         />
                         <button
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-txt-2 hover:text-txt-2 text-xs"
                         >
                           {showPassword ? 'Hide' : 'Show'}
                         </button>
@@ -185,7 +185,7 @@ export default function Settings() {
                         value={config[field.key] || ''}
                         onChange={e => update(field.key, e.target.value)}
                         type={field.type === 'number' ? 'number' : 'text'}
-                        className="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full border border-bdr-strong bg-surface-2 text-txt-1 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
                         placeholder={field.placeholder}
                       />
                     )}
@@ -198,12 +198,12 @@ export default function Settings() {
       ))}
 
       {/* Actions */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
+      <div className="bg-surface-2 bg-surface-2 rounded-lg shadow p-5">
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={save}
             disabled={saving}
-            className="bg-indigo-600 text-white px-5 py-2 rounded text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition"
+            className="bg-accent text-white px-5 py-2 rounded text-sm font-medium hover:bg-accent-hover disabled:opacity-50 transition"
           >
             {saving ? 'Saving...' : 'Save Settings'}
           </button>
@@ -211,7 +211,7 @@ export default function Settings() {
           <button
             onClick={testConnection}
             disabled={testing}
-            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-5 py-2 rounded text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 transition"
+            className="bg-surface-2 text-txt-2 px-5 py-2 rounded text-sm font-medium hover:bg-surface-2 disabled:opacity-50 transition"
           >
             {testing ? 'Testing...' : 'Test Connection'}
           </button>

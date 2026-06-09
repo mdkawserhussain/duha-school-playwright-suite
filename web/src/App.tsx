@@ -21,58 +21,74 @@ const PAGES = [
 
 export default function App() {
   const [page, setPage] = useState('dashboard');
-  const [dark, setDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-  }, [dark]);
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSidebarOpen(false);
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, []);
 
   return (
-    <div className={`min-h-screen ${dark ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Navigation */}
-      <nav className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white'} shadow-sm border-b`}>
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-              SP
-            </div>
-            <h1 className={`text-lg font-bold ${dark ? 'text-white' : 'text-gray-900'}`}>
-              School Portal Scraper
-            </h1>
+    <div className="app-layout">
+      {/* Mobile hamburger */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-lg"
+        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}
+        aria-label="Toggle navigation"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M3 5h14M3 10h14M3 15h14" stroke="var(--text-primary)" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </button>
+
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <div style={{ padding: '1.5rem 1rem 1rem' }}>
+          <div className="gradient-text" style={{ fontSize: '1.25rem', fontWeight: 800 }}>
+            School Portal
           </div>
-          <div className="flex items-center gap-2">
-            {PAGES.map(p => (
-              <button
-                key={p.key}
-                onClick={() => setPage(p.key)}
-                className={`px-3 py-1.5 rounded text-sm font-medium transition ${
-                  page === p.key
-                    ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300'
-                    : dark
-                      ? 'text-gray-400 hover:bg-gray-700'
-                      : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                <span className="mr-1">{p.icon}</span>
-                <span className="hidden md:inline">{p.label}</span>
-              </button>
-            ))}
-            <button
-              onClick={() => setDark(!dark)}
-              className={`ml-2 p-2 rounded-lg transition ${dark ? 'text-yellow-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'}`}
-              title="Toggle dark mode"
-            >
-              {dark ? '☀️' : '🌙'}
-            </button>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', letterSpacing: '0.05em', marginTop: '0.25rem' }}>
+            Scraper Dashboard
           </div>
         </div>
-      </nav>
 
-      {/* Page content */}
-      <main className="max-w-7xl mx-auto px-4 py-6">
+        <nav style={{ flex: 1, padding: '0 0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          {PAGES.map(p => (
+            <button
+              key={p.key}
+              onClick={() => { setPage(p.key); setSidebarOpen(false); }}
+              className={`sidebar-nav-link ${page === p.key ? 'active' : ''}`}
+            >
+              <span style={{ fontSize: '1.1rem' }}>{p.icon}</span>
+              <span>{p.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div style={{ padding: '1rem', borderTop: '1px solid var(--border)' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            DUHA Payroll
+          </div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+            International School
+          </div>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="main-content">
         {page === 'dashboard' && <Dashboard />}
         {page === 'runs' && <RunHistory />}
         {page === 'trends' && <Trends />}

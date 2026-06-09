@@ -44,7 +44,7 @@ export default function DuesByClass({ data }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-surface-2 rounded-lg shadow p-6">
       <h2 className="text-lg font-semibold mb-4">Outstanding Dues by Class</h2>
       <div className="h-64">
         <Bar data={chartData} options={options} />

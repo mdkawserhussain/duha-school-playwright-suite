@@ -61,18 +61,18 @@ function StudentDetail({ student, periodMonths }: { student: Student; periodMont
   );
 
   return (
-    <div className="p-5 bg-gray-50 rounded-xl border text-sm">
+    <div className="p-5 bg-surface-2 rounded-xl border text-sm">
       {/* Student header */}
       <div className="flex items-center gap-4 mb-4 pb-3 border-b">
-        <div className="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-sm">
+        <div className="w-10 h-10 bg-accent-dim text-txt-1 rounded-full flex items-center justify-center font-bold text-sm">
           {(student['Std Name'] || '?')[0]}
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900">{student['Std Name']}</h3>
-          <div className="text-xs text-gray-500">ID: {student['User ID']} · {student['_class']} · {student['_shift']}</div>
+          <h3 className="font-semibold text-txt-1">{student['Std Name']}</h3>
+          <div className="text-xs text-txt-2">ID: {student['User ID']} · {student['_class']} · {student['_shift']}</div>
         </div>
         <div className="ml-auto text-right">
-          <div className="text-xs text-gray-400">Total Due</div>
+          <div className="text-xs text-txt-2">Total Due</div>
           <div className="text-lg font-bold text-red-600">৳{parseTotalDue(student['Total Due']).toLocaleString()}</div>
         </div>
       </div>
@@ -80,7 +80,7 @@ function StudentDetail({ student, periodMonths }: { student: Student; periodMont
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Monthly Breakdown */}
         <div>
-          <h4 className="font-semibold text-gray-700 mb-2 text-xs uppercase tracking-wide">Monthly Dues</h4>
+          <h4 className="font-semibold text-txt-2 mb-2 text-xs uppercase tracking-wide">Monthly Dues</h4>
           <div className="grid grid-cols-4 gap-1.5">
             {MONTHS.map(m => {
               const val = student[m] || '';
@@ -90,10 +90,10 @@ function StudentDetail({ student, periodMonths }: { student: Student; periodMont
               const hasValue = paid > 0 || due > 0;
               return (
                 <div key={m} className={`px-2 py-1.5 rounded-lg text-xs text-center ${
-                  !inPeriod ? 'bg-gray-100 text-gray-300' :
-                  due > 0 ? 'bg-red-50 border border-red-200 text-red-700' :
-                  paid > 0 ? 'bg-green-50 border border-green-200 text-green-700' :
-                  'bg-white border border-gray-100 text-gray-300'
+                  !inPeriod ? 'bg-surface-2 text-txt-2' :
+                  due > 0 ? 'bg-red-900/20 border border-red-500/30 text-red-700' :
+                  paid > 0 ? 'bg-green-900/20 border border-green-500/30 text-green-700' :
+                  'bg-surface-2 border border-bdr text-txt-2'
                 }`}>
                   <div className="font-medium text-[10px]">{m.slice(0, 3)}</div>
                   <div className="font-semibold">
@@ -111,16 +111,16 @@ function StudentDetail({ student, periodMonths }: { student: Student; periodMont
 
         {/* Fee Breakdown */}
         <div>
-          <h4 className="font-semibold text-gray-700 mb-2 text-xs uppercase tracking-wide">Fee Dues</h4>
+          <h4 className="font-semibold text-txt-2 mb-2 text-xs uppercase tracking-wide">Fee Dues</h4>
           <div className="space-y-1">
             {feeColumns.slice(0, 12).map(f => {
               const val = student[f] || '';
               const paid = parsePaidFromCell(val);
               const due = parseDueFromCell(val);
               return (
-                <div key={f} className={`flex justify-between items-center px-2.5 py-1.5 rounded-lg text-xs ${due > 0 ? 'bg-red-50 border border-red-100' : 'bg-white border border-gray-100'}`}>
-                  <span className="text-gray-600 truncate">{f}</span>
-                  <span className={`font-medium shrink-0 ml-2 ${due > 0 ? 'text-red-600' : 'text-gray-400'}`}>
+                <div key={f} className={`flex justify-between items-center px-2.5 py-1.5 rounded-lg text-xs ${due > 0 ? 'bg-red-900/20 border border-red-100' : 'bg-surface-2 border border-bdr'}`}>
+                  <span className="text-txt-2 truncate">{f}</span>
+                  <span className={`font-medium shrink-0 ml-2 ${due > 0 ? 'text-red-600' : 'text-txt-2'}`}>
                     {due > 0 ? `৳${due.toLocaleString()}` : paid > 0 ? `৳${paid.toLocaleString()}` : '—'}
                     {due > 0 && <span className="text-[9px] ml-1 opacity-60">DUE</span>}
                   </span>
@@ -173,7 +173,7 @@ export default function Dashboard() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  if (isLoading) return <div className="text-center py-12 text-gray-500">Loading...</div>;
+  if (isLoading) return <div className="text-center py-12 text-txt-2">Loading...</div>;
 
   const searchResults = search.trim()
     ? (students || []).filter(s => {
@@ -200,20 +200,20 @@ export default function Dashboard() {
       <DuesByClass data={data?.byClass || []} />
 
       {/* Student Search */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-surface-2 rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Students with Dues</h2>
           {/* Period Selector */}
           <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500 mr-1">Period:</span>
+            <span className="text-xs text-txt-2 mr-1">Period:</span>
             {MONTHS.map(m => (
               <button
                 key={m}
                 onClick={() => toggleMonth(m)}
                 className={`px-1.5 py-0.5 text-[10px] rounded border transition ${
                   selectedMonths.includes(m)
-                    ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
-                    : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                    ? 'bg-accent-dim text-txt-1 border-accent/30'
+                    : 'bg-surface-2 text-txt-2 border-bdr hover:bg-surface-2'
                 }`}
               >
                 {m.slice(0, 3)}
@@ -222,7 +222,7 @@ export default function Dashboard() {
             {selectedMonths.length > 0 && (
               <button
                 onClick={() => { setSelectedMonths([]); localStorage.removeItem('dashboard-period'); }}
-                className="ml-1 text-[10px] text-gray-400 hover:text-gray-600"
+                className="ml-1 text-[10px] text-txt-2 hover:text-txt-2"
               >
                 Clear
               </button>
@@ -234,7 +234,7 @@ export default function Dashboard() {
         <div ref={searchRef} className="relative mb-4">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
@@ -243,12 +243,12 @@ export default function Dashboard() {
                 onChange={e => { setSearch(e.target.value); setShowDropdown(true); setSelectedStudentId(null); }}
                 onFocus={() => setShowDropdown(true)}
                 placeholder="Search by name, ID, or class..."
-                className="w-full border rounded-lg pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border rounded-lg pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
               />
               {search && (
                 <button
                   onClick={() => { setSearch(''); setSelectedStudentId(null); setShowDropdown(false); inputRef.current?.focus(); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-2 hover:text-txt-2"
                 >
                   ×
                 </button>
@@ -258,7 +258,7 @@ export default function Dashboard() {
 
           {/* Dropdown */}
           {showDropdown && searchResults.length > 0 && (
-            <div className="absolute z-20 mt-1 w-full bg-white border rounded-xl shadow-lg max-h-80 overflow-y-auto">
+            <div className="absolute z-20 mt-1 w-full bg-surface-2 border rounded-xl shadow-lg max-h-80 overflow-y-auto">
               {searchResults.map((s) => {
                 const periodDue = periodMonths.reduce((sum, m) => sum + parseDueFromCell(s[m]), 0);
                 const totalDue = parseTotalDue(s['Total Due']);
@@ -270,20 +270,20 @@ export default function Dashboard() {
                       setShowDropdown(false);
                       setSearch(s['Std Name']);
                     }}
-                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-indigo-50 text-left transition border-b last:border-0"
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-accent-dim text-left transition border-b last:border-0"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 bg-accent-dim text-accent rounded-full flex items-center justify-center font-bold text-xs shrink-0">
                         {(s['Std Name'] || '?')[0]}
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{s['Std Name']}</div>
-                        <div className="text-xs text-gray-400">ID: {s['User ID']} · {s['_class']} · {s['_shift']}</div>
+                        <div className="text-sm font-medium text-txt-1">{s['Std Name']}</div>
+                        <div className="text-xs text-txt-2">ID: {s['User ID']} · {s['_class']} · {s['_shift']}</div>
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-2">
                       {selectedMonths.length > 0 && (
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-txt-2">
                           Period: <span className="font-medium text-red-500">৳{periodDue.toLocaleString()}</span>
                         </div>
                       )}
@@ -296,7 +296,7 @@ export default function Dashboard() {
           )}
 
           {showDropdown && search.trim() && searchResults.length === 0 && (
-            <div className="absolute z-20 mt-1 w-full bg-white border rounded-xl shadow-lg p-4 text-center text-gray-400 text-sm">
+            <div className="absolute z-20 mt-1 w-full bg-surface-2 border rounded-xl shadow-lg p-4 text-center text-txt-2 text-sm">
               No students match "{search}"
             </div>
           )}
@@ -309,7 +309,7 @@ export default function Dashboard() {
 
         {/* Empty state */}
         {!selectedStudent && !search && (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-txt-2">
             Type a student name, ID, or class to search
           </div>
         )}
@@ -317,11 +317,11 @@ export default function Dashboard() {
 
       {/* Recent Runs */}
       {data?.recentRuns && data.recentRuns.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-surface-2 rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Recent Runs</h2>
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-gray-500 border-b">
+              <tr className="text-left text-txt-2 border-b">
                 <th className="pb-2">Time</th>
                 <th className="pb-2">Duration</th>
                 <th className="pb-2">Raw</th>
