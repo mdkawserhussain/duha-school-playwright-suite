@@ -202,7 +202,7 @@ describe('convertToPayrollInput', () => {
     month: 6,
     holidays: [5],
     policies: {
-      standardThreshold: '07:49 AM',
+      standardTiming: '07:49 AM',
       tiffinRate: 25,
       over20Fine: 300,
       latePenalties: [],

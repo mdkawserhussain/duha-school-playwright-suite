@@ -54,7 +54,7 @@ export interface PayrollConfig {
   month: number;
   holidays: number[];
   policies: {
-    standardThreshold: string;
+    standardTiming: string;
     tiffinRate: number;
     over20Fine: number;
     latePenalties: Array<{ min: number; fine: number }>;
@@ -301,7 +301,7 @@ export function convertToPayrollInput(
     const baseline = computeBaseline(
       records,
       config.holidays,
-      config.policies.standardThreshold
+      config.policies.standardTiming
     );
 
     results.push({ name, role, dailyLogs, baseline });

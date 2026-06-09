@@ -14,7 +14,7 @@ import { execSync } from 'node:child_process';
 import { attendanceToPayroll } from '../src/utils/attendanceToPayroll';
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-const JS_AGV8_DIR = path.resolve(PROJECT_ROOT, '..', 'js-agv8');
+const JS_AGV8_DIR = path.join(PROJECT_ROOT, 'js-agv8');
 const OUTPUT_DIR = path.join(PROJECT_ROOT, 'output');
 
 // ─── Arg Parsing ─────────────────────────────────────────────────────────────
