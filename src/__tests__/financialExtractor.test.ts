@@ -13,10 +13,25 @@ import type { LedgerDataItem, LedgerResponse } from '../types/FinancialReport';
 describe('financialExtractor', () => {
   describe('deduplicateEntries', () => {
     it('should remove duplicate entries by id', () => {
+      const mockAccVoucherDetails = {
+        id: 1,
+        transaction_date: '2026-01-01',
+        voucher_type: 'receipt',
+        voucher_no: 'V001',
+        transaction_for: 'fee',
+        transaction_note: '',
+        site_accounts_fiscal_year_id: 1,
+        site_accounts_voucher_id: 1,
+        site_id: 1,
+        status: 'approved',
+        created_at: '',
+        updated_at: ''
+      };
+      const mockLedger = { id: 1, name: 'Tuition Fee', ledger_code: '30003' };
       const items: LedgerDataItem[] = [
-        { id: 1, debit_amount: 100, credit_amount: 0, entry: 'dr', created_date: '2026-01-01', status: 'approved', site_accounts_ledger_id: 1, site_accounts_voucher_detail_id: 1, site_id: 1, updated_at: '', created_at: '', acc_voucher_details: {} as any, ledger: {} as any },
-        { id: 1, debit_amount: 100, credit_amount: 0, entry: 'dr', created_date: '2026-01-01', status: 'approved', site_accounts_ledger_id: 1, site_accounts_voucher_detail_id: 1, site_id: 1, updated_at: '', created_at: '', acc_voucher_details: {} as any, ledger: {} as any },
-        { id: 2, debit_amount: 200, credit_amount: 0, entry: 'dr', created_date: '2026-01-02', status: 'approved', site_accounts_ledger_id: 1, site_accounts_voucher_detail_id: 2, site_id: 1, updated_at: '', created_at: '', acc_voucher_details: {} as any, ledger: {} as any }
+        { id: 1, debit_amount: 100, credit_amount: 0, entry: 'dr', created_date: '2026-01-01', status: 'approved', site_accounts_ledger_id: 1, site_accounts_voucher_detail_id: 1, site_id: 1, updated_at: '', created_at: '', acc_voucher_details: { ...mockAccVoucherDetails }, ledger: { ...mockLedger } },
+        { id: 1, debit_amount: 100, credit_amount: 0, entry: 'dr', created_date: '2026-01-01', status: 'approved', site_accounts_ledger_id: 1, site_accounts_voucher_detail_id: 1, site_id: 1, updated_at: '', created_at: '', acc_voucher_details: { ...mockAccVoucherDetails }, ledger: { ...mockLedger } },
+        { id: 2, debit_amount: 200, credit_amount: 0, entry: 'dr', created_date: '2026-01-02', status: 'approved', site_accounts_ledger_id: 1, site_accounts_voucher_detail_id: 2, site_id: 1, updated_at: '', created_at: '', acc_voucher_details: { ...mockAccVoucherDetails }, ledger: { ...mockLedger } }
       ];
 
       const result = deduplicateEntries(items);
@@ -85,13 +100,25 @@ describe('financialExtractor', () => {
           sub_total_amount: 500,
           total_amount: 500,
           upto_date_for_opening_balance: ''
+        },
+        {
+          ledger_account: { id: 3, name: 'Salary Expense', ledger_code: '40008', root: 'Expense', is_system: 0, is_tax: 0, is_opening: 0, is_closing: 0, is_bank: 0, is_cash: 0, site_id: 1, created_at: '', updated_at: '' },
+          data_list: [],
+          total_credit: 0,
+          total_debit: 2000,
+          total_credit_for_opening_balance: 0,
+          total_debit_for_opening_balance: 0,
+          opening_balance: 0,
+          sub_total_amount: 2000,
+          total_amount: 2000,
+          upto_date_for_opening_balance: ''
         }
       ];
 
       const result = categorizeByRoot(responses);
       expect(result.income).toHaveLength(1);
       expect(result.asset).toHaveLength(1);
-      expect(result.expense).toHaveLength(0);
+      expect(result.expense).toHaveLength(1);
     });
   });
 
@@ -120,6 +147,7 @@ describe('financialExtractor', () => {
       expect(result[0].feeType).toBe('Tuition Fee');
       expect(result[0].totalCollected).toBe(2500);
       expect(result[0].transactionCount).toBe(2);
+      expect(result[0].dailyBreakdown).toEqual({ '2026-01-01': 1000, '2026-01-02': 1500 });
     });
   });
 
@@ -153,9 +181,14 @@ describe('financialExtractor', () => {
       ];
 
       const result = calculateCashFlow(responses, '2026-01-01', '2026-01-31');
+      expect(result.period).toEqual({ from: '2026-01-01', to: '2026-01-31' });
       expect(result.totalIncome).toBe(5000);
       expect(result.totalExpense).toBe(3000);
       expect(result.netCashFlow).toBe(2000);
+      expect(result.openingBalance).toBe(0);
+      expect(result.closingBalance).toBe(2000);
+      expect(result.incomeByType).toEqual({ 'Tuition Fee': 5000 });
+      expect(result.expenseByType).toEqual({ 'Salary Expense': 3000 });
     });
   });
 });
