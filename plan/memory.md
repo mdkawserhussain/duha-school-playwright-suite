@@ -1,5 +1,46 @@
 # Memory: duha-playwright
 
+## Critical Rules
+
+### Rule 1: ALWAYS Use Brainstorming Skill
+
+**Every single prompt MUST use the brainstorming skill first, no exceptions.**
+- This applies to ALL tasks: simple questions, fixes, features, refactoring, etc.
+- The brainstorming skill helps explore intent, requirements, and design before implementation.
+- Never skip brainstorming even if the task seems straightforward.
+- Load the skill at the START of every conversation/task.
+
+### Rule 2: Always Check Available Skills
+
+**For every prompt, check what skills are available and use them.**
+- Before responding, check if any superpowers-ecc skill applies to the task.
+- Use the `skill` tool to load relevant skills.
+- Available skills (24 total from superpowers-ecc):
+  - `api-design` - API design patterns
+  - `brainstorming` - Design exploration
+  - `continuous-learning-v2` - Learning workflows
+  - `deployment-patterns` - Deployment strategies
+  - `dispatching-parallel-agents` - Parallel execution
+  - `e2e-testing` - End-to-end testing
+  - `eval-harness` - Evaluation harness
+  - `executing-plans` - Plan execution with checkpoints
+  - `finishing-a-development-branch` - Merge/PR decisions
+  - `receiving-code-review` - Handle review feedback
+  - `requesting-code-review` - Request reviews
+  - `search-first` - Search before coding
+  - `security-review` - Security analysis
+  - `strategic-compact` - Token optimization
+  - `subagent-driven-development` - Subagent workflows
+  - `systematic-debugging` - Bug investigation
+  - `test-driven-development` - TDD workflow
+  - `token-optimization` - Reduce token usage
+  - `using-git-worktrees` - Isolated workspaces
+  - `using-superpowers-ecc` - Bootstrap/entry point
+  - `verification-before-completion` - Pre-merge checks
+  - `verification-loop` - Verification cycles
+  - `writing-plans` - Create implementation plans
+  - `writing-skills` - Create/edit skills
+
 ## Project Identity
 
 - **Name**: School Portal Automation Suite (duha-playwright)
@@ -136,3 +177,15 @@ WEB_PORT=3001
 - `errors/` (screenshots)
 - `node_modules/`
 - `.env` (secrets)
+
+## Financial Report Extractor
+
+- API endpoint: `/site/accounts/report/ledger-details-list`
+- Response format: Array of arrays (not array of objects) - must flatten
+- Ledger accounts: Income (Tuition, Session, Admission, Books, Exam, etc.), Expense (Salary, Meal, etc.), Assets (Cash, Bank)
+- **Opening balance is completely ignored** - only period transactions are counted
+- Uses `total_credit_for_opening_balance` and `upto_date_for_opening_balance` fields to exclude opening balance
+- Outputs: JSON files + Excel report (3 sheets: Cash Flow, Fee Collection, Ledger Details)
+- Script: `scripts/run-financial.ts` - standalone runner with dotenv
+- Web UI: `web/src/pages/Financial.tsx` - state-based navigation
+- Status: ✅ Working - successfully extracts data and generates Excel reports

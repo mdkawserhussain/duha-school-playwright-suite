@@ -116,22 +116,20 @@ export async function generateExcelReport(
   addGridlines(ledgerSheet);
 
   // Number formatting for amount columns
-  [cashFlowSheet, feeSheet, ledgerSheet].forEach(sheet => {
-    sheet.getColumn('amount')?.eachCell((cell, rowNumber) => {
-      if (rowNumber > 1) cell.numFmt = '#,##0';
-    });
-    sheet.getColumn('totalCollected')?.eachCell((cell, rowNumber) => {
-      if (rowNumber > 1) cell.numFmt = '#,##0';
-    });
-    sheet.getColumn('credit')?.eachCell((cell, rowNumber) => {
-      if (rowNumber > 1) cell.numFmt = '#,##0';
-    });
-    sheet.getColumn('debit')?.eachCell((cell, rowNumber) => {
-      if (rowNumber > 1) cell.numFmt = '#,##0';
-    });
-    sheet.getColumn('balance')?.eachCell((cell, rowNumber) => {
-      if (rowNumber > 1) cell.numFmt = '#,##0';
-    });
+  cashFlowSheet.getColumn('amount')?.eachCell((cell, rowNumber) => {
+    if (rowNumber > 1) cell.numFmt = '#,##0';
+  });
+  feeSheet.getColumn('totalCollected')?.eachCell((cell, rowNumber) => {
+    if (rowNumber > 1) cell.numFmt = '#,##0';
+  });
+  ledgerSheet.getColumn('credit')?.eachCell((cell, rowNumber) => {
+    if (rowNumber > 1) cell.numFmt = '#,##0';
+  });
+  ledgerSheet.getColumn('debit')?.eachCell((cell, rowNumber) => {
+    if (rowNumber > 1) cell.numFmt = '#,##0';
+  });
+  ledgerSheet.getColumn('balance')?.eachCell((cell, rowNumber) => {
+    if (rowNumber > 1) cell.numFmt = '#,##0';
   });
 
   // Ensure output directory exists

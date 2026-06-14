@@ -49,12 +49,14 @@ export async function humanClick(page: Page, locator: Locator): Promise<void> {
 
 /**
  * Types text with human-like delays between keystrokes.
+ * Clears existing text first to prevent appending.
  */
 export async function humanType(page: Page, locator: Locator, text: string): Promise<void> {
   const cursor = await getGhostCursor(page);
   if (cursor) {
     try {
       await cursor.click(locator);
+      await locator.fill('');
       await locator.type(text, { delay: 50 + Math.random() * 100 });
       return;
     } catch {
@@ -62,5 +64,6 @@ export async function humanType(page: Page, locator: Locator, text: string): Pro
     }
   }
   await locator.click();
+  await locator.fill('');
   await locator.type(text, { delay: 50 + Math.random() * 100 });
 }

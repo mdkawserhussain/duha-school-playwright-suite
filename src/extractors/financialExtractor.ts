@@ -84,24 +84,30 @@ export function calculateFeeCollection(incomeResponses: LedgerResponse[]): FeeCo
 
   for (const response of incomeResponses) {
     const feeType = response.ledger_account.name;
-    const totalCollected = response.total_credit;
+    // Ignore opening balance - use only period transactions
+    const totalCollected = response.total_credit - response.total_credit_for_opening_balance;
     const transactionCount = response.data_list.length;
 
-    // Calculate daily breakdown
+    // Calculate daily breakdown - ignore opening balance transactions
     const dailyBreakdown: Record<string, number> = {};
+    const openingBalanceDate = response.upto_date_for_opening_balance;
+    
     for (const item of response.data_list) {
       const date = item.acc_voucher_details?.transaction_date || item.created_date;
-      if (date) {
+      // Skip transactions on or before the opening balance date
+      if (date && (!openingBalanceDate || date > openingBalanceDate)) {
         dailyBreakdown[date] = (dailyBreakdown[date] || 0) + item.credit_amount;
       }
     }
 
-    summaries.push({
-      feeType,
-      totalCollected,
-      transactionCount,
-      dailyBreakdown
-    });
+    if (totalCollected > 0) {
+      summaries.push({
+        feeType,
+        totalCollected,
+        transactionCount,
+        dailyBreakdown
+      });
+    }
   }
 
   return summaries;
@@ -122,27 +128,31 @@ export function calculateCashFlow(
   const incomeByType: Record<string, number> = {};
   const expenseByType: Record<string, number> = {};
 
-  // Calculate income
+  // Calculate income - ignore opening balance entirely
   for (const response of categorized.income) {
-    totalIncome += response.total_credit;
-    incomeByType[response.ledger_account.name] = response.total_credit;
+    // Use only transactions within the date range, not opening balance
+    const periodCredit = response.total_credit - response.total_credit_for_opening_balance;
+    totalIncome += periodCredit;
+    if (periodCredit > 0) {
+      incomeByType[response.ledger_account.name] = periodCredit;
+    }
   }
 
-  // Calculate expense
+  // Calculate expense - ignore opening balance entirely
   for (const response of categorized.expense) {
-    totalExpense += response.total_debit;
-    expenseByType[response.ledger_account.name] = response.total_debit;
+    // Use only transactions within the date range, not opening balance
+    const periodDebit = response.total_debit - response.total_debit_for_opening_balance;
+    totalExpense += periodDebit;
+    if (periodDebit > 0) {
+      expenseByType[response.ledger_account.name] = periodDebit;
+    }
   }
 
   const netCashFlow = totalIncome - totalExpense;
 
-  // Calculate opening and closing balances from asset accounts
-  let openingBalance = 0;
-  for (const response of categorized.asset) {
-    openingBalance += response.opening_balance;
-  }
-
-  const closingBalance = openingBalance + netCashFlow;
+  // Opening balance is completely ignored per user request
+  const openingBalance = 0;
+  const closingBalance = netCashFlow;
 
   return {
     period: { from: fromDate, to: toDate },
@@ -162,13 +172,13 @@ export function calculateCashFlow(
 async function fetchLedgerData(
   page: Page,
   params: FinancialReportParams
-): Promise<LedgerResponse[]> {
+): Promise<any[]> {
   const xsrfToken = await page.evaluate(() => {
     const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
     return match ? decodeURIComponent(match[1]) : '';
   });
 
-  const responseBody: LedgerResponse[] = await page.evaluate(async (args) => {
+  const responseBody: any[] = await page.evaluate(async (args) => {
     const resp = await fetch(args.url, {
       method: 'POST',
       headers: {
@@ -205,11 +215,47 @@ export async function extractFinancialData(
   log.step(`Extracting financial data from ${params.from_date} to ${params.to_date}...`);
 
   // Fetch raw data from API
-  const rawResponses = await fetchLedgerData(page, params);
+  const rawResponse = await fetchLedgerData(page, params);
+  
+  // API returns array of arrays - flatten to get ledger entries
+  const rawResponses: LedgerResponse[] = [];
+  if (Array.isArray(rawResponse)) {
+    for (const item of rawResponse) {
+      if (Array.isArray(item)) {
+        // Inner array - each element is a ledger response
+        for (const ledger of item) {
+          if (ledger && typeof ledger === 'object' && ledger.data_list) {
+            rawResponses.push(ledger as LedgerResponse);
+          }
+        }
+      } else if (item && typeof item === 'object' && item.data_list) {
+        // Direct object
+        rawResponses.push(item as LedgerResponse);
+      }
+    }
+  }
+  
   log.info(`API returned ${rawResponses.length} ledger entries`);
+  
+  // Debug: log first entry structure
+  if (rawResponses.length > 0) {
+    const first = rawResponses[0];
+    log.info(`First ledger: ${first.ledger_account?.name || 'unknown'} (${first.data_list?.length || 0} items)`);
+  }
+
+  // Filter out opening balance accounts entirely
+  const filteredResponses = rawResponses.filter(response => {
+    if (response.ledger_account.is_opening === 1) {
+      log.info(`Ignoring opening balance account: ${response.ledger_account.name}`);
+      return false;
+    }
+    return true;
+  });
+
+  log.info(`After filtering opening balance: ${filteredResponses.length} ledger entries`);
 
   // Deduplicate data_list items across all responses
-  for (const response of rawResponses) {
+  for (const response of filteredResponses) {
     const originalCount = response.data_list.length;
     response.data_list = deduplicateEntries(response.data_list);
     if (originalCount !== response.data_list.length) {
@@ -218,17 +264,17 @@ export async function extractFinancialData(
   }
 
   // Save raw data
-  writeJsonOutput('financial_raw', rawResponses);
+  writeJsonOutput('financial_raw', filteredResponses);
 
   // Calculate and save cash flow
-  const cashFlow = calculateCashFlow(rawResponses, params.from_date, params.to_date);
+  const cashFlow = calculateCashFlow(filteredResponses, params.from_date, params.to_date);
   writeJsonOutput('financial_cash_flow', [cashFlow]);
 
   // Calculate and save fee collection
-  const categorized = categorizeByRoot(rawResponses);
+  const categorized = categorizeByRoot(filteredResponses);
   const feeCollection = calculateFeeCollection(categorized.income);
   writeJsonOutput('financial_fee_collection', feeCollection);
 
   log.step('Financial data extraction complete');
-  return rawResponses;
+  return filteredResponses;
 }

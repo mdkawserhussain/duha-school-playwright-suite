@@ -28,6 +28,7 @@ npm start
 - **Payment Ledger** — Per-student installment payment histories
 - **Waiver Tracking** — Class-wide fee concessions and waivers
 - **Diff Engine** — Day-over-day comparison (new defaulters, cleared dues, increases)
+- **Financial Reports** — Cash flow, fee collection, and ledger details (ignores opening balance)
 
 ### Notifications & Reporting
 - **WhatsApp Messages** — Per-column dues breakdown (monthly + fee dues) with period filtering
@@ -39,6 +40,7 @@ npm start
 - **Dashboard** — Summary cards, student search with dropdown, period selector, click-to-expand detail view
 - **Controls** — Unified filter strip (Due Only, Min Amount, Class, Shift, Year, Period), column selection, extraction, Excel/JSON/WhatsApp export
 - **WhatsApp** — Per-column dues breakdown (monthly + fee badges), Send All, Open Dashboard
+- **Financial** — Date range selection, cash flow summary, fee collection, ledger details, Excel export
 - **Logs** — System info, error screenshots, extraction logs, error.log viewer
 - **Settings** — Collapsible grouped config, PORTAL_COLUMNS management
 - **Run History** — Full extraction log from SQLite
@@ -50,7 +52,7 @@ npm start
 - **GitHub Actions** — Automated builds for Windows (.msi), macOS (.dmg), Linux (.deb)
 
 ### Reliability
-- **38 unit tests** for pure-function modules
+- **90 unit tests** for pure-function modules
 - **Selector health check** — Detects portal UI changes before extraction
 - **Dropdown cache** — 24-hour TTL avoids redundant browser interactions
 - **Global timeout** — Prevents infinite loops on slow portal responses
@@ -76,6 +78,10 @@ npm start -- --preview                       # Dry-run (no file writes)
 npm start -- --headed                        # Visible browser
 npm start -- --no-cache                      # Force fresh dropdown discovery
 npm start -- --setup                         # Re-run setup wizard
+
+# Financial reports
+npx tsx scripts/run-financial.ts                                          # Default (current month)
+FINANCIAL_FROM_DATE=2026-01-01 FINANCIAL_TO_DATE=2026-01-31 npx tsx scripts/run-financial.ts  # Custom range
 ```
 
 ## Web UI
@@ -152,6 +158,14 @@ SCHEDULE="0 8 * * 1-5" npm run start:scheduler  # Weekdays at 8 AM
 | `TELEGRAM_CHAT_ID` | Telegram chat ID |
 | `HEARTBEAT_URL` | Uptime monitoring ping URL |
 
+### Financial Reports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `FINANCIAL_FROM_DATE` | (current month start) | Start date (YYYY-MM-DD) |
+| `FINANCIAL_TO_DATE` | (current month end) | End date (YYYY-MM-DD) |
+| `FINANCIAL_STATUS` | `approved` | Transaction status filter |
+
 ### Advanced
 
 | Variable | Default | Description |
@@ -172,17 +186,18 @@ src/
   scheduler.ts             # Nightly scheduler
   config.ts                # Configuration
   auth/                    # Login & session
-  extractors/              # Data extraction (accounts, attendance, payments, waivers)
+  extractors/              # Data extraction (accounts, attendance, payments, waivers, financial)
   processors/              # Pure-function data processing
   reporters/               # Output generation (HTML, WhatsApp, Telegram)
-  utils/                   # Shared utilities (logger, file writer, cache, monthlyTotals, etc.)
+  utils/                   # Shared utilities (logger, file writer, cache, monthlyTotals, financialReports)
   server/                  # Express API server
-    routes/                # API routes (control, dashboard, dues, export, logs, runs, whatsapp)
+    routes/                # API routes (control, dashboard, dues, export, logs, runs, whatsapp, financial)
     sse/                   # Server-sent events for live logs
-  types/                   # TypeScript interfaces
+  types/                   # TypeScript interfaces (FinancialReport.ts)
 web/                       # React frontend (Vite + Tailwind)
-  src/pages/               # Dashboard, Controls, WhatsApp, Logs, Settings, RunHistory, Trends
+  src/pages/               # Dashboard, Controls, WhatsApp, Financial, Logs, Settings, RunHistory, Trends
 src-tauri/                 # Tauri desktop wrapper (Rust)
+scripts/                   # CLI scripts (run-financial.ts)
 docs/                      # Architecture, troubleshooting, filter reference
 ```
 
@@ -197,6 +212,10 @@ docs/                      # Architecture, troubleshooting, filter reference
 | `output/dues_dashboard_*.html` | Interactive HTML dashboard |
 | `output/WhatsApp-Links-Dashboard.html` | WhatsApp notification links |
 | `output/wa-data.json` | Cached WhatsApp links with per-column dues |
+| `output/financial_raw_*.json` | Raw financial ledger entries |
+| `output/financial_cash_flow_*.json` | Cash flow statement (ignores opening balance) |
+| `output/financial_fee_collection_*.json` | Fee collection summary by type |
+| `output/financial_report_*.xlsx` | Financial Excel report (3 sheets) |
 | `output/run_manifest_*.json` | Run results and failed combos |
 | `output/run_metrics_*.json` | Execution timing metrics |
 | `user-data/history.db` | SQLite historical database |
@@ -209,6 +228,7 @@ docs/                      # Architecture, troubleshooting, filter reference
 npm test                           # Run unit tests
 npx tsc --noEmit                   # Type-check
 npm run check:selectors            # Verify portal selectors
+npx tsx scripts/run-financial.ts   # Run financial extractor
 ```
 
 ## Documentation
