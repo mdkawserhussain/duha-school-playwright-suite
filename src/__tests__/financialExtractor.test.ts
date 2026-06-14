@@ -191,4 +191,39 @@ describe('financialExtractor', () => {
       expect(result.expenseByType).toEqual({ 'Salary Expense': 3000 });
     });
   });
+
+  describe('Integration Tests', () => {
+    it('should process complete financial extraction flow', () => {
+      const mockResponses: LedgerResponse[] = [
+        {
+          ledger_account: { id: 1, name: 'Tuition Fee', ledger_code: '30003', root: 'Income', is_system: 0, is_tax: 0, is_opening: 0, is_closing: 0, is_bank: 0, is_cash: 0, site_id: 1, created_at: '', updated_at: '' },
+          data_list: [
+            { id: 1, credit_amount: 1000, debit_amount: 0, entry: 'cr', created_date: '2026-01-01', status: 'approved', acc_voucher_details: { transaction_note: 'Name: John Doe, Shift: Day, Class: 10A, Payment Slip No: 12345', voucher_no: 'V001', transaction_date: '2026-01-01', voucher_type: 'receipt', transaction_for: 'fee', site_accounts_fiscal_year_id: 1, site_accounts_voucher_id: 1, site_id: 1, status: 'approved', created_at: '', updated_at: '' }, ledger: { id: 1, name: 'Tuition Fee', ledger_code: '30003' }, site_accounts_ledger_id: 1, site_accounts_voucher_detail_id: 1, site_id: 1, updated_at: '', created_at: '' }
+          ],
+          total_credit: 1000,
+          total_debit: 0,
+          total_credit_for_opening_balance: 0,
+          total_debit_for_opening_balance: 0,
+          opening_balance: 0,
+          sub_total_amount: 1000,
+          total_amount: 1000,
+          upto_date_for_opening_balance: ''
+        }
+      ];
+
+      const categorized = categorizeByRoot(mockResponses);
+      expect(categorized.income).toHaveLength(1);
+      expect(categorized.expense).toHaveLength(0);
+
+      const feeCollection = calculateFeeCollection(categorized.income);
+      expect(feeCollection).toHaveLength(1);
+      expect(feeCollection[0].feeType).toBe('Tuition Fee');
+      expect(feeCollection[0].totalCollected).toBe(1000);
+
+      const cashFlow = calculateCashFlow(mockResponses, '2026-01-01', '2026-01-31');
+      expect(cashFlow.totalIncome).toBe(1000);
+      expect(cashFlow.totalExpense).toBe(0);
+      expect(cashFlow.netCashFlow).toBe(1000);
+    });
+  });
 });
