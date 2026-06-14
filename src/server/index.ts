@@ -19,6 +19,8 @@ import { exportRouter } from './routes/export';
 import { logsRouter } from './routes/logs';
 import { payrollRouter } from './routes/payroll';
 import { leaveRouter } from './routes/leave';
+import { salarySlipsRouter } from './routes/salarySlips';
+import { verifyRouter } from './routes/verify';
 import { initLeaveHistoryTable } from '../utils/leaveHistoryDb';
 
 const app = express();
@@ -54,6 +56,8 @@ app.use('/api/export', exportRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api/payroll', payrollRouter);
 app.use('/api/leave', leaveRouter);
+app.use('/api/salary-slips', salarySlipsRouter);
+app.use('/api/verify', verifyRouter);
 
 // Initialize leave history table on startup
 initLeaveHistoryTable();

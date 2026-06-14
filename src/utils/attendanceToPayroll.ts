@@ -2,7 +2,7 @@
  * Attendance-to-Payroll Bridge
  *
  * Transforms portal attendance JSON (FlatAttendanceRecord[]) into the
- * temp/parsed.json format expected by js-agv8's payroll engine.
+ * temp/parsed.json format expected by payroll's payroll engine.
  *
  * @module attendanceToPayroll
  */
@@ -228,7 +228,7 @@ function extractDay(dateStr: string): number {
 
 /**
  * Find staff config entry by name (fuzzy matching).
- * Mirrors js-agv8/utils.js:findStaffConfig logic.
+ * Mirrors payroll/utils.js:findStaffConfig logic.
  */
 export function findStaffMatch(
   empName: string,
@@ -328,10 +328,10 @@ export function writePayrollInput(
 // ─── Main Entry Point ────────────────────────────────────────────────────────
 
 /**
- * Transform portal attendance JSON into js-agv8 temp/parsed.json format.
+ * Transform portal attendance JSON into payroll temp/parsed.json format.
  *
  * @param attendancePath - Path to attendance_YYYY-MM-DD.json
- * @param jsAgv8Dir - Path to js-agv8 project directory
+ * @param jsAgv8Dir - Path to payroll project directory
  * @returns Array of PayrollInput records written
  */
 export function attendanceToPayroll(
@@ -351,10 +351,10 @@ export function attendanceToPayroll(
     throw new Error('Attendance file is empty');
   }
 
-  // 2. Read js-agv8 config
+  // 2. Read payroll config
   const configPath = path.join(jsAgv8Dir, 'config.json');
   if (!fs.existsSync(configPath)) {
-    throw new Error(`config.json not found: ${configPath}\nEnsure js-agv8 is at: ${jsAgv8Dir}`);
+    throw new Error(`config.json not found: ${configPath}\nEnsure payroll is at: ${jsAgv8Dir}`);
   }
 
   const config: PayrollConfig = JSON.parse(

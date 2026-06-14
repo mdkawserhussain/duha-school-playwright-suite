@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DUHA Payroll System - Attendance Review</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js"></script>
+  <script>
+    let originalData = [];
+    let currentData = [];
+    let isDirty = false;
+
+    async function loadParsedData() {
+      try {
+        const res = await fetch('/api/parsed');
+        originalData = await res.json();
+        currentData = JSON.parse(JSON.stringify(originalData));
+        isDirty = false;
+        renderTable();
+        updateDirtyIndicator();
+      } catch (err) {
+        showToast('Failed to load calculated attendance data.', 'error');
+      }
+    }
+
+    function renderTable() {
+      const container = document.getElementById('review-table-body');
+      if (!container) return;
+
+      if (!currentData.length) {
+        container.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text-secondary);">
+          No attendance parsed yet. <a href="index.html" style="color:var(--accent);text-decoration:underline;">Go to Pipeline</a> and run Phase 1.
+        </td></tr>`;
+        return;
+      }
+
+      container.innerHTML = currentData.map((row, idx) => {
+        const b = row.baseline || {};
+        const orig = originalData[idx];
+        const ob = orig ? orig.baseline || {} : {};
+
+        const pdaysDirty = b.pdays !== ob.pdays ? 'cell-modified' : '';
+        const leaveDirty = b.leave !== ob.leave ? 'cell-modified' : '';
+        const absentDirty = b.absent !== ob.absent ? 'cell-modified' : '';
+        const lateDirty = b.late !== ob.late ? 'cell-modified' : '';
+
+        let detailsStr = '';
+        if (b.absentDates && b.absentDates.length) detailsStr += `Ab: ${b.absentDates.join(',')} `;
+        if (b.lateDetails && b.lateDetails.length) detailsStr += `Lt: ${b.lateDetails.join(',')} `;
+        if (b.leaveDates && b.leaveDates.length) detailsStr += `Lv: ${b.leaveDates.join(',')} `;
+
+        return `
+          <tr>
+            <td style="font-weight:600;">${row.name}</td>
+            <td class="${pdaysDirty}">
+              <input type="number" min="0" step="1" value="${b.pdays || 0}"
+                data-idx="${idx}" data-field="pdays"
+                onchange="updateCell(this)" onkeydown="handleCellKey(event, this)">
+            </td>
+            <td class="${leaveDirty}">
+              <input type="number" min="0" step="1" value="${b.leave || 0}"
+                data-idx="${idx}" data-field="leave"
+                onchange="updateCell(this)" onkeydown="handleCellKey(event, this)">
+            </td>
+            <td class="${absentDirty}">
+              <input type="number" min="0" step="1" value="${b.absent || 0}"
+                data-idx="${idx}" data-field="absent"
+                onchange="updateCell(this)" onkeydown="handleCellKey(event, this)">
+            </td>
+            <td class="${lateDirty}">
+              <input type="number" min="0" step="1" value="${b.late || 0}"
+                data-idx="${idx}" data-field="late"
+                onchange="updateCell(this)" onkeydown="handleCellKey(event, this)">
+            </td>
+            <td style="color:var(--text-secondary);">${b.over20 || 0}</td>
+            <td style="font-size:0.75rem;color:var(--text-secondary);max-width:300px;word-break:break-all;">${detailsStr || '—'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateCell(input) {
+      const idx = parseInt(input.dataset.idx);
+      const field = input.dataset.field;
+      const raw = input.value.trim();
+
+      if (raw === '' || isNaN(raw)) {
+        input.value = currentData[idx].baseline[field] || 0;
+        showToast('Please enter a valid number.', 'error');
+        return;
+      }
+
+      const val = parseInt(raw);
+      if (val < 0) {
+        input.value = 0;
+        showToast('Value must be non-negative.', 'error');
+        return;
+      }
+
+      if (!currentData[idx].baseline) currentData[idx].baseline = {};
+      currentData[idx].baseline[field] = val;
+
+      // Mark as dirty
+      isDirty = true;
+      updateDirtyIndicator();
+
+      // Highlight changed cell
+      const orig = originalData[idx] ? originalData[idx].baseline || {} : {};
+      const td = input.closest('td');
+      if (td) {
+        td.classList.toggle('cell-modified', val !== (orig[field] || 0));
+      }
+    }
+
+    function handleCellKey(e, input) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        // Move to next input in same column
+        const allInputs = [...document.querySelectorAll('#review-table-body input[type="number"]')];
+        const currentIdx = allInputs.indexOf(input);
+        if (currentIdx < allInputs.length - 1) {
+          allInputs[currentIdx + 1].focus();
+          allInputs[currentIdx + 1].select();
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        const idx = parseInt(input.dataset.idx);
+        const field = input.dataset.field;
+        input.value = currentData[idx].baseline[field] || 0;
+        input.blur();
+      }
+    }
+
+    function updateDirtyIndicator() {
+      const indicator = document.getElementById('dirty-indicator');
+      if (indicator) {
+        indicator.style.display = isDirty ? 'inline-block' : 'none';
+      }
+    }
+
+    async function saveEdits() {
+      showToast('Saving edits...', 'info');
+      try {
+        const res = await fetch('/api/parsed', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currentData)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Attendance edits saved and temp/parsed.docx regenerated!', 'success');
+          originalData = JSON.parse(JSON.stringify(currentData));
+          isDirty = false;
+          updateDirtyIndicator();
+          renderTable();
+        } else {
+          showToast(`Failed to save edits: ${data.error}`, 'error');
+        }
+      } catch (err) {
+        showToast(`Error saving edits: ${err.message}`, 'error');
+      }
+    }
+
+    // Warn before leaving with unsaved changes
+    window.addEventListener('beforeunload', (e) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadParsedData);
+  </script>
+</head>
+<body>
+  <div id="toast-container" class="toast-container"></div>
+
+  <header>
+    <div>
+      <h1>Attendance Review
+        <span id="dirty-indicator" style="display:none;font-size:0.5em;color:var(--warning);vertical-align:middle;">● Unsaved</span>
+      </h1>
+      <div class="school-name">Verification & Corrections (Phase 2)</div>
+    </div>
+    <nav>
+      <a href="index.html">Pipeline</a>
+      <a href="review.html" class="active">Attendance Review</a>
+      <a href="config.html">Config Editor</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <h2>Calculated Attendance Logs</h2>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span id="dirty-indicator" style="display:none;font-size:0.75rem;color:var(--warning);">● Unsaved changes</span>
+          <button class="btn" onclick="saveEdits()">Save Edits</button>
+        </div>
+      </div>
+      <div style="background:rgba(245,158,11,0.05);color:var(--warning);padding:1rem;border-radius:0.5rem;font-size:0.875rem;margin-bottom:1rem;border:1px solid rgba(245,158,11,0.2);">
+        <strong>Tip:</strong> Edit values in the <strong>P.Days, Leave, Absent, or Late</strong> columns. Press <strong>Enter</strong> to move to next cell, <strong>Escape</strong> to cancel. Click <strong>Save Edits</strong> to persist.
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Staff Name</th>
+              <th>P.Days</th>
+              <th>Leave</th>
+              <th>Absent</th>
+              <th>Late Entries</th>
+              <th>Late &gt;20m</th>
+              <th>Attendance Details</th>
+            </tr>
+          </thead>
+          <tbody id="review-table-body">
+            <tr>
+              <td colspan="7" style="text-align:center;color:var(--text-secondary);">Loading calculated data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

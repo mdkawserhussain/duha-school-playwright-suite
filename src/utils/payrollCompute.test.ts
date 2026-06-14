@@ -456,18 +456,18 @@ describe('computeStaffSalary: missing staff config', () => {
 
 describe('computePayrollPreview', () => {
   it('computes preview with 3 staff members', () => {
-    // This test uses real js-agv8 data if available, otherwise tests the interface
+    // This test uses real payroll data if available, otherwise tests the interface
     const fs = require('node:fs');
     const path = require('node:path');
-    const jsAgv8Dir = path.resolve(process.cwd(), 'js-agv8');
+    const payrollDir = path.resolve(process.cwd(), 'payroll');
 
-    if (!fs.existsSync(path.join(jsAgv8Dir, 'config.json'))) {
-      console.warn('Skipping full preview test: js-agv8 not available');
+    if (!fs.existsSync(path.join(payrollDir, 'config.json'))) {
+      console.warn('Skipping full preview test: payroll not available');
       return;
     }
 
     try {
-      const result = computePayrollPreview(jsAgv8Dir);
+      const result = computePayrollPreview(payrollDir);
       expect(result.staff.length).toBeGreaterThan(0);
       expect(result.summary.totalStaff).toBe(result.staff.length);
       expect(result.summary.totalGross).toBeGreaterThanOrEqual(0);

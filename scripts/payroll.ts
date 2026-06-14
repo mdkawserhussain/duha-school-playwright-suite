@@ -1,5 +1,5 @@
 /**
- * Payroll CLI — runs attendance-to-payroll bridge + js-agv8 pipeline.
+ * Payroll CLI — runs attendance-to-payroll bridge + payroll pipeline.
  *
  * Usage:
  *   npx tsx scripts/payroll.ts                     # auto-find latest attendance
@@ -14,7 +14,7 @@ import { execSync } from 'node:child_process';
 import { attendanceToPayroll } from '../src/utils/attendanceToPayroll';
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-const JS_AGV8_DIR = path.join(PROJECT_ROOT, 'js-agv8');
+const PAYROLL_DIR = path.join(PROJECT_ROOT, 'payroll');
 const OUTPUT_DIR = path.join(PROJECT_ROOT, 'output');
 
 // ─── Arg Parsing ─────────────────────────────────────────────────────────────
@@ -55,10 +55,10 @@ function findLatestAttendance(): string | null {
   return files.length > 0 ? path.join(OUTPUT_DIR, files[0]) : null;
 }
 
-// ─── Run js-agv8 Script ─────────────────────────────────────────────────────
+// ─── Run Payroll Script ─────────────────────────────────────────────────────
 
 function runScript(scriptName: string, label: string): boolean {
-  const scriptPath = path.join(JS_AGV8_DIR, scriptName);
+  const scriptPath = path.join(PAYROLL_DIR, scriptName);
   if (!fs.existsSync(scriptPath)) {
     console.warn(`⚠️  ${label}: ${scriptName} not found, skipping`);
     return false;
@@ -67,7 +67,7 @@ function runScript(scriptName: string, label: string): boolean {
   try {
     console.log(`\n▶ Running ${label}...`);
     execSync(`node ${scriptName}`, {
-      cwd: JS_AGV8_DIR,
+      cwd: PAYROLL_DIR,
       stdio: 'inherit',
       timeout: 120_000,
     });
@@ -88,10 +88,10 @@ function main() {
   console.log('  DUHA Payroll — Attendance Bridge');
   console.log('═══════════════════════════════════════════════\n');
 
-  // Check js-agv8 exists
-  if (!fs.existsSync(JS_AGV8_DIR)) {
-    console.error(`❌ js-agv8 project not found at: ${JS_AGV8_DIR}`);
-    console.error('   Ensure the js-agv8 directory is a sibling of the playwright project.');
+  // Check payroll exists
+  if (!fs.existsSync(PAYROLL_DIR)) {
+    console.error(`❌ payroll project not found at: ${PAYROLL_DIR}`);
+    console.error('   Ensure the payroll directory is a sibling of the playwright project.');
     process.exit(1);
   }
 
@@ -105,16 +105,16 @@ function main() {
   }
 
   console.log(`📄 Attendance: ${path.basename(attendancePath)}`);
-  console.log(`📁 Payroll project: ${JS_AGV8_DIR}`);
+  console.log(`📁 Payroll project: ${PAYROLL_DIR}`);
   if (dryRun) console.log('🔍 Dry run mode — bridge only, no reports');
   console.log('');
 
   // Run bridge
   console.log('▶ Step 1: Converting attendance → payroll format...');
   try {
-    const inputs = attendanceToPayroll(attendancePath, JS_AGV8_DIR);
+    const inputs = attendanceToPayroll(attendancePath, PAYROLL_DIR);
     console.log(`✅ Bridge complete: ${inputs.length} employees processed`);
-    console.log(`   Output: ${path.join(JS_AGV8_DIR, 'temp', 'parsed.json')}`);
+    console.log(`   Output: ${path.join(PAYROLL_DIR, 'temp', 'parsed.json')}`);
   } catch (err) {
     console.error(`❌ Bridge failed: ${(err as Error).message}`);
     process.exit(1);
@@ -125,7 +125,7 @@ function main() {
     process.exit(0);
   }
 
-  // Run js-agv8 pipeline
+  // Run payroll pipeline
   console.log('\n▶ Step 2: Running payroll pipeline...');
   runScript('all.js', 'Payroll computation');
 
@@ -139,7 +139,7 @@ function main() {
   console.log('  Generated Files');
   console.log('═══════════════════════════════════════════════\n');
 
-  const outputDir = path.join(JS_AGV8_DIR, 'output');
+  const outputDir = path.join(PAYROLL_DIR, 'output');
   if (fs.existsSync(outputDir)) {
     const files = fs.readdirSync(outputDir)
       .filter(f => !f.startsWith('.'))

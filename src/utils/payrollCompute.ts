@@ -1,7 +1,7 @@
 /**
  * Salary Computation Module
  *
- * TypeScript port of js-agv8/all.js computePayroll() for the web preview endpoint.
+ * TypeScript port of payroll/all.js computePayroll() for the web preview endpoint.
  * Reads directly from filesystem (no HTTP needed).
  *
  * @module payrollCompute
@@ -157,7 +157,7 @@ function timeToMins(timeStr: string): number {
 
 /**
  * Find staff config entry by name (fuzzy matching).
- * Mirrors js-agv8/utils.js:findStaffConfig logic.
+ * Mirrors payroll/utils.js:findStaffConfig logic.
  */
 function findStaffConfig(empName: string, staff: StaffConfig[]): StaffConfig | null {
   const norm = normalize(empName);
@@ -428,7 +428,7 @@ export function computeStaffSalary(
 
 /**
  * Compute payroll preview for all staff.
- * Reads parsed.json + config.json from js-agv8 directory.
+ * Reads parsed.json + config.json from payroll directory.
  */
 export function computePayrollPreview(jsAgv8Dir: string): PayrollPreview {
   const configPath = path.join(jsAgv8Dir, 'config.json');
