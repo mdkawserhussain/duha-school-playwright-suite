@@ -222,7 +222,7 @@ export async function extractFinancialData(
 
   // Calculate and save cash flow
   const cashFlow = calculateCashFlow(rawResponses, params.from_date, params.to_date);
-  writeJsonOutput('financial_cash_flow', cashFlow);
+  writeJsonOutput('financial_cash_flow', [cashFlow]);
 
   // Calculate and save fee collection
   const categorized = categorizeByRoot(rawResponses);
