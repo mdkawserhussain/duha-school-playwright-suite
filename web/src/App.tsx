@@ -8,6 +8,7 @@ import Settings from './pages/Settings';
 import Logs from './pages/Logs';
 import Payroll from './pages/Payroll';
 import Leave from './pages/Leave';
+import Financial from './pages/Financial';
 
 const PAGES = [
   { key: 'dashboard', label: 'Dashboard', icon: '📊' },
@@ -18,6 +19,7 @@ const PAGES = [
   { key: 'logs', label: 'Logs', icon: '📝' },
   { key: 'payroll', label: 'Payroll', icon: '💰' },
   { key: 'leave', label: 'Leave', icon: '📅' },
+  { key: 'financial', label: 'Financial', icon: '💹' },
   { key: 'settings', label: 'Settings', icon: '⚙️' },
 ];
 
@@ -99,6 +101,7 @@ export default function App() {
         {page === 'logs' && <Logs />}
         {page === 'payroll' && <Payroll />}
         {page === 'leave' && <Leave />}
+        {page === 'financial' && <Financial />}
         {page === 'settings' && <Settings />}
       </main>
     </div>
